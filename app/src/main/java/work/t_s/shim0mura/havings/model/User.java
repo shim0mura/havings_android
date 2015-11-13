@@ -63,8 +63,26 @@ public class User {
         }
     }
 
+    public void resetTokenAndUid(Context context){
+        ApiKey.resetApiKey(context);
+        this.accessToken = null;
+        this.uid = null;
+    }
+
+    public void storeTokenAndUid(Context context, String token, String uid){
+        ApiKey.storeApiKey(context, token, uid);
+        this.accessToken = token;
+        this.uid = uid;
+    }
+
     public boolean canAccessWithToken(){
-        return (accessToken != null && uid != null);
+        Boolean result = false;
+        if(accessToken == null || uid == null){
+            result = false;
+        }else if(true) {
+            result = true;
+        }
+        return result;
     }
 
     public String testGetToken(){

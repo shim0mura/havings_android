@@ -36,6 +36,11 @@ public class RegisterActivity extends SessionBaseActivity {
         this.TAG = "RegisterActivity";
 
         this.presenter = new RegisterPresenter(this);
+        if(presenter.isUserAbleToAccess()){
+            navigateToHome(new NavigateEvent());
+            Log.d(TAG, "can access with token!");
+            return;
+        }
 
         setContentView(R.layout.activity_register);
 

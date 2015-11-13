@@ -4,10 +4,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +37,8 @@ public class WebApiImpl implements Api {
 
     private static final OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final String ACCESS_TOKEN_HEADER = "X_ACCESS_TOKEN";
+    private static final String UID_HEADER = "X_UID";
 
     public WebApiImpl(Context context){
 
@@ -78,7 +82,6 @@ public class WebApiImpl implements Api {
 
             }
         };
-
 
         return requestBody;
     }

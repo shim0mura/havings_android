@@ -41,6 +41,10 @@ abstract public class SessionBasePresenter {
         Log.d(TAG, activity.toString());
     }
 
+    public Boolean isUserAbleToAccess(){
+        return user.canAccessWithToken();
+    }
+
     public void test(){
 
         ApiKey.storeApiKey(activity, "test", "ttttttttt");

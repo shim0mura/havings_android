@@ -21,10 +21,17 @@ import java.util.UUID;
  */
 public class ApiKey {
 
-    private static String API_KEY = "ApiKey";
-    private static String API_TOKEN = "access-token";
-    private static String UID = "uid";
-    private static String ACCESS_KEY = "secret";
+    private static final String API_KEY = "ApiKey";
+    private static final String API_TOKEN = "access-token";
+    private static final String UID = "uid";
+    private static final String ACCESS_KEY = "secret";
+
+    public static void resetApiKey(Context context){
+        SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
+        preferences.edit().remove(API_TOKEN);
+        preferences.edit().remove(UID);
+        preferences.edit().commit();
+    }
 
     //https://github.com/facebook/conceal/issues/90
     //concealは最新バージョンだとcrypto.isAvailable()がうまく行かなくて落ちるので今は使わないで
