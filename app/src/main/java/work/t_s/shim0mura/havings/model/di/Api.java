@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 
@@ -16,6 +17,5 @@ import javax.inject.Singleton;
 public interface Api {
     void test();
     void execute(final Request request, final Callback callback);
-    MediaType getMediaTypeToPost();
-    RequestBody buildBaseRequestBody();
+    OkHttpClient getClient();
 }

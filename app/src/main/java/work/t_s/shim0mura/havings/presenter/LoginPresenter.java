@@ -1,10 +1,9 @@
 package work.t_s.shim0mura.havings.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import com.squareup.okhttp.Callback;
@@ -20,10 +19,9 @@ import java.util.Iterator;
 import butterknife.ButterKnife;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiKey;
-import work.t_s.shim0mura.havings.model.ApiRoute;
+import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.StatusCode;
-import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.NavigateEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
@@ -53,8 +51,29 @@ public class LoginPresenter extends SessionBasePresenter {
     }
 
     static public Uri getAuthUri(String provider){
-        String uri = ApiRoute.SIGNIN_BY_OAUTH + provider + ApiRoute.SIGNIN_BY_OAUTH_PARAMS;
+        String uri = ApiService.SIGNIN_BY_OAUTH + provider + ApiService.SIGNIN_BY_OAUTH_PARAMS;
         return Uri.parse(uri);
+    }
+
+    @Override
+    public void loginByOauth(){
+        Bundle params = activity.getIntent().getExtras();
+        String token = params.getString("token");
+        String uid = params.getString("uid");
+
+        Log.d(TAG, token);
+        Log.d(TAG, uid);
+
+        if(token == null || uid == null){
+            BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+            Log.d(TAG, "failed to get token");
+        }else{
+            Log.d(TAG, "get token");
+            Log.d(TAG, token);
+            asm.setApiKey(token, uid);
+
+            BusHolder.get().post(new NavigateEvent());
+        }
     }
 
     @Override
@@ -89,9 +108,19 @@ public class LoginPresenter extends SessionBasePresenter {
                             Log.d(TAG, token);
                             String uid = jsonResult.getString("uid");
                             Log.d(TAG, uid);
-                            user.storeTokenAndUid(activity, token, uid);
+                            asm.setApiKey(token, uid);
                             BusHolder.get().post(new NavigateEvent());
                         }catch (JSONException e){
+                            e.printStackTrace();
+                            BusHolder.get().post(new AlertEvent(AlertEvent.CANT_PARSE_RESPONSE));
+                        }
+                        break;
+                    case StatusCode.Unauthorized:
+                        Log.d(TAG, "response successed, but posted data wrong");
+                        try{
+                            String errorStr = new JSONObject(result).getString("error");
+                            BusHolder.get().post(new SetErrorEvent(emailId, errorStr));
+                        }catch(JSONException e){
                             e.printStackTrace();
                             BusHolder.get().post(new AlertEvent(AlertEvent.CANT_PARSE_RESPONSE));
                         }

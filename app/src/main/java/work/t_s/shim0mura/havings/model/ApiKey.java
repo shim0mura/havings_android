@@ -26,11 +26,44 @@ public class ApiKey {
     private static final String UID = "uid";
     private static final String ACCESS_KEY = "secret";
 
-    public static void resetApiKey(Context context){
+    private static ApiKey apiKey;
+    private Context context;
+    private String token;
+    private String uid;
+
+    private ApiKey(Context c){
+        context = c;
+
         SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
-        preferences.edit().remove(API_TOKEN);
-        preferences.edit().remove(UID);
-        preferences.edit().commit();
+        String accessKey = preferences.getString(ACCESS_KEY, null);
+        token = preferences.getString(API_TOKEN, null);
+        uid = preferences.getString(UID, null);
+    }
+
+    public String getToken(){
+        return token;
+    }
+    public String getUid(){
+        return uid;
+    }
+
+    public static synchronized ApiKey getSingleton(Context context){
+        if(apiKey == null){
+            apiKey = new ApiKey(context);
+        }
+
+        return apiKey;
+    }
+
+    public void clearApiKey(){
+        token = null;
+        uid = null;
+
+        SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
+        //preferences.edit().remove(API_TOKEN);
+        //preferences.edit().remove(UID);
+        //preferences.edit().commit();
+        preferences.edit().clear().commit();
     }
 
     //https://github.com/facebook/conceal/issues/90
@@ -38,14 +71,17 @@ public class ApiKey {
     //sharedpreferenceのみでいく
     //使う場合の参考
     // http://qiita.com/Rompei/items/c21c543707510720db2d
-    public static void storeApiKey(Context context, String token, String uid){
+    public void storeApiKey(String rawToken, String rawUid){
         SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor;
 
         //String accessKey = UUID.randomUUID().toString();
         editor = preferences.edit();
-        editor.putString(API_TOKEN, token);
-        editor.putString(UID, uid);
+        editor.putString(API_TOKEN, rawToken);
+        editor.putString(UID, rawUid);
+
+        token = rawToken;
+        uid = rawUid;
 
         /*
         Crypto crypto = new Crypto(
@@ -72,50 +108,5 @@ public class ApiKey {
         }
         */
         editor.apply();
-    }
-
-    public static String[] getApiKey(Context context){
-        SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
-        String accessKey = preferences.getString(ACCESS_KEY, null);
-        String encryptedToken = preferences.getString(API_TOKEN, null);
-        String encryptedUid = preferences.getString(UID, null);
-
-        /*
-        byte[] rawEncryptedToken = null;
-        String rawDecryptedToken = null;
-        byte[] rawEncryptedUid = null;
-        String rawDecryptedUid = null;
-
-        if(encryptedToken!=null && encryptedUid!=null && accessKey!=null) {
-            rawEncryptedToken = Base64.decode(encryptedToken, Base64.DEFAULT);
-            rawEncryptedUid = Base64.decode(encryptedToken, Base64.DEFAULT);
-
-
-            Crypto crypto = new Crypto(
-                    new SharedPrefsBackedKeyChain(context),
-                    new SystemNativeCryptoLibrary());
-            if (!crypto.isAvailable()) {
-                return null;
-            }
-            try {
-                byte[] decryptedToken = crypto.decrypt(rawEncryptedToken, new Entity(accessKey));
-                rawDecryptedToken = new String(decryptedToken);
-                byte[] decryptedUid = crypto.decrypt(rawEncryptedUid, new Entity(accessKey));
-                rawDecryptedUid = new String(decryptedUid);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (CryptoInitializationException e) {
-                e.printStackTrace();
-            } catch (KeyChainException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return new String[]{rawDecryptedToken, rawDecryptedUid};
-        */
-
-        return new String[]{encryptedToken, encryptedUid};
     }
 }

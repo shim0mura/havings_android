@@ -28,7 +28,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import okio.Buffer;
 import okio.BufferedSink;
-import work.t_s.shim0mura.havings.model.ApiRoute;
+import work.t_s.shim0mura.havings.model.ApiService;
 
 /**
  * Created by shim0mura on 2015/11/05.
@@ -36,9 +36,6 @@ import work.t_s.shim0mura.havings.model.ApiRoute;
 public class WebApiImpl implements Api {
 
     private static final OkHttpClient client = new OkHttpClient();
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static final String ACCESS_TOKEN_HEADER = "X_ACCESS_TOKEN";
-    private static final String UID_HEADER = "X_UID";
 
     public WebApiImpl(Context context){
 
@@ -56,6 +53,8 @@ public class WebApiImpl implements Api {
         // https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CustomTrust.java
         SSLContext sslContext = sslContextForTrustedCertificates(trustedCertificatesInputStream());
         client.setSslSocketFactory(sslContext.getSocketFactory());
+
+        client.interceptors().add(new JsonHeaderInterceptor());
     }
 
     public void test(){
@@ -66,26 +65,9 @@ public class WebApiImpl implements Api {
         client.newCall(request).enqueue(callback);
     }
 
-    public MediaType getMediaTypeToPost(){
-        return JSON;
+    public OkHttpClient getClient(){
+        return client;
     }
-
-    public RequestBody buildBaseRequestBody(){
-        RequestBody requestBody = new RequestBody() {
-            @Override
-            public MediaType contentType() {
-                return JSON;
-            }
-
-            @Override
-            public void writeTo(BufferedSink sink) throws IOException {
-
-            }
-        };
-
-        return requestBody;
-    }
-
 
     private InputStream trustedCertificatesInputStream() {
         // PEM files for root certificates of Comodo and Entrust. These two CAs are sufficient to view
@@ -162,6 +144,19 @@ public class WebApiImpl implements Api {
             return keyStore;
         } catch (IOException e) {
             throw new AssertionError(e);
+        }
+    }
+
+    private class JsonHeaderInterceptor implements Interceptor {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request original = chain.request();
+
+            Request newRequest = original.newBuilder()
+                        .addHeader("Accept", ApiService.JSON.toString())
+                        .build();
+
+            return chain.proceed(newRequest);
         }
     }
 

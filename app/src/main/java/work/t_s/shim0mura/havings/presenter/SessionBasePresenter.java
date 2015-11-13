@@ -19,6 +19,7 @@ import java.util.Iterator;
 import butterknife.ButterKnife;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiKey;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.User;
@@ -33,21 +34,31 @@ import work.t_s.shim0mura.havings.model.event.ToggleLoadingEvent;
 abstract public class SessionBasePresenter {
     User user;
     Activity activity;
+    static ApiServiceManager asm;
     protected String TAG = "SessionBasePresenter...";
 
     public SessionBasePresenter(Context c){
         user = User.getSingleton(c);
         activity = (Activity)c;
+
+        asm = ApiServiceManager.getSingleton(activity);
         Log.d(TAG, activity.toString());
     }
 
     public Boolean isUserAbleToAccess(){
-        return user.canAccessWithToken();
+        Boolean result = false;
+
+        if(asm.canAccessToApi()){
+            Log.d(TAG, "have api token and uid");
+            result = true;
+        }
+
+        return result;
     }
 
     public void test(){
 
-        ApiKey.storeApiKey(activity, "test", "ttttttttt");
+        //ApiKey.storeApiKey(activity, "test", "ttttttttt");
 
         ToggleLoadingEvent e = new ToggleLoadingEvent(activity.findViewById(R.id.loading_progress), activity.findViewById(R.id.form));
         BusHolder.get().post(e);
@@ -61,10 +72,12 @@ abstract public class SessionBasePresenter {
             @Override
             public void onResponse(Response response) throws IOException {
                 String result = response.body().string();
+                /*
                 user.setTokenAndUid(activity);
                 Log.d(TAG, "test result:" + result);
                 Log.d(TAG, "token:"+ user.testGetToken());
                 Log.d(TAG, "uid:"+ user.testGetUid());
+                */
                 ToggleLoadingEvent e = new ToggleLoadingEvent(activity.findViewById(R.id.form), activity.findViewById(R.id.loading_progress));
                 BusHolder.get().post(e);
                 BusHolder.get().post(new AlertEvent(0));
@@ -131,4 +144,6 @@ abstract public class SessionBasePresenter {
 
         return res.getIdentifier(id, "id", activity.getPackageName());
     }
+
+    public void loginByOauth(){}
 }

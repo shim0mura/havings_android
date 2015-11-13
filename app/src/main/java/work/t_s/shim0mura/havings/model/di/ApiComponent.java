@@ -3,6 +3,7 @@ package work.t_s.shim0mura.havings.model.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.User;
 
 /**
@@ -13,4 +14,5 @@ import work.t_s.shim0mura.havings.model.User;
 @Component(modules = ApiModule.class)
 public interface ApiComponent {
     void inject(User user);
+    void inject(ApiServiceManager asm);
 }

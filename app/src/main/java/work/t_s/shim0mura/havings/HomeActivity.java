@@ -22,7 +22,16 @@ import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+import work.t_s.shim0mura.havings.model.ApiKey;
+import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
+import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.User;
+import work.t_s.shim0mura.havings.model.entity.UserEntity;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -69,6 +78,29 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        ApiService service = ApiServiceManager.getService(this);
+        Call<UserEntity> call = service.getUser(10);
+
+        call.enqueue(new Callback<UserEntity>() {
+            @Override
+            public void onResponse(Response<UserEntity> response, Retrofit retrofit) {
+                if(response.isSuccess()) {
+                    UserEntity user = response.body();
+                    Log.d("user", response.toString());
+                    Log.d("user", user.toString());
+                    Log.d("user", user.name);
+                }else if(response.code() == StatusCode.Unauthorized){
+                    Log.d("failed to authorize", "401 failed to authorize");
+                }else{
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("user", "get failed");
+            }
+        });
     }
 
 
@@ -171,9 +203,8 @@ public class HomeActivity extends AppCompatActivity {
     @OnClick({R.id.logout, R.id.fab})
     public void logout(View v){
         Log.d("ssss", "logout");
-        User user = User.getSingleton(this);
-        Log.d("sss", user.testGetToken());
-        user.resetTokenAndUid(this);
+        ApiServiceManager asm = ApiServiceManager.getSingleton(this);
+        asm.clearApiKey();
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
         finish();
