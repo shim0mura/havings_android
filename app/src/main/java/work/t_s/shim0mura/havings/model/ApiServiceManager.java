@@ -3,6 +3,7 @@ package work.t_s.shim0mura.havings.model;
 import android.content.Context;
 
 import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
@@ -77,6 +78,10 @@ public class ApiServiceManager {
     public void clearApiKey(){
         apiKey.clearApiKey();
         removeAuthHeader();
+    }
+
+    public OkHttpClient getHttpClient(){
+        return okhttpClient.getClient();
     }
 
     public void addAuthHeader(String token, String uid){

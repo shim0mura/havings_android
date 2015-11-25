@@ -210,4 +210,10 @@ public class HomeActivity extends AppCompatActivity {
         finish();
     }
 
+    @OnClick(R.id.item)
+    public void navigateToItem(View v){
+        Log.d("ssss", "to item");
+        Intent intent = new Intent(this, ItemActivity.class);
+        startActivity(intent);
+    }
 }
