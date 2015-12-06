@@ -44,6 +44,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
+import com.jakewharton.scalpel.ScalpelFrameLayout;
 
 import java.util.ArrayList;
 
@@ -112,9 +113,6 @@ public class ItemActivity extends AppCompatActivity {
         mFlexibleSpaceHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_height);
         int flexibleSpaceAndToolbarHeight = mFlexibleSpaceHeight + toolbar.getHeight();
 
-        findViewById(R.id.body).setPadding(0, flexibleSpaceAndToolbarHeight, 0, 0);
-        mFlexibleSpaceView.getLayoutParams().height = flexibleSpaceAndToolbarHeight;
-
         mToolbalHeight = toolbar.getHeight();
 
         //mParallaxImageHeight = getResources().getDimensionPixelSize(R.dimen.parallax_image_height);
@@ -130,22 +128,6 @@ public class ItemActivity extends AppCompatActivity {
         });
         */
 
-
-
-        /*
-        ViewTreeObserver vto = mTitleView.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    mTitleView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                } else {
-                    mTitleView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-
-            }
-        });
-        */
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         viewPager = (ViewPager) findViewById(R.id.pager);
 
@@ -207,66 +189,31 @@ public class ItemActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         Log.d("activity", "oncread end");
+
+        final Activity a = this;
+
+        ViewTreeObserver vto = viewPager.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    viewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+
+                stickyScrollPresenter.initialize();
+            }
+        });
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        Log.d("onwindow", "focus changed");
-        int descHeight = findViewById(R.id.desc).getHeight();
-        Log.d("height", String.valueOf(descHeight));
-
-
-        Context c = getBaseContext();
-        int resourceId = c.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            statusBarSize = c.getResources().getDimensionPixelSize(resourceId);
-            Log.d("statusbar", String.valueOf(statusBarSize));
-
-        }
-
-        WindowManager wm = (WindowManager)c.getSystemService(Context.WINDOW_SERVICE);
-        Display disp = wm.getDefaultDisplay();
-        Point point = new Point();
-        disp.getSize(point);
-
-        android.view.ViewGroup.LayoutParams params = viewPager.getLayoutParams();
-
-        Log.d("displaysize", String.valueOf(point.y));
-        Log.d("toolbar-size", String.valueOf(mToolbarView.getHeight()));
-        Log.d("titlesize", String.valueOf(mTitleView.getHeight()));
-        Log.d("tabsize", String.valueOf(tabLayout.getHeight()));
-        Log.d("wrapper view size", String.valueOf(wrapperViewSize));
-
-        android.view.ViewGroup.LayoutParams paramTabWrapper = findViewById(R.id.tab_wrapper).getLayoutParams();
-        paramTabWrapper.height = point.y - statusBarSize - mToolbarView.getHeight() + 500;
-        //findViewById(R.id.tab_wrapper).setLayoutParams(paramTabWrapper);
-        findViewById(R.id.tab_wrapper).setPadding(0, descHeight, 0, 0);
-        Log.d("tabwrappersize", String.valueOf(findViewById(R.id.tab_wrapper).getHeight()));
-
-        // scrollbody
-        android.view.ViewGroup.LayoutParams paramScroll = findViewById(R.id.body).getLayoutParams();
-        Log.d("scroll hieghti", String.valueOf(paramScroll.height));
-        paramScroll.height = point.y - statusBarSize - mToolbarView.getHeight() + descHeight;
-        //findViewById(R.id.body).setLayoutParams(paramScroll);
-        Log.d("scroll hieghti after", String.valueOf(paramScroll.height));
-
-        params.height = point.y - statusBarSize - mToolbarView.getHeight() - tabLayout.getHeight();
-        //viewPager.setLayoutParams(params);
-        Log.d("view pager size", String.valueOf(params.height));
-
-
-
-        //mScrollView.setPadding(0, 0, 0, point.y - statusBarSize - mToolbarView.getHeight() - tabLayout.getHeight());
-
-        //mListView = viewPager.findViewById(R.id.page_text);
-
-        Log.d("first scroll", String.valueOf(mScrollView.getCurrentScrollY()));
 
         stickyScrollPresenter.updateScrolling(0);
 
         Log.d("title size in onwindow", String.valueOf(mTitleView.getHeight()));
-        //wrapperViewSize = findViewById(R.id.wrapper).getHeight();
 
     }
 

@@ -39,4 +39,5 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_test_graph">TestGraphActivity</string>
 </resources>

@@ -6,7 +6,11 @@
     <dimen name="appbar_padding_top">8dp</dimen>
 
     <dimen name="parallax_image_height">300dp</dimen>
-    <dimen name="flexible_space_height">200dp</dimen>
+    <dimen name="flexible_space_height">300dp</dimen>
     <dimen name="toolbar_margin_start">72dp</dimen>
 
+    <dimen name="app_basic_padding">16dp</dimen>
+    <dimen name="padding_between_content">8dp</dimen>
+
+    <item name="title_scale_start" type="dimen" format="float">0.5</item>
 </resources>

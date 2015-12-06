@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -14,24 +13,18 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
-
 /**
- * Created by shim0mura on 2015/11/25.
+ * Created by shim0mura on 2015/11/26.
  */
-public class TestFragment extends Fragment {
+public class Test2Fragment extends Fragment {
 
-    private int lastY;
-    private StickyScrollPresenter presenter;
-
-    public TestFragment(StickyScrollPresenter p) {
-        presenter = p;
+    public Test2Fragment() {
     }
 
-    public static TestFragment newInstance(int page, StickyScrollPresenter p) {
+    public static Test2Fragment newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt("page", page);
-        TestFragment fragment = new TestFragment(p);
+        Test2Fragment fragment = new Test2Fragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,7 +36,7 @@ public class TestFragment extends Fragment {
         if(page == 1) {
             final ListView listView = (ListView)view.findViewById(R.id.page_text);
             ArrayList<String> items = new ArrayList<String>();
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 1; i <= 100; i++) {
                 items.add("Item " + i);
             }
             listView.setAdapter(new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items));
@@ -83,8 +76,6 @@ public class TestFragment extends Fragment {
             });
             */
 
-
-            listView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(presenter));
 
             listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
