@@ -10,6 +10,7 @@ import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
 import retrofit.http.Path;
+import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 
 /**
@@ -32,6 +33,11 @@ public interface ApiService {
     @GET("/user/{user_id}")
     Call<UserEntity> getUser(
             @Path("user_id") int user_id
+    );
+
+    @GET("/items/{item_id}")
+    Call<ItemEntity> getItem(
+            @Path("item_id") int item_id
     );
 
 }

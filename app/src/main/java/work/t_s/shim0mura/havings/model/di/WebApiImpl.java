@@ -53,8 +53,6 @@ public class WebApiImpl implements Api {
         // https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CustomTrust.java
         SSLContext sslContext = sslContextForTrustedCertificates(trustedCertificatesInputStream());
         client.setSslSocketFactory(sslContext.getSocketFactory());
-
-        client.interceptors().add(new JsonHeaderInterceptor());
     }
 
     public void test(){
@@ -69,7 +67,21 @@ public class WebApiImpl implements Api {
         return client;
     }
 
-    private InputStream trustedCertificatesInputStream() {
+    public static OkHttpClient createNewClient(){
+        OkHttpClient c = new OkHttpClient();
+        c.setHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        });
+
+        SSLContext sslContext = sslContextForTrustedCertificates(trustedCertificatesInputStream());
+        c.setSslSocketFactory(sslContext.getSocketFactory());
+        return c;
+    }
+
+    private static InputStream trustedCertificatesInputStream() {
         // PEM files for root certificates of Comodo and Entrust. These two CAs are sufficient to view
         // https://publicobject.com (Comodo) and https://squareup.com (Entrust). But they aren't
         // sufficient to connect to most HTTPS sites including https://godaddy.com and https://visa.com.
@@ -103,7 +115,7 @@ public class WebApiImpl implements Api {
                 .inputStream();
     }
 
-    public SSLContext sslContextForTrustedCertificates(InputStream in) {
+    private static SSLContext sslContextForTrustedCertificates(InputStream in) {
         try {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             Collection<? extends Certificate> certificates = certificateFactory.generateCertificates(in);
@@ -136,7 +148,7 @@ public class WebApiImpl implements Api {
         }
     }
 
-    private KeyStore newEmptyKeyStore(char[] password) throws GeneralSecurityException {
+    private static KeyStore newEmptyKeyStore(char[] password) throws GeneralSecurityException {
         try {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             InputStream in = null; // By convention, 'null' creates an empty key store.
@@ -144,19 +156,6 @@ public class WebApiImpl implements Api {
             return keyStore;
         } catch (IOException e) {
             throw new AssertionError(e);
-        }
-    }
-
-    private class JsonHeaderInterceptor implements Interceptor {
-        @Override
-        public Response intercept(Chain chain) throws IOException {
-            Request original = chain.request();
-
-            Request newRequest = original.newBuilder()
-                        .addHeader("Accept", ApiService.JSON.toString())
-                        .build();
-
-            return chain.proceed(newRequest);
         }
     }
 

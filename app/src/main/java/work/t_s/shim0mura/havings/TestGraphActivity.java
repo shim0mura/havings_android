@@ -196,7 +196,7 @@ public class TestGraphActivity extends AppCompatActivity {
 
         chart.setTouchEnabled(true);
 
-        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
+        MyMarkerView mv = new MyMarkerView(this, R.layout.item_metadata);
         chart.setMarkerView(mv);
         setData(10, 20);
         */
@@ -388,58 +388,5 @@ public class TestGraphActivity extends AppCompatActivity {
         }
 
         public void onNothingSelected(){};
-    }
-
-    public class MyMarkerView extends MarkerView {
-
-        private TextView tvContent;
-
-        public MyMarkerView(Context context, int layoutResource) {
-            super(context, layoutResource);
-
-            tvContent = (TextView)findViewById(R.id.tvContent);
-            tvContent.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    Log.d("tv_content", "touched");
-                    return false;
-                }
-            });
-            findViewById(R.id.test_scroll).setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    Log.d("test_scroll", "touched");
-                    return false;
-                }
-            });
-        }
-
-        // callbacks everytime the MarkerView is redrawn, can be used to update the
-        // content (user-interface)
-        @Override
-        public void refreshContent(Entry e, Highlight highlight) {
-
-            if (e instanceof CandleEntry) {
-
-                CandleEntry ce = (CandleEntry) e;
-
-                tvContent.setText("" + Utils.formatNumber(ce.getHigh(), 0, true));
-            } else {
-
-                tvContent.setText("" + Utils.formatNumber(e.getVal(), 0, true));
-            }
-        }
-
-        @Override
-        public int getXOffset(float xpos) {
-            // this will center the marker-view horizontally
-            return -(getWidth() / 2);
-        }
-
-        @Override
-        public int getYOffset(float ypos) {
-            // this will cause the marker-view to be above the selected value
-            return -getHeight();
-        }
     }
 }

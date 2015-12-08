@@ -214,6 +214,7 @@ public class HomeActivity extends AppCompatActivity {
     public void navigateToItem(View v){
         Log.d("ssss", "to item");
         Intent intent = new Intent(this, ItemActivity.class);
+        intent.putExtra("itemId", 2);
         //Intent intent = new Intent(this, TestGraphActivity.class);
         startActivity(intent);
     }

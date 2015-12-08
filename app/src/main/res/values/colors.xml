@@ -3,8 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="lightPrimaryColor">#f8bbd0</color>
 
     <color name="primaryText">#212121</color>
     <color name="secondaryText">#727272</color>
     <color name="divider">#b6b6b6</color>
+
+    <color name="tagColor">#77ff0000</color>
+    <color name="favorite">#FF4081</color>
 </resources>

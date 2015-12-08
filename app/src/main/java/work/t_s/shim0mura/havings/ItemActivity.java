@@ -3,8 +3,10 @@ package work.t_s.shim0mura.havings;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -34,28 +37,40 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
-import com.jakewharton.scalpel.ScalpelFrameLayout;
+import com.squareup.otto.Subscribe;
+import com.wefika.flowlayout.FlowLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
+import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.BusHolder;
+import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 
 //public class ItemActivity extends AppCompatActivity implements ObservableScrollViewCallbacks{
 public class ItemActivity extends AppCompatActivity {
 
-
-    private static final float MAX_TEXT_SCALE_DELTA = 0.9f;
+    private static final String TAG = "ItemActivity";
 
     private ItemPresenter itemPresenter;
     private StickyScrollPresenter stickyScrollPresenter;
@@ -80,7 +95,20 @@ public class ItemActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private FragmentPagerAdapter adapter;
 
-    private boolean isEnd = false;
+    @Bind(R.id.image) ImageView thumbnail;
+    @Bind(R.id.overlay) View overlay;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.breadcrumb) TextView breadcrumb;
+    @Bind(R.id.item_type) ImageView itemTypeIcon;
+    @Bind(R.id.item_count) TextView itemCount;
+    @Bind(R.id.favorite_count) TextView favoriteCount;
+    @Bind(R.id.comment_count) TextView commentCount;
+    @Bind(R.id.item_owner) TextView ownerName;
+    @Bind(R.id.owner_image) CircleImageView ownerImage;
+    @Bind(R.id.action_favorite_icon) ImageView actionFavoriteIcon;
+    @Bind(R.id.action_favorite_text) TextView actionFavoriteText;
+    @Bind(R.id.item_tag) FlowLayout itemTag;
+    @Bind(R.id.description) TextView description;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +119,12 @@ public class ItemActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.toolbar = toolbar;
 
-        itemPresenter = new ItemPresenter(this);
+        Intent intent = getIntent();
+        int itemId = intent.getIntExtra("itemId", 0);
+
         stickyScrollPresenter = new StickyScrollPresenter(this);
-        //itemPresenter.test();
+        itemPresenter = new ItemPresenter(this, stickyScrollPresenter);
+        itemPresenter.getItem(itemId);
 
         mImageView = findViewById(R.id.image);
         mOverlayView = findViewById(R.id.overlay);
@@ -106,8 +137,8 @@ public class ItemActivity extends AppCompatActivity {
         //mScrollView.setScrollViewCallbacks(this);
 
         mTitleView = (TextView)findViewById(R.id.title);
-        //mTitleView.setText(getTitle());
-        mTitleView.setText("あいうえおかきくけこさしすせそ");
+        //intentからアイテムのタイトルを読み込ませたほうがいいのでは？
+        //mTitleView.setText("アイテムのタイトルを読込中……");
         setTitle(null);
 
         mFlexibleSpaceHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_height);
@@ -190,32 +221,126 @@ public class ItemActivity extends AppCompatActivity {
 
         Log.d("activity", "oncread end");
 
-        final Activity a = this;
-
-        ViewTreeObserver vto = viewPager.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    viewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                } else {
-                    viewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-
-                stickyScrollPresenter.initialize();
-            }
-        });
+        ButterKnife.bind(this);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
-        stickyScrollPresenter.updateScrolling(0);
+        //stickyScrollPresenter.updateScrolling(0);
 
         Log.d("title size in onwindow", String.valueOf(mTitleView.getHeight()));
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BusHolder.get().register(this);
+        Log.d(TAG, "regist action");
+    }
+
+    @Override
+    protected void onPause() {
+        BusHolder.get().unregister(this);
+        Log.d(TAG, "unregist action");
+
+        super.onPause();
+    }
+
+    @OnClick(R.id.item_count)
+    public void testClick(View v){
+        Log.d("test click", "cliced");
+        Toast.makeText(this, "テスト", Toast.LENGTH_LONG).show();
+    }
+
+    @OnClick(R.id.title)
+    public void testClick1(View v){
+        Toast.makeText(this, "テスト comment", Toast.LENGTH_LONG).show();
+    }
+
+    @Subscribe
+    public void setItemData(ItemEntity item){
+        Log.d("item set", "start");
+        title.setText(item.name);
+
+        breadcrumb.setText(item.breadcrumb.replaceAll("\\s>\\s", " >\n"));
+
+        if(item.isList){
+            itemTypeIcon.setImageResource(R.drawable.list_icon);
+        }
+
+        if(item.thumbnail != null){
+            setItemThumbnail(item.thumbnail);
+        }else{
+            setItemHeaderBackground();
+        }
+
+        itemCount.setText(String.valueOf(item.count));
+
+        ownerName.setText(item.owner.name);
+        if(item.owner.image != null){
+            String ownerThumbnail = ApiService.BASE_URL + item.owner.image;
+            Glide.with(this).load(ownerThumbnail).into(ownerImage);
+        }
+
+        favoriteCount.setText(String.valueOf(item.favoriteCount));
+        commentCount.setText(String.valueOf(item.commentCount));
+
+        if(item.isFavorited){
+            actionFavoriteIcon.setImageResource(R.drawable.ic_already_favorite_18dp);
+            actionFavoriteText.setText(R.string.already_favorite_item);
+            actionFavoriteText.setTextColor(ContextCompat.getColor(this, R.color.favorite));
+        }
+
+        if(item.tags != null && item.tags.size() > 0){
+            setTag(item.tags);
+        }else{
+
+        }
+
+        if(item.description != null) {
+            description.setText(item.description);
+        }else{
+            description.setText("");
+        }
+    }
+
+    private void setItemThumbnail(String thumbnailUrl){
+        thumbnailUrl = ApiService.BASE_URL + thumbnailUrl;
+        Glide.with(this).load(thumbnailUrl).into(thumbnail);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            overlay.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.shadow));
+        } else {
+            overlay.setBackground(ContextCompat.getDrawable(this, R.drawable.shadow));
+        }
+    }
+
+    private void setItemHeaderBackground(){
+        Log.d(TAG, "thumbnail not set");
+        overlay.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+    }
+
+    private void setTag(List<String> tags){
+        for(String tag : tags){
+            TextView baseTag = new TextView(this);
+            FlowLayout.LayoutParams lp = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(0, 15, 20, 0);
+            baseTag.setBackgroundColor(ContextCompat.getColor(this, R.color.tagColor));
+            baseTag.setPadding(10, 0, 10, 0);
+            baseTag.setLayoutParams(lp);
+            baseTag.setText(tag);
+            itemTag.addView(baseTag);
+        }
+    }
+
+    /*
+    @OnClick(R.id.test)
+    public void testClick2(View v){
+        Toast.makeText(this, "テスト タグ", Toast.LENGTH_LONG).show();
+    }
+    */
 
     /*
     @Override

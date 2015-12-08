@@ -1,13 +1,21 @@
 package work.t_s.shim0mura.havings.model;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.inject.Inject;
 
@@ -17,6 +25,7 @@ import work.t_s.shim0mura.havings.model.di.Api;
 import work.t_s.shim0mura.havings.model.di.ApiComponent;
 import work.t_s.shim0mura.havings.model.di.ApiModule;
 import work.t_s.shim0mura.havings.model.di.DaggerApiComponent;
+import work.t_s.shim0mura.havings.model.di.WebApiImpl;
 
 /**
  * Created by shim0mura on 2015/11/13.
@@ -28,7 +37,11 @@ public class ApiServiceManager {
     private static ApiService service;
     private static Retrofit.Builder builder = new Retrofit.Builder()
                     .baseUrl(ApiService.BASE_URL)
-                    .addConverterFactory(JacksonConverterFactory.create());
+                    .addConverterFactory(JacksonConverterFactory.create(
+                            new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
+                    ));
+    //ruby風のスネークケースをjava風のキャメルケースに置き換えたいので、その指定をcreateの中でしてる
+    //http://stackoverflow.com/questions/10519265/jackson-overcoming-underscores-in-favor-of-camel-case
 
     private static Retrofit retrofit;
     private AuthHeaderInterceptor ahi;
@@ -43,7 +56,10 @@ public class ApiServiceManager {
 
         apiKey = ApiKey.getSingleton(context);
         if(canAccessToApi()){
+            addJsonHeader();
             addAuthHeader(apiKey.getToken(), apiKey.getUid());
+            addRawJsonLogInterceptor();
+            setGlideHttpClient(c);
         }
     }
 
@@ -84,6 +100,16 @@ public class ApiServiceManager {
         return okhttpClient.getClient();
     }
 
+    public void setGlideHttpClient(Context c){
+        // jsonHeaderInterceptorを入れたくないので別のclientを作る
+        OkHttpClient client = WebApiImpl.createNewClient();
+        Glide.get(c).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+    }
+
+    public void addJsonHeader(){
+        okhttpClient.getClient().interceptors().add(new JsonHeaderInterceptor());
+    }
+
     public void addAuthHeader(String token, String uid){
         if(ahi == null){
             ahi = new AuthHeaderInterceptor(token, uid);
@@ -95,6 +121,23 @@ public class ApiServiceManager {
         if(ahi != null) {
             okhttpClient.getClient().interceptors().remove(ahi);
             ahi = null;
+        }
+    }
+
+    public void addRawJsonLogInterceptor(){
+        okhttpClient.getClient().interceptors().add(new RawLogInterceptor());
+    }
+
+    private class JsonHeaderInterceptor implements Interceptor {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request original = chain.request();
+
+            Request newRequest = original.newBuilder()
+                    .addHeader("Accept", ApiService.JSON.toString())
+                    .build();
+
+            return chain.proceed(newRequest);
         }
     }
 
@@ -118,6 +161,22 @@ public class ApiServiceManager {
                     .build();
 
             return chain.proceed(newRequest);
+        }
+    }
+
+    private class RawLogInterceptor implements Interceptor {
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+
+            Response response = chain.proceed(request);
+            String rawJson = response.body().string();
+
+            Log.d("raw json", String.format("raw JSON response is: %s", rawJson));
+
+            // Re-create the response before returning it because body can be read only once
+            return response.newBuilder().body(ResponseBody.create(response.body().contentType(), rawJson)).build();
         }
     }
 

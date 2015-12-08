@@ -49,7 +49,6 @@ public class StickyScrollPresenter {
     public Boolean scrollDirection = true;
 
     public ObservableScrollView scrollView;
-    private View scrollGapView;
     private View toolbarView;
     private TextView titleView;
     private View breadcrumbView;
@@ -67,10 +66,7 @@ public class StickyScrollPresenter {
     public StickyScrollPresenter(Context c){
         activity = (Activity)c;
 
-        //asm = ApiServiceManager.getSingleton(activity);
-
         scrollView = (ObservableScrollView)activity.findViewById(R.id.scroll);
-        scrollGapView = activity.findViewById(R.id.scroll_gap);
         toolbarView = activity.findViewById(R.id.toolbar);
         titleView = (TextView)activity.findViewById(R.id.title);
         breadcrumbView = activity.findViewById(R.id.breadcrumb);
@@ -96,15 +92,15 @@ public class StickyScrollPresenter {
 
         // descの大きさがディスプレイサイズ以上だと、ディスプレイサイズをオーバーした分のviewがレンダリングされない
         // なのでここで子要素を含めた時の大きさを計算して、その大きさにセットしておく
-        descView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int descHeight = descView.getMeasuredHeight();
+        int descHeight = descView.getHeight();
         android.view.ViewGroup.LayoutParams descLayout = descView.getLayoutParams();
         descLayout.height = descHeight;
 
         /*
         Log.d("image", String.valueOf(activity.findViewById(R.id.image).getMeasuredHeight()));
         Log.d("upper meta", String.valueOf(activity.findViewById(R.id.upper_item_meta_data).getMeasuredHeight()));
-        Log.d("down meta", String.valueOf(activity.findViewById(R.id.adding_item_meta_data).getMeasuredHeight()));
+        Log.d("down meta", String.valueOf(activity.findViewById(R.id.item_action_buttons).getMeasuredHeight()));
+        Log.d("tag wrapper", String.valueOf(activity.findViewById(R.id.item_tag_wrapper).getMeasuredHeight()));
         Log.d("description", String.valueOf(activity.findViewById(R.id.description).getMeasuredHeight()));
         Log.d("description", String.valueOf(activity.findViewById(R.id.description).getHeight()));
         */
@@ -143,7 +139,8 @@ public class StickyScrollPresenter {
 
         // obsevableScrollのサイズ調整
         // tabを含むheightにしないとスクロールしてくれない
-        activity.findViewById(R.id.scroll_gap).setPadding(0, flexibleSpaceHeight + toolbarHeight, 0, 0);
+
+        //activity.findViewById(R.id.scroll_gap).setPadding(0, flexibleSpaceHeight + toolbarHeight, 0, 0);
         android.view.ViewGroup.LayoutParams paramScroll = activity.findViewById(R.id.scroll_gap).getLayoutParams();
         paramScroll.height = point.y - statusBarSize - activity.findViewById(R.id.tabs).getHeight() + descHeight;
 
@@ -251,7 +248,7 @@ public class StickyScrollPresenter {
         //mOverlayView.setTranslationY(ScrollUtils.getFloat(-scrollY, minOverlayTransitionY, 0));
         //mImageView.setTranslationY(ScrollUtils.getFloat(-scrollY / 2, minOverlayTransitionY, 0));
 
-        descView.setTranslationY(-scrollY);
+        //descView.setTranslationY(-scrollY);
         tabWrapper.setTranslationY(-scrollY);
         //mListView.setScrollY(scrollY);
         //mOverlayView.setTranslationY(-scrollY);
@@ -285,7 +282,7 @@ public class StickyScrollPresenter {
         public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
             //Log.d("scroll", String.valueOf(scrollY));
             View view = (View)scrollView.getChildAt(scrollView.getChildCount() - 1);
-            int diff = (view.getBottom()-(scrollView.getHeight() + scrollView.getScrollY()));
+            int diff = (view.getBottom() -(scrollView.getHeight() + scrollView.getScrollY()));
 
             //Log.d("diff", String.valueOf(diff));
 

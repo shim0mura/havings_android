@@ -43,7 +43,7 @@ public class TestFragment extends Fragment {
         if(page == 1) {
             final ListView listView = (ListView)view.findViewById(R.id.page_text);
             ArrayList<String> items = new ArrayList<String>();
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 1; i <= 30; i++) {
                 items.add("Item " + i);
             }
             listView.setAdapter(new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items));
