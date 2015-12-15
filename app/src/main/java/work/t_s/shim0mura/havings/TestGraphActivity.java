@@ -22,29 +22,6 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.db.chart.Tools;
-import com.db.chart.listener.OnEntryClickListener;
-import com.db.chart.model.LineSet;
-import com.db.chart.view.AxisController;
-import com.db.chart.view.LineChartView;
-import com.db.chart.view.Tooltip;
-import com.db.chart.view.animation.Animation;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.MarkerView;
-import com.github.mikephil.charting.data.CandleEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.Utils;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.OnDataPointTapListener;
-import com.jjoe64.graphview.series.Series;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +31,6 @@ import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
 
 public class TestGraphActivity extends AppCompatActivity {
-
-    private LineChart chart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,152 +216,5 @@ public class TestGraphActivity extends AppCompatActivity {
         */
     }
 
-    private void setData(int count, float range) {
 
-        ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < count; i++) {
-            xVals.add((i) + "");
-        }
-
-        ArrayList<Entry> yVals = new ArrayList<Entry>();
-
-        for (int i = 0; i < count; i++) {
-
-            float mult = (range + 1);
-            float val = (float) (Math.random() * mult) + 3;// + (float)
-            // ((mult *
-            // 0.1) / 10);
-            yVals.add(new Entry(val, i));
-        }
-
-        // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
-        // set1.setFillAlpha(110);
-        // set1.setFillColor(Color.RED);
-
-        // set the line to be drawn like this "- - - - - -"
-        set1.enableDashedLine(10f, 5f, 0f);
-        set1.enableDashedHighlightLine(10f, 5f, 0f);
-        set1.setColor(Color.BLACK);
-        set1.setCircleColor(Color.BLACK);
-        set1.setLineWidth(1f);
-        set1.setCircleSize(3f);
-        set1.setDrawCircleHole(false);
-        set1.setValueTextSize(9f);
-        set1.setFillAlpha(65);
-        set1.setFillColor(Color.BLACK);
-//        set1.setDrawFilled(true);
-        // set1.setShader(new LinearGradient(0, 0, 0, mChart.getHeight(),
-        // Color.BLACK, Color.WHITE, Shader.TileMode.MIRROR));
-
-        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
-        dataSets.add(set1); // add the datasets
-
-        // create a data object with the datasets
-        LineData data = new LineData(xVals, dataSets);
-
-        // set data
-        chart.setOnChartValueSelectedListener(new MpCallback());
-        chart.setData(data);
-    }
-
-    public class TestGraph<E extends DataPointInterface> extends LineGraphSeries {
-        private final class Styles {
-            /**
-             * the thickness of the line.
-             * This option will be ignored if you are
-             * using a custom paint via {@link #setCustomPaint(android.graphics.Paint)}
-             */
-            private int thickness = 5;
-
-            /**
-             * flag whether the area under the line to the bottom
-             * of the viewport will be filled with a
-             * specific background color.
-             *
-             * @see #backgroundColor
-             */
-            private boolean drawBackground = false;
-
-            /**
-             * flag whether the data points are highlighted as
-             * a visible point.
-             *
-             * @see #dataPointsRadius
-             */
-            private boolean drawDataPoints = false;
-
-            /**
-             * the radius for the data points.
-             *
-             * @see #drawDataPoints
-             */
-            private float dataPointsRadius = 10f;
-
-            /**
-             * the background color for the filling under
-             * the line.
-             *
-             * @see #drawBackground
-             */
-            private int backgroundColor = Color.argb(100, 172, 218, 255);
-        }
-
-        /**
-         * wrapped styles
-         */
-        private Styles mStyles;
-
-        /**
-         * internal paint object
-         */
-        private Paint mPaint;
-
-        /**
-         * paint for the background
-         */
-        private Paint mPaintBackground;
-
-        /**
-         * path for the background filling
-         */
-        private Path mPathBackground;
-
-        /**
-         * path to the line
-         */
-        private Path mPath;
-
-        /**
-         * custom paint that can be used.
-         * this will ignore the thickness and color styles.
-         */
-        private Paint mCustomPaint;
-
-        public TestGraph(E[] data) {
-            super(data);
-        }
-
-        @Override
-        public void onTap(float x, float y) {
-            Log.d("custom_ontouch", "x:" + x + ", y:" + y);
-            DataPointInterface d = findDataPoint(x, y);
-            if(d != null){
-                Log.d("custom_ontouch_data", "x:"+d.getX()+",y:"+d.getY());
-            }
-            super.onTap(x, y);
-        }
-    }
-
-    public class MpCallback implements OnChartValueSelectedListener {
-        @Override
-        public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-            Log.d("mp_callback", "selected");
-            Log.d("mp_callback", e.getData().toString());
-            Log.d("mp_callback", String.valueOf(e.getXIndex()));
-            Log.d("mp_callback", String.valueOf(h.getXIndex()));
-        }
-
-        public void onNothingSelected(){};
-    }
 }

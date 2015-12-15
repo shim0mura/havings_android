@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_graph_tab_wrapper"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/to_detail_graph"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        >
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:text="ssss"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/item_graph_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/to_detail_graph"
+        android:paddingRight="@dimen/padding_between_content"
+        android:paddingLeft="@dimen/padding_between_content"
+
+        >
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/item_graph"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </FrameLayout>
+
+
+
+</RelativeLayout>

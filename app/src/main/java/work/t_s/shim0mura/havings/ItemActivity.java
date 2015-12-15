@@ -1,56 +1,32 @@
 package work.t_s.shim0mura.havings;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
-import com.github.ksoichiro.android.observablescrollview.Scrollable;
 import com.squareup.otto.Subscribe;
 import com.wefika.flowlayout.FlowLayout;
 
@@ -66,13 +42,13 @@ import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
+import work.t_s.shim0mura.havings.view.TestFragment;
 
-//public class ItemActivity extends AppCompatActivity implements ObservableScrollViewCallbacks{
 public class ItemActivity extends AppCompatActivity {
 
     private static final String TAG = "ItemActivity";
 
-    private ItemPresenter itemPresenter;
+    public ItemPresenter itemPresenter;
     private StickyScrollPresenter stickyScrollPresenter;
     private Toolbar toolbar;
 
@@ -93,7 +69,7 @@ public class ItemActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private FragmentPagerAdapter adapter;
+    private PagerAdapter pagerAdapter;
 
     @Bind(R.id.image) ImageView thumbnail;
     @Bind(R.id.overlay) View overlay;
@@ -123,7 +99,7 @@ public class ItemActivity extends AppCompatActivity {
         int itemId = intent.getIntExtra("itemId", 0);
 
         stickyScrollPresenter = new StickyScrollPresenter(this);
-        itemPresenter = new ItemPresenter(this, stickyScrollPresenter);
+        itemPresenter = new ItemPresenter(this);
         itemPresenter.getItem(itemId);
 
         mImageView = findViewById(R.id.image);
@@ -162,6 +138,7 @@ public class ItemActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         viewPager = (ViewPager) findViewById(R.id.pager);
 
+        /*
         adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -171,7 +148,7 @@ public class ItemActivity extends AppCompatActivity {
 
             @Override
             public CharSequence getPageTitle(int position) {
-                return "tab " + (position + 1);
+                return "item_list_tab " + (position + 1);
             }
 
             @Override
@@ -179,15 +156,15 @@ public class ItemActivity extends AppCompatActivity {
                 return 3;
             }
         };
+        */
 
         tabLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d("tab touch", String.valueOf(v.getScrollY()));
+                Log.d("item_list_tab touch", String.valueOf(v.getScrollY()));
                 return v.onTouchEvent(event);
             }
         });
-
 
         viewPager.setOnTouchListener(new View.OnTouchListener() {
                                          @Override
@@ -216,8 +193,8 @@ public class ItemActivity extends AppCompatActivity {
             }
         });
 
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
+
+        //tabLayout.getTabAt(0).setIcon(R.drawable.ic_already_favorite_18dp);
 
         Log.d("activity", "oncread end");
 
@@ -305,6 +282,31 @@ public class ItemActivity extends AppCompatActivity {
         }else{
             description.setText("");
         }
+
+        pagerAdapter = new ItemPresenter.ItemPagerAdapter(this, stickyScrollPresenter, itemPresenter, item);
+        viewPager.setAdapter(pagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            switch(i){
+                case 0:
+                    tab.setCustomView(itemPresenter.getTabView(i, item.owningItemCount));
+                    break;
+                case 1:
+                    tab.setCustomView(itemPresenter.getTabView(i, item.imageCount));
+                    break;
+                case 2:
+                    tab.setCustomView(itemPresenter.getTabView(i, 0));
+                    break;
+            }
+        }
+
+        ViewGroup wrapperView = ButterKnife.findById(this, R.id.wrapper);
+        wrapperView.removeViewAt(0);
+        ButterKnife.findById(this, R.id.frame_wrapper).setVisibility(View.VISIBLE);
+
+        stickyScrollPresenter.initialize();
     }
 
     private void setItemThumbnail(String thumbnailUrl){
@@ -323,15 +325,9 @@ public class ItemActivity extends AppCompatActivity {
     }
 
     private void setTag(List<String> tags){
-        for(String tag : tags){
-            TextView baseTag = new TextView(this);
-            FlowLayout.LayoutParams lp = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 15, 20, 0);
-            baseTag.setBackgroundColor(ContextCompat.getColor(this, R.color.tagColor));
-            baseTag.setPadding(10, 0, 10, 0);
-            baseTag.setLayoutParams(lp);
-            baseTag.setText(tag);
-            itemTag.addView(baseTag);
+        for(String tagString : tags){
+            TextView tag = ItemPresenter.createTag(this, tagString, true);
+            itemTag.addView(tag);
         }
     }
 
@@ -493,7 +489,7 @@ Log.d("scroll end", "enedd");
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             int page = getArguments().getInt("page", 0);
-            View view = inflater.inflate(R.layout.tab, container, false);
+            View view = inflater.inflate(R.layout.item_list_tab, container, false);
             if(page == 1) {
                 final ListView listView = (ListView)view.findViewById(R.id.page_text);
                 ArrayList<String> items = new ArrayList<String>();

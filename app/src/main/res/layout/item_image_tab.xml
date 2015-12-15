@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <GridView
+        android:id="@+id/item_image_tab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="150dp"
+        android:columnWidth="150dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="@dimen/padding_between_grid"
+        android:horizontalSpacing="@dimen/padding_between_grid"
+        android:stretchMode="columnWidth"
+        android:paddingTop="@dimen/padding_between_content"
+        android:paddingBottom="@dimen/padding_between_content"
+        android:paddingLeft="@dimen/padding_between_grid"
+        android:paddingRight="@dimen/padding_between_grid"
+        android:gravity="center"
+        >
+
+    </GridView>
+
+    <ProgressBar
+        android:id="@+id/image_loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:maxHeight="50dp"
+        android:minHeight="50dp"
+        android:background="#33222222"
+        android:visibility="gone"
+        />
+
+</FrameLayout>

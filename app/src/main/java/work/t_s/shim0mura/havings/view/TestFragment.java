@@ -1,10 +1,9 @@
-package work.t_s.shim0mura.havings;
+package work.t_s.shim0mura.havings.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -14,6 +13,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 
 /**
@@ -24,14 +24,18 @@ public class TestFragment extends Fragment {
     private int lastY;
     private StickyScrollPresenter presenter;
 
+    public TestFragment(){}
+
+    /*
     public TestFragment(StickyScrollPresenter p) {
         presenter = p;
     }
+    */
 
     public static TestFragment newInstance(int page, StickyScrollPresenter p) {
         Bundle args = new Bundle();
         args.putInt("page", page);
-        TestFragment fragment = new TestFragment(p);
+        TestFragment fragment = new TestFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -39,7 +43,7 @@ public class TestFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         int page = getArguments().getInt("page", 0);
-        View view = inflater.inflate(R.layout.tab, container, false);
+        View view = inflater.inflate(R.layout.item_list_tab, container, false);
         if(page == 1) {
             final ListView listView = (ListView)view.findViewById(R.id.page_text);
             ArrayList<String> items = new ArrayList<String>();
@@ -57,32 +61,6 @@ public class TestFragment extends Fragment {
                                                 }
                                             }
             );
-
-
-            /*
-            listView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    Log.d("touch", String.valueOf(event.getAction() == MotionEvent.ACTION_MOVE));
-                    //Log.d("super touch", String.valueOf(v.onTouchEvent(event)));
-
-                    if(MotionEvent.ACTION_MOVE == event.getAction()){
-                        Log.d("action type", "move");
-                        Log.d("point move", String.valueOf(lastY - (int) event.getY()));
-                    }
-                    if(MotionEvent.ACTION_DOWN == event.getAction()){
-                        Log.d("action type", "down");
-                        lastY = (int)event.getY();
-                        Log.d("point", String.valueOf(lastY));
-                    }
-
-                    //return (event.getAction() == MotionEvent.ACTION_MOVE);
-                    //return v.onTouchEvent(event);
-                    return true;
-                }
-            });
-            */
-
 
             listView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(presenter));
 

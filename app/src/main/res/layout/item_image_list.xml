@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="150dp"
     android:layout_height="150dp"
-    android:padding="3dp">
+    >
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitCenter"
-        android:src="@drawable/bg1"/>
+        android:id="@+id/item_image"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_image_black_18dp"
+        />
     <TextView
+        android:id="@+id/image_date"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="#99000000"
         android:gravity="center"
         android:layout_gravity="bottom"
-        android:text="11111/222/22"
+        android:text="1111/22/22"
         android:textColor="#ffffff"
         android:textSize="16dp"/>
 </FrameLayout>

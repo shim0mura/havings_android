@@ -50,7 +50,7 @@ public class TestActivity extends AppCompatActivity {
 
             @Override
             public CharSequence getPageTitle(int position) {
-                return "tab " + (position + 1);
+                return "item_list_tab " + (position + 1);
             }
 
             @Override
@@ -62,7 +62,7 @@ public class TestActivity extends AppCompatActivity {
         tabLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d("tab touch", String.valueOf(v.getScrollY()));
+                Log.d("item_list_tab touch", String.valueOf(v.getScrollY()));
                 return v.onTouchEvent(event);
             }
         });

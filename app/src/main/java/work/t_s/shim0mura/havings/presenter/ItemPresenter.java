@@ -2,22 +2,28 @@ package work.t_s.shim0mura.havings.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
-import com.bumptech.glide.load.model.GlideUrl;
+import com.wefika.flowlayout.FlowLayout;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
+import lecho.lib.hellocharts.view.LineChartView;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -29,7 +35,9 @@ import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
-import work.t_s.shim0mura.havings.model.entity.UserEntity;
+import work.t_s.shim0mura.havings.view.GraphRenderer;
+import work.t_s.shim0mura.havings.view.ItemImageListAdapter;
+import work.t_s.shim0mura.havings.view.ItemListAdapter;
 
 /**
  * Created by shim0mura on 2015/11/14.
@@ -37,16 +45,14 @@ import work.t_s.shim0mura.havings.model.entity.UserEntity;
 public class ItemPresenter {
     User user;
     Activity activity;
-    StickyScrollPresenter stickyScrollPresenter;
     static ApiService service;
 
     protected String TAG = "ItemPresenter: ";
 
-    public ItemPresenter(Context c, StickyScrollPresenter s){
+    public ItemPresenter(Context c){
         user = User.getSingleton(c);
         activity = (Activity)c;
         service = ApiServiceManager.getService(activity);
-        stickyScrollPresenter = s;
     }
 
     public void test(){
@@ -63,24 +69,38 @@ public class ItemPresenter {
             public void onResponse(Response<ItemEntity> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     ItemEntity item = response.body();
-                    Log.d("item", item.name);
-                    Log.d("item", item.description);
-                    Log.d("item", String.valueOf(item.count));
-                    Log.d("item", String.valueOf(item.count));
-                    Log.d("item is_list", String.valueOf(item.isList));
-                    //View metadata = ButterKnife.findById(activity, R.id.upper_item_meta_data);
-
-                    //TextView itemCount = ButterKnife.findById(metadata, R.id.item_count);
 
                     //setItemData(item);
                     BusHolder.get().post(item);
 
-                    //activityにいれる
-                    ViewGroup wrapperView = ButterKnife.findById(activity, R.id.wrapper);
-                    wrapperView.removeViewAt(0);
-                    ButterKnife.findById(activity, R.id.frame_wrapper).setVisibility(View.VISIBLE);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else {
 
-                    stickyScrollPresenter.initialize();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("item", "get failed");
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void getNextItemList(int itemId, int offset, final ItemListAdapter adapter, final ListView listView, final View footerView){
+        Call<ItemEntity> call = service.getNextItem(itemId, offset);
+
+        call.enqueue(new Callback<ItemEntity>() {
+            @Override
+            public void onResponse(Response<ItemEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ItemEntity item = response.body();
+                    adapter.finishLoadNextItem();
+                    listView.removeFooterView(footerView);
+                    adapter.addItem(item);
+                    adapter.notifyDataSetChanged();
+
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");
                 } else {
@@ -93,6 +113,255 @@ public class ItemPresenter {
                 Log.d("user", "get failed");
             }
         });
+    }
+
+    public void getNextItemImageList(int itemId, int offset, final ItemImageListAdapter adapter, final ViewGroup gridView, final View footerView){
+        Call<ItemEntity> call = service.getNextItemImage(itemId, offset);
+
+        call.enqueue(new Callback<ItemEntity>() {
+            @Override
+            public void onResponse(Response<ItemEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ItemEntity item = response.body();
+                    adapter.finishLoadNextItem();
+                    footerView.setVisibility(View.GONE);
+                    adapter.addItem(item);
+                    adapter.notifyDataSetChanged();
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("user", "get failed");
+            }
+        });
+    }
+
+
+
+    public View getTabView(int position, int count){
+        View tab = activity.getLayoutInflater().inflate(R.layout.item_tab_header, null);
+        switch(position){
+            case 0:
+                TextView itemCount = (TextView)tab.findViewById(R.id.tab_count);
+                itemCount.setText(String.valueOf(count));
+                break;
+            case 1:
+                ImageView iconTypeImage = (ImageView)tab.findViewById(R.id.tab_icon);
+                iconTypeImage.setImageResource(R.drawable.ic_image_black_18dp);
+                TextView imageTab = (TextView)tab.findViewById(R.id.tab_name);
+                imageTab.setText(R.string.item_images);
+                TextView imageCount = (TextView)tab.findViewById(R.id.tab_count);
+                imageCount.setText(String.valueOf(count));
+                break;
+            case 2:
+                ImageView iconTypeGraph = (ImageView)tab.findViewById(R.id.tab_icon);
+                iconTypeGraph.setImageResource(R.drawable.ic_timeline_black_18dp);
+                TextView graphTab = (TextView)tab.findViewById(R.id.tab_name);
+                graphTab.setText(R.string.item_graph);
+                TextView graphCount = (TextView)tab.findViewById(R.id.tab_count);
+                graphCount.setVisibility(View.GONE);
+        }
+
+        return tab;
+    }
+
+    public static TextView createTag(Context context, String tag, @Nullable Boolean isMultiline){
+        TextView baseTag = new TextView(context);
+        FlowLayout.LayoutParams lp = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
+        int marginTop = 0;
+        if(isMultiline){
+            marginTop = 15;
+        }
+        lp.setMargins(0, marginTop, 20, 0);
+        baseTag.setBackgroundColor(ContextCompat.getColor(context, R.color.tagColor));
+        baseTag.setPadding(10, 0, 10, 0);
+        baseTag.setLayoutParams(lp);
+        baseTag.setText(tag);
+        return baseTag;
+    }
+
+    public static class ItemPagerAdapter extends PagerAdapter {
+
+        private Activity activity;
+        private StickyScrollPresenter stickyScrollPresenter;
+        private ItemPresenter itemPresenter;
+        private ItemEntity item;
+        private View loader;
+
+        public ItemPagerAdapter(Activity a, StickyScrollPresenter s, ItemPresenter ip, ItemEntity i){
+            activity = a;
+            stickyScrollPresenter = s;
+            itemPresenter = ip;
+            item = i;
+            loader = View.inflate(a, R.layout.loading, null);
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view==((View)object);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+
+            Log.d("customview", "position;" + position);
+            View v;
+            if(position == 0) {
+                v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
+
+                final ListView listView = (ListView) v.findViewById(R.id.page_text);
+
+                final ItemListAdapter adapter = new ItemListAdapter(activity, R.layout.item_list, item);
+                //BusHolder.get().register(adapter);
+                //listView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, items));
+
+                listView.setAdapter(adapter);
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                        Log.d("click position", String.valueOf(position));
+
+                                                    }
+                                                }
+                );
+
+                listView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+
+                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+                        Log.d("schroll state", "changed");
+                    }
+
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                        Log.d("scroll from listview", String.valueOf(visibleItemCount));
+                        //一番下にいったかどうかと次があるかのフラグのチェック
+                        //trueならapi取得
+                        //callback+eventbusでなんとかする
+                        if ((totalItemCount == firstVisibleItem + visibleItemCount) && adapter.hasNextItem()) {
+                            Log.d("request", "to api");
+                            if (!adapter.getIsLoadingNextItem()) {
+                                adapter.startLoadNextItem();
+                                listView.addFooterView(loader);
+                                itemPresenter.getNextItemList(item.id, adapter.getLastItemId(), adapter, listView, loader);
+                            }
+                        }
+                    }
+                });
+            }else if (position == 1){
+                v = attachImageGrid(container);
+            }else if (position == 2){
+                v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
+                v = attachGraph(container);
+            }else {
+                v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
+            }
+            container.addView(v);
+            return v;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            Log.d("customview", "destroyed:" + position);
+        }
+
+        public View attachImageGrid(ViewGroup container){
+            View v = activity.getLayoutInflater().inflate(R.layout.item_image_tab, container, false);
+
+            final ProgressBar imageLoader = (ProgressBar)v.findViewById(R.id.image_loader);
+            final GridView gridView = (GridView)v.findViewById(R.id.item_image_tab);
+            final ItemImageListAdapter adapter = new ItemImageListAdapter(activity, R.layout.item_image_list, item);
+            gridView.setAdapter(adapter);
+
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    Log.d("image click position", String.valueOf(position));
+
+                                                }
+                                            }
+            );
+
+            gridView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+
+            gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    Log.d("schroll state", "changed");
+                }
+
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    Log.d("scroll from gridview", String.valueOf(visibleItemCount));
+
+                    if ((totalItemCount == firstVisibleItem + visibleItemCount) && adapter.hasNextItem()) {
+                        Log.d("request", "to image api");
+                        if (!adapter.getIsLoadingNextItem()) {
+                            adapter.startLoadNextItem();
+                            imageLoader.setVisibility(View.VISIBLE);
+                            itemPresenter.getNextItemImageList(item.id, adapter.getLastItemImageId(), adapter, gridView, imageLoader);
+                        }
+                    }
+
+                }
+            });
+
+
+            return v;
+        }
+
+        public View attachGraph(ViewGroup container){
+            View v = activity.getLayoutInflater().inflate(R.layout.item_graph_tab, container, false);
+
+            /*
+            final ProgressBar imageLoader = (ProgressBar)v.findViewById(R.id.image_loader);
+            final GridView gridView = (GridView)v.findViewById(R.id.item_image_tab);
+            final ItemImageListAdapter adapter = new ItemImageListAdapter(activity, R.layout.item_image_list, item);
+            gridView.setAdapter(adapter);
+            */
+            final RelativeLayout graphView = (RelativeLayout)v.findViewById(R.id.item_graph_tab_wrapper);
+
+            /*
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    Log.d("image click position", String.valueOf(position));
+
+                                                }
+                                            }
+            );
+            */
+            graphView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("graph", "clicked");
+
+                }
+            });
+
+            LineChartView lineChartView = (LineChartView)graphView.findViewById(R.id.item_graph);
+
+            lineChartView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+            GraphRenderer.renderSimpleGraph(lineChartView, item.countProperties);
+            graphView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+
+            return v;
+        }
     }
 
 }

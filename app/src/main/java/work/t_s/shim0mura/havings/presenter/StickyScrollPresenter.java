@@ -314,6 +314,8 @@ public class StickyScrollPresenter {
         private StickyScrollPresenter presenter;
         private int lastY;
         private int diff;
+        private int pointX;
+        private int pointY;
 
         public CustomTouchListener(StickyScrollPresenter p){
             presenter = p;
@@ -330,6 +332,8 @@ public class StickyScrollPresenter {
                 if(!v.canScrollVertically(-1)){
                     lastY = (int)event.getRawY();
                     Log.d("scrolled_listview", "reach top");
+
+                    presenter.scrollView.dispatchTouchEvent(event);
                     presenter.scroll(-5);
                 }
                 result = v.onTouchEvent(event);
@@ -358,14 +362,27 @@ public class StickyScrollPresenter {
                     //Log.d("scrolling", String.valueOf(presenter.scrolling));
                     lastY = (int) event.getRawY();
 
+
                 } else if (MotionEvent.ACTION_DOWN == event.getAction()) {
                     presenter.scrollView.dispatchTouchEvent(event);
-
+                    //v.onTouchEvent(event);
                     Log.d("action type", "down");
                     lastY = (int) event.getRawY();
+                    pointY = (int) event.getRawY();
+                    pointX = (int) event.getRawX();
                     Log.d("point", String.valueOf(lastY));
                 } else if (MotionEvent.ACTION_UP == event.getAction()){
                     presenter.scrollView.dispatchTouchEvent(event);
+                    int totalDiffX = Math.abs(pointX - (int)event.getRawX());
+                    int totalDiffY = Math.abs(pointY - (int)event.getRawY());
+                    if(totalDiffX < 30 && totalDiffY < 30){
+                        // clickイベントがどこかで止められてるので自作する
+                        // よくわからないけどperformClickが効かないのでtouchイベントを呼ぶ
+                        event.setAction(MotionEvent.ACTION_DOWN);
+                        v.onTouchEvent(event);
+                        event.setAction(MotionEvent.ACTION_UP);
+                        v.onTouchEvent(event);
+                    }
                 }
             }
 

@@ -25,10 +25,21 @@ public class ItemEntity {
     public Boolean isFavorited;
     public int commentCount;
 
+    public int owningItemCount;
+    public int imageCount;
+
     public UserEntity owner;
 
     // tag_idをもったtagEntityに置き換える
     // TextViewのtag属性にtagのidを持たせる
     public List<String> tags;
+
+    public List<ItemImageEntity> images;
+    public Boolean hasNextImage;
+
+    public List<ItemEntity> owningItems;
+    public Boolean hasNextItem;
+
+    public List<CountDataEntity> countProperties;
 
 }

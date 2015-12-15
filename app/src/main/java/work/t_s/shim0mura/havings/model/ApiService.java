@@ -2,14 +2,10 @@ package work.t_s.shim0mura.havings.model;
 
 import com.squareup.okhttp.MediaType;
 
-import java.util.List;
-
 import retrofit.Call;
-import retrofit.Callback;
 import retrofit.http.GET;
-import retrofit.http.Header;
-import retrofit.http.Headers;
 import retrofit.http.Path;
+import retrofit.http.Query;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 
@@ -40,4 +36,15 @@ public interface ApiService {
             @Path("item_id") int item_id
     );
 
+    @GET("/items/{item_id}/next_items")
+    Call<ItemEntity> getNextItem(
+            @Path("item_id") int item_id,
+            @Query("from") int offset
+    );
+
+    @GET("/items/{item_id}/next_images")
+    Call<ItemEntity> getNextItemImage(
+            @Path("item_id") int item_id,
+            @Query("from") int offset
+    );
 }

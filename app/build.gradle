@@ -46,9 +46,7 @@ dependencies {
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
     compile 'com.wefika:flowlayout:0.4.1'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-    compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
-    compile 'com.jjoe64:graphview:4.0.1'
-    compile 'com.diogobernardino:williamchart:2.1'
     compile 'com.github.lecho:hellocharts-android:v1.5.8'
-
+    compile 'joda-time:joda-time:2.9.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.7.0-rc1'
 }

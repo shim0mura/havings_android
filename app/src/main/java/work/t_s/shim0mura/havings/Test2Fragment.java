@@ -32,7 +32,7 @@ public class Test2Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         int page = getArguments().getInt("page", 0);
-        View view = inflater.inflate(R.layout.tab, container, false);
+        View view = inflater.inflate(R.layout.item_list_tab, container, false);
         if(page == 1) {
             final ListView listView = (ListView)view.findViewById(R.id.page_text);
             ArrayList<String> items = new ArrayList<String>();
