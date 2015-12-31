@@ -1,6 +1,7 @@
 package work.t_s.shim0mura.havings;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.squareup.otto.Subscribe;
@@ -47,9 +50,13 @@ import work.t_s.shim0mura.havings.view.TestFragment;
 public class ItemActivity extends AppCompatActivity {
 
     private static final String TAG = "ItemActivity";
+    private static final String ITEM_ID = "ItemId";
+
+    private static final String FAB_TYPE_ADD_ITEM = "addItem";
 
     public ItemPresenter itemPresenter;
     private StickyScrollPresenter stickyScrollPresenter;
+    private Activity act;
     private Toolbar toolbar;
 
     private View mImageView;
@@ -62,7 +69,8 @@ public class ItemActivity extends AppCompatActivity {
     private int mFlexibleSpaceHeight;
     private int mToolbalHeight;
     private TextView mTitleView;
-    public View mListView;
+
+    private ItemEntity item = null;
 
     private int wrapperViewSize;
     private int statusBarSize;
@@ -86,6 +94,12 @@ public class ItemActivity extends AppCompatActivity {
     @Bind(R.id.item_tag) FlowLayout itemTag;
     @Bind(R.id.description) TextView description;
 
+    public static void startActivity(Context context, int itemId){
+        Intent intent = new Intent(context, ItemActivity.class);
+        intent.putExtra(ITEM_ID, itemId);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,11 +110,10 @@ public class ItemActivity extends AppCompatActivity {
         this.toolbar = toolbar;
 
         Intent intent = getIntent();
-        int itemId = intent.getIntExtra("itemId", 0);
+        int itemId = intent.getIntExtra(ITEM_ID, 0);
 
         stickyScrollPresenter = new StickyScrollPresenter(this);
         itemPresenter = new ItemPresenter(this);
-        itemPresenter.getItem(itemId);
 
         mImageView = findViewById(R.id.image);
         mOverlayView = findViewById(R.id.overlay);
@@ -197,18 +210,37 @@ public class ItemActivity extends AppCompatActivity {
         //tabLayout.getTabAt(0).setIcon(R.drawable.ic_already_favorite_18dp);
 
         Log.d("activity", "oncread end");
+        act = this;
+
+        final FloatingActionMenu fab = (FloatingActionMenu)findViewById(R.id.menu_labels_right);
+        fab.setClosedOnTouchOutside(true);
+
+        final FloatingActionButton programFab1 = new FloatingActionButton(this);
+        programFab1.setButtonSize(FloatingActionButton.SIZE_MINI);
+        programFab1.setLabelText("Programmatically added button");
+        programFab1.setImageResource(R.drawable.ic_already_favorite_18dp);
+        programFab1.setTag(R.string.fab_type, FAB_TYPE_ADD_ITEM);
+        programFab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, (String)v.getTag(R.string.fab_type));
+                switch((String)v.getTag(R.string.fab_type)){
+                    case FAB_TYPE_ADD_ITEM:
+                        ItemFormActivity.startActivity(act, item);
+                        break;
+                }
+            }
+        });
+        fab.addMenuButton(programFab1);
 
         ButterKnife.bind(this);
+        itemPresenter.getItem(itemId);
+
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
-        //stickyScrollPresenter.updateScrolling(0);
-
-        Log.d("title size in onwindow", String.valueOf(mTitleView.getHeight()));
-
     }
 
     @Override
@@ -240,6 +272,8 @@ public class ItemActivity extends AppCompatActivity {
     @Subscribe
     public void setItemData(ItemEntity item){
         Log.d("item set", "start");
+        this.item = item;
+
         title.setText(item.name);
 
         breadcrumb.setText(item.breadcrumb.replaceAll("\\s>\\s", " >\n"));
@@ -331,222 +365,10 @@ public class ItemActivity extends AppCompatActivity {
         }
     }
 
-    /*
-    @OnClick(R.id.test)
-    public void testClick2(View v){
-        Toast.makeText(this, "テスト タグ", Toast.LENGTH_LONG).show();
-    }
-    */
-
-    /*
-    @Override
-    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-        Log.d("scroll", String.valueOf(scrollY));
-        View view = (View)mScrollView.getChildAt(mScrollView.getChildCount() - 1);
-        int diff = (view.getBottom()-(mScrollView.getHeight()+mScrollView.getScrollY()));
-
-        Log.d("diff", String.valueOf(diff));
-
-        if(scrollY > 1174){
-Log.d("scroll end", "enedd");
-            isEnd = true;
-            updateScrolling(scrollY);
-
-
-        }else{
-            isEnd = false;
-            updateScrolling(scrollY);
-
-        }
-    }
-
-    @Override
-    public void onDownMotionEvent() {
-        if(isEnd){
-            //Log.d("scroll ended", String.valueOf(mScrollView.getCurrentScrollY()));
-            //mListView.setPressed(true);
-            //mListView.setScrollY(0);
-
-        }
-    }
-
-    @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-
-    }
-    */
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         //onScrollChanged(mScrollView.getCurrentScrollY(), false, false);
     }
-
-    /*
-    public void updateScrolling(int scrollY){
-
-
-        //mOverlayView.setAlpha(ScrollUtils.getFloat((float) scrollY / flexibleRange, 0, 1));
-        float scaleBase = Math.min(1, (float) scrollY / mFlexibleSpaceHeight - mToolbalHeight);
-        //mOverlayView.setAlpha(al);
-        //mToolbarView.getBackground().setAlpha(1);
-        mToolbarView.setBackgroundColor(ScrollUtils.getColorWithAlpha(scaleBase, ContextCompat.getColor(this, R.color.colorPrimary)));
-
-        //Log.d("aplha", String.valueOf(ScrollUtils.getFloat((float) scrollY / flexibleRange, 0, 1)));
-        //Log.d("original-aplha", String.valueOf(al));
-
-        //float scale = 1 + ScrollUtils.getFloat((flexibleRange - scrollY) / flexibleRange, 0, MAX_TEXT_SCALE_DELTA);
-        float scale = 1 + (1 - scaleBase);
-
-        // Pivot the title view to (0, 0)
-        //mTitleView.setPivotX(0);
-        //mTitleView.setPivotY(0);
-
-        // Scale the title view
-        //mTitleView.setScaleX(scale);
-        //mTitleView.setScaleY(scale);
-
-        mTitleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, scale * 20);
-
-        //mTitleView.setWidth();
-
-        //Log.d("scale", String.valueOf(scale));
-
-        // Translate the title view
-        int adjustedScrollY = (int) ScrollUtils.getFloat(scrollY, 0, mFlexibleSpaceHeight);
-        //int maxTitleTranslationY = mToolbarView.getHeight() + mFlexibleSpaceHeight - (int) (mTitleView.getHeight() * (1 + scale));
-        //int maxTitleTranslationY = mToolbarView.getHeight() + mFlexibleSpaceHeight - (int) (mTitleView.getHeight() * (1 + scale));
-
-        //int maxTitleTranslationY = (int) (mFlexibleSpaceHeight - mTitleView.getHeight() * scale);
-        int h = mTitleView.getHeight();
-        int maxTitleTranslationY = (int) (mFlexibleSpaceHeight - mTitleView.getHeight());
-
-        //int titleTranslationY = (int) (maxTitleTranslationY * ((float) mFlexibleSpaceHeight - adjustedScrollY) / mFlexibleSpaceHeight);
-        int titleTranslationY = Math.max(maxTitleTranslationY - scrollY, 0);
-        mTitleView.setTranslationY(titleTranslationY);
-
-        //mOverlayView.setTranslationY(ScrollUtils.getFloat(-scrollY, minOverlayTransitionY, 0));
-        //mImageView.setTranslationY(ScrollUtils.getFloat(-scrollY / 2, minOverlayTransitionY, 0));
-
-        mDescView.setTranslationY(-scrollY);
-        findViewById(R.id.tab_wrapper).setTranslationY(-scrollY);
-        //mListView.setScrollY(scrollY);
-        //mOverlayView.setTranslationY(-scrollY);
-        //mImageView.setTranslationY(-scrollY);
-
-        //Log.d("scale", String.valueOf(maxTitleTranslationY));
-        //Log.d("scale", String.valueOf(titleTranslationY));
-
-        //Log.d("scale", String.valueOf(scale));
-        //Log.d("maxtitle", String.valueOf(maxTitleTranslationY));
-        //Log.d("title-height", String.valueOf(h));
-        //Log.d("title-inlin-height", String.valueOf(mTitleView.getLineHeight()));
-
-        //Log.d("scroll", String.valueOf(scrollY));
-
-
-        if(scrollY == 1175){
-            Log.d("dragging", String.valueOf(dragging));
-            mScrollView.setScrollY(1);
-
-        }
-    }
-    */
-
-    public static class CustomTouchListener implements AdapterView.OnTouchListener {
-
-        private Activity activity;
-
-        public CustomTouchListener(Activity a){
-            activity = a;
-            Log.d("TouchListener", "called");
-        }
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            Log.d("action type", String.valueOf(event.getAction()));
-            Log.d("touch", String.valueOf(event.getAction() == MotionEvent.ACTION_MOVE));
-            Log.d("super touch", String.valueOf(v.onTouchEvent(event)));
-            //return (event.getAction() == MotionEvent.ACTION_MOVE);
-            return v.onTouchEvent(event);
-        }
-    }
-
-    /*
-    public static class TestFragment extends Fragment {
-
-        public TestFragment() {
-        }
-
-        public static TestFragment newInstance(int page) {
-            Bundle args = new Bundle();
-            args.putInt("page", page);
-            TestFragment fragment = new TestFragment();
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            int page = getArguments().getInt("page", 0);
-            View view = inflater.inflate(R.layout.item_list_tab, container, false);
-            if(page == 1) {
-                final ListView listView = (ListView)view.findViewById(R.id.page_text);
-                ArrayList<String> items = new ArrayList<String>();
-                for (int i = 1; i <= 100; i++) {
-                    items.add("Item " + i);
-                }
-                listView.setAdapter(new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items));
-
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                    @Override
-                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                        Log.d("position", String.valueOf(position));
-
-                                                    }
-                                                }
-                );
-
-
-                listView.setOnTouchListener(new AdapterView.OnTouchListener() {
-
-                    public boolean onTouch(View v, MotionEvent event) {
-                        //Log.d("ontouch in listview", "hh");
-                        //v.setScrollY((int)event.getY());
-                        Log.d("action type", String.valueOf(event.getAction()));
-                        Log.d("touch", String.valueOf(event.getAction() == MotionEvent.ACTION_MOVE));
-                        Log.d("super touch", String.valueOf(v.onTouchEvent(event)));
-                        //return (event.getAction() == MotionEvent.ACTION_MOVE);
-                        return v.onTouchEvent(event);
-                    }
-
-                });
-
-                listView.setOnTouchListener(new CustomTouchListener(this.getActivity()));
-
-                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-                        Log.d("schroll state", "changed");
-                    }
-
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        Log.d("scroll from listview", String.valueOf(visibleItemCount));
-                        Log.d("listview", String.valueOf(listView.getHeight()));
-                        //view.setEnabled(false);
-                    }
-                });
-
-            }else{
-                //((TextView) view.findViewById(R.id.page_text)).setText("Page " + page);
-
-            }
-            return view;
-        }
-    }
-    */
 
 }

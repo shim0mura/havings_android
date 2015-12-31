@@ -25,6 +25,7 @@ import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
+import work.t_s.shim0mura.havings.util.ViewUtil;
 
 /**
  * Created by shim0mura on 2015/12/10.
@@ -38,7 +39,6 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
     private int lastItemImageId = 0;
     private Boolean hasNextItemToLoad;
     private Boolean isLoadingNextItem = false;
-    private Calendar calendar = Calendar.getInstance();
 
     public ItemImageListAdapter(Context c, int resource, ItemEntity i){
         super(c, resource);
@@ -109,26 +109,19 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ItemImageEntity item = getItem(position);
+        ItemImageEntity itemImage = getItem(position);
 
-        String thumbnailUrl = ApiService.BASE_URL + item.url;
+        convertView.setTag(R.string.tag_image_url, itemImage.url);
+        convertView.setTag(R.string.tag_image_date, itemImage.date);
+
+        String thumbnailUrl = ApiService.BASE_URL + itemImage.url;
         Glide.with(context).load(thumbnailUrl).into(holder.image);
 
-        Log.d("image-date", item.date.toString());
+        Log.d("image-date", itemImage.date.toString());
 
-        holder.imageDate.setText(dateToString(item.date));
+        holder.imageDate.setText(ViewUtil.dateToString(itemImage.date, true));
 
         return convertView;
-    }
-
-    private String dateToString(Date d){
-        // http://www.kaoriya.net/blog/2012/01/17/
-        StringBuilder s = new StringBuilder();
-        calendar.setTime(d);
-        s.append(calendar.get(Calendar.YEAR)).append('/')
-                .append(calendar.get(Calendar.MONTH) + 1).append('/')
-                .append(calendar.get(Calendar.DAY_OF_MONTH)).append(' ');
-        return s.toString();
     }
 
     class ViewHolder{

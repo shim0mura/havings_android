@@ -109,6 +109,7 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
         }
 
         ItemEntity item = getItem(position);
+        convertView.setTag(R.string.tag_item_id, item.id);
 
         if(item.thumbnail != null){
             String thumbnailUrl = ApiService.BASE_URL + item.thumbnail;

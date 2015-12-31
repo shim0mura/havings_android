@@ -3,6 +3,7 @@ package work.t_s.shim0mura.havings.view;
 import android.graphics.Color;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
+import work.t_s.shim0mura.havings.util.ViewUtil;
 
 /**
  * Created by shim0mura on 2015/12/12.
@@ -26,17 +28,9 @@ public class GraphRenderer {
 
     public static void renderSimpleGraph(LineChartView lineChartView, List<CountDataEntity> countData){
 
-        /*
-        List<PointValue> values = new ArrayList<PointValue>();
-        values.add(new PointValue(0, 2));
-        values.add(new PointValue(1, 4));
-        values.add(new PointValue(2, 3));
-        values.add(new PointValue(3, 4));
-        */
-        CountDataEntity c = new CountDataEntity();
-        c.count = 40;
-        c.date = new Date();
-        countData.add(c);
+        if(shouldAddTodayData(countData.get(countData.size()-1).date)){
+            addTodayData(countData);
+        }
 
         List<PointValue> yValues = new ArrayList<PointValue>();
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
@@ -48,14 +42,7 @@ public class GraphRenderer {
             yValues.add(new PointValue(dataItem.date.getTime(), yValue));
             AxisValue axisValue = new AxisValue(dataItem.date.getTime());
 
-            StringBuilder s = new StringBuilder();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(dataItem.date);
-            s.append(calendar.get(Calendar.YEAR)).append('/')
-                    .append(calendar.get(Calendar.MONTH) + 1).append('/')
-                    .append(calendar.get(Calendar.DAY_OF_MONTH)).append(' ');
-
-            axisValue.setLabel(s.toString());
+            axisValue.setLabel(ViewUtil.dateToString(dataItem.date, false));
             axisValues.add(axisValue);
         }
 
@@ -72,7 +59,7 @@ public class GraphRenderer {
         Axis axisY = new Axis().setHasLines(true);
         axisY.setName("モノの数");
         axisX.setHasTiltedLabels(true);
-        axisX.setMaxLabelChars(10);
+        axisX.setMaxLabelChars(5);
         data.setAxisXBottom(axisX);
         data.setAxisYLeft(axisY);
 
@@ -86,7 +73,23 @@ public class GraphRenderer {
         lineChartView.setMaximumViewport(v);
         lineChartView.setCurrentViewport(v);
 
+    }
 
+    private static Boolean shouldAddTodayData(Date lastDate){
+        DateTime lastDt = new DateTime(lastDate);
+        DateTime today = new DateTime();
+        if(Days.daysBetween(lastDt, today).getDays() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private static void addTodayData(List<CountDataEntity> counts){
+        CountDataEntity c = new CountDataEntity();
+        c.count = counts.get(counts.size() - 1).count;
+        c.date = new Date();
+        counts.add(c);
     }
 
 }

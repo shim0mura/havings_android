@@ -45,11 +45,6 @@
                 app:layout_collapseMode="pin"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/lipsum_short"
-            android:textColor="#fff"/>
     </android.support.design.widget.AppBarLayout>
     <LinearLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

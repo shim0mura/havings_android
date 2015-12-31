@@ -22,12 +22,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.wefika.flowlayout.FlowLayout;
 
+import java.util.Date;
+
 import butterknife.ButterKnife;
 import lecho.lib.hellocharts.view.LineChartView;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import work.t_s.shim0mura.havings.DetailGraphActivity;
+import work.t_s.shim0mura.havings.ImageDetailActivity;
+import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
@@ -35,6 +40,7 @@ import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 import work.t_s.shim0mura.havings.view.ItemImageListAdapter;
 import work.t_s.shim0mura.havings.view.ItemListAdapter;
@@ -69,8 +75,6 @@ public class ItemPresenter {
             public void onResponse(Response<ItemEntity> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     ItemEntity item = response.body();
-
-                    //setItemData(item);
                     BusHolder.get().post(item);
 
                 } else if (response.code() == StatusCode.Unauthorized) {
@@ -232,7 +236,7 @@ public class ItemPresenter {
                                                     @Override
                                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                         Log.d("click position", String.valueOf(position));
-
+                                                        ItemActivity.startActivity(activity, (int)view.getTag(R.string.tag_item_id));
                                                     }
                                                 }
                 );
@@ -265,7 +269,6 @@ public class ItemPresenter {
             }else if (position == 1){
                 v = attachImageGrid(container);
             }else if (position == 2){
-                v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
                 v = attachGraph(container);
             }else {
                 v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
@@ -277,6 +280,7 @@ public class ItemPresenter {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             Log.d("customview", "destroyed:" + position);
+            container.removeView((View) object);
         }
 
         public View attachImageGrid(ViewGroup container){
@@ -291,7 +295,7 @@ public class ItemPresenter {
                                                 @Override
                                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                     Log.d("image click position", String.valueOf(position));
-
+                                                    ImageDetailActivity.startActivity(activity, item, (String)view.getTag(R.string.tag_image_url), (Date)view.getTag(R.string.tag_image_date));
                                                 }
                                             }
             );
@@ -336,16 +340,6 @@ public class ItemPresenter {
             */
             final RelativeLayout graphView = (RelativeLayout)v.findViewById(R.id.item_graph_tab_wrapper);
 
-            /*
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                    Log.d("image click position", String.valueOf(position));
-
-                                                }
-                                            }
-            );
-            */
             graphView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -359,6 +353,19 @@ public class ItemPresenter {
             lineChartView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
             GraphRenderer.renderSimpleGraph(lineChartView, item.countProperties);
             graphView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+
+            v.findViewById(R.id.navigate_to_detailgraph).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DetailGraphActivity.startActivity(activity, item);
+                }
+            });
+
+            int countSize = item.countProperties.size();
+            TextView graphFrom = (TextView)v.findViewById(R.id.item_graph_date_from);
+            graphFrom.setText(ViewUtil.dateToString(item.countProperties.get(0).date, true));
+            TextView graphTo = (TextView)v.findViewById(R.id.item_graph_date_to);
+            graphTo.setText(ViewUtil.dateToString(item.countProperties.get(countSize - 1).date, true));
 
             return v;
         }

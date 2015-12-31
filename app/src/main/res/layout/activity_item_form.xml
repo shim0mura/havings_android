@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:fitsSystemWindows="true"
-    tools:context="work.t_s.shim0mura.havings.TestGraphActivity">
+    tools:context="work.t_s.shim0mura.havings.ItemFormActivity">
 
     <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
         android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
@@ -15,34 +15,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <!--
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-        -->
-
-    <!--
-    <com.db.chart.view.LineChartView
-    xmlns:chart="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/chart"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    />
-    -->
-    <FrameLayout
-        android:id="@+id/popup"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginTop="72dp">
-        <lecho.lib.hellocharts.view.LineChartView
-            android:id="@+id/chart"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
-
-    </FrameLayout>
-
+    <include layout="@layout/content_item_form" />
 
 </android.support.design.widget.CoordinatorLayout>
-

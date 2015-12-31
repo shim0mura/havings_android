@@ -11,4 +11,6 @@
 
     <color name="tagColor">#77ff0000</color>
     <color name="favorite">#FF4081</color>
+
+    <color name="addImageButtonBackground">#212121</color>
 </resources>

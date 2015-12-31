@@ -1,60 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="wrap_content"
+    android:layout_width="150dp"
     android:layout_height="wrap_content"
+    android:background="#33ff0000"
+    android:padding="@dimen/padding_between_content"
     >
-    <TextView
+
+    <FrameLayout
+        android:id="@+id/image_frame"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:gravity="center"
-        android:textSize="20dp"
-        android:textColor="#656b72"
-        android:text="dsfsds">
-    </TextView>
-    <ImageView
-        android:id="@+id/test_img"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_visibility_black_18dp"/>
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_below="@id/test_img">
+        android:maxHeight="80dp"
+        >
+
+        <ImageView
+            android:id="@+id/item_image"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_image_black_18dp"
+            android:visibility="visible"
+            />
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="48dp"
+            android:background="#77000000"
+            android:gravity="center"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            >
             <TextView
+                android:id="@+id/popup_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1111"/>
-            <TextView
-                android:layout_width="wrap_content"
+                android:text="2015/12/12"
+                android:textColor="#ffffff"
+                android:textSize="14dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="222"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="333"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="44"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="555"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="666"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="7777"/>
-
+                android:orientation="horizontal"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
+                    android:textSize="14dp"
+                    android:text="@string/item_count_prefix"/>
+                <TextView
+                    android:id="@+id/popup_item_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
+                    android:textSize="14dp"
+                    />
+            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </FrameLayout>
+
+    <ListView
+        android:id="@+id/event_list"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@id/image_frame"
+        android:visibility="visible">
+    </ListView>
+
 </RelativeLayout>

@@ -23,6 +23,7 @@ android {
         exclude 'LICENSE'
         exclude 'META-INF/NOTICE'
         exclude 'NOTICE'
+        pickFirst 'META-INF/services/javax.annotation.processing.Processor'
     }
 }
 
@@ -49,4 +50,9 @@ dependencies {
     compile 'com.github.lecho:hellocharts-android:v1.5.8'
     compile 'joda-time:joda-time:2.9.1'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.7.0-rc1'
+    compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
+    compile 'com.github.clans:fab:1.6.2'
+    compile 'com.splitwise:tokenautocomplete:2.0.2@aar'
+    compile 'com.jakewharton.timber:timber:4.1.0'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
 }

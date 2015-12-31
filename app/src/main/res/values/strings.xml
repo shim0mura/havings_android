@@ -30,6 +30,32 @@
     <string name="item_list">モノリスト</string>
     <string name="item_images">画像</string>
     <string name="item_graph">グラフ</string>
+    <string name="item_count_prefix">モノの数: </string>
+
+    <string name="item_graph_date_range_prefix">記録期間</string>
+    <string name="item_graph_date_range_from_to">から</string>
+    <string name="navigate_to_detailgraph">グラフを詳しく見る</string>
+
+    <string name="action_post_item">アイテムを追加する</string>
+
+    <string name="event_type_add_item">アイテムの追加</string>
+    <string name="event_type_add_list">リストの追加</string>
+    <string name="event_type_add_image">画像の追加</string>
+    <string name="event_type_drop_item">アイテムの手放し</string>
+
+    <string name="prompt_list_name">リスト名（必須）</string>
+    <string name="prompt_list_image">画像の追加（必須）</string>
+    <string name="prompt_list_image_from_camera">カメラから追加</string>
+    <string name="prompt_list_image_from_gallery">ギャラリーから追加</string>
+    <string name="specify_list_name_from_tags">場所・収納アイテム・カテゴリから選ぶ</string>
+    <string name="specify_list_name_by_input">自分で入力</string>
+
+    <string name="tag_item_id">itemId</string>
+    <string name="tag_image_date">imageDate</string>
+    <string name="tag_image_url">imageUrl</string>
+    <string name="tag_event">event</string>
+
+    <string name="fab_type">fabType</string>
 
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_home">HomeActivity</string>
@@ -49,4 +75,7 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_test_graph">TestGraphActivity</string>
+    <string name="title_activity_image_detail">ImageDetailActivity</string>
+    <string name="title_activity_item_form">ItemFormActivity</string>
+    <string name="title_activity_list_select">ListSelectActivity</string>
 </resources>

@@ -26,11 +26,11 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import work.t_s.shim0mura.havings.model.ApiKey;
+import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
+import work.t_s.shim0mura.havings.model.DefaultTag;
 import work.t_s.shim0mura.havings.model.StatusCode;
-import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 
 public class HomeActivity extends AppCompatActivity {
@@ -101,6 +101,12 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d("user", "get failed");
             }
         });
+
+        DefaultTag tag = DefaultTag.getSingleton(this);
+        Timber.d("version %s", tag.getCurrentMigrationVersionOfLocal());
+        tag.checkMigrationVersion();
+        Timber.d("version %s", tag.getCurrentMigrationVersionOfLocal());
+
     }
 
 
@@ -212,10 +218,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.item)
     public void navigateToItem(View v){
-        Log.d("ssss", "to item");
-        Intent intent = new Intent(this, ItemActivity.class);
-        intent.putExtra("itemId", 2);
-        //Intent intent = new Intent(this, TestGraphActivity.class);
-        startActivity(intent);
+        ItemActivity.startActivity(this, 2);
+        //Log.d("ssss", "to item");
+
+        //Intent intent = new Intent(this, ItemActivity.class);
+        //intent.putExtra("itemId", 2);
     }
 }

@@ -5,19 +5,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/graph_date_range"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:paddingTop="@dimen/padding_between_content"
+        android:paddingBottom="@dimen/padding_between_content"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/item_graph_date_range_prefix"/>
+        <TextView
+            android:id="@+id/item_graph_date_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/item_graph_date_range_from_to"/>
+        <TextView
+            android:id="@+id/item_graph_date_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/to_detail_graph"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:paddingBottom="@dimen/padding_between_content"
+        android:gravity="center"
         >
-        <TextView
-
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/navigate_to_detailgraph"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30dp"
-            android:text="ssss"/>
+            android:text="@string/navigate_to_detailgraph"/>
+
     </LinearLayout>
 
     <FrameLayout
@@ -25,6 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/to_detail_graph"
+        android:layout_below="@id/graph_date_range"
         android:paddingRight="@dimen/padding_between_content"
         android:paddingLeft="@dimen/padding_between_content"
 
