@@ -1,51 +1,54 @@
 package work.t_s.shim0mura.havings;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
 import com.squareup.otto.Subscribe;
 import com.tokenautocomplete.FilteredArrayAdapter;
+import com.wefika.flowlayout.FlowLayout;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
-import io.realm.RealmResults;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.BusHolder;
+import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.entity.TagEntity;
+import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.model.realm.Tag;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
@@ -55,24 +58,110 @@ import work.t_s.shim0mura.havings.util.SpaceTokenizer;
 import work.t_s.shim0mura.havings.util.TagCompletionView;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 
+public class ItemFormActivity extends ItemFormBaseActivity {
+
+    private ItemEntity relatedItem;
+
+    public static void startActivity(Context context, ItemEntity i, boolean asList){
+        Intent intent = new Intent(context, new Object(){ }.getClass().getEnclosingClass());
+        intent.putExtra(SERIALIZED_ITEM, i);
+        intent.putExtra(AS_LIST, asList);
+        Activity a = (Activity)context;
+        a.startActivityForResult(intent, ItemActivity.ITEM_CREATED_RESULTCODE);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_item_form);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        relatedItem = item;
+        item = new ItemEntity();
+        item.isList = asList;
+        item.privateType = relatedItem.privateType;
+        item.listId = relatedItem.isList ? relatedItem.id : relatedItem.listId;
+        if(!asList){
+            item.count = 1;
+        }
+
+        ButterKnife.bind(this);
+
+        constructForm();
+
+        formPresenter.getUserListTree();
+    }
+
+    @OnClick(R.id.post_item)
+    public void postItem(){
+        clearWarning();
+        constructItem();
+
+        List<ItemImageEntity> addedImages = formPresenter.constructAddingImage(getAddedImageViews());
+        item.imageDataForPost = new ArrayList<ItemImageEntity>();
+        item.imageDataForPost.addAll(addedImages);
+
+        formPresenter.attemptToCreateItem(item);
+        item.imageDataForPost = new ArrayList<ItemImageEntity>();
+    }
+
+    @Subscribe
+    @Override
+    public void successToPost(ItemEntity itemEntity){
+        Intent data = getIntent();
+        Bundle extras = new Bundle();
+        extras.putSerializable(ItemActivity.CREATED_ITEM, itemEntity);
+        data.putExtras(extras);
+        setResult(Activity.RESULT_OK, data);
+
+        finish();
+    }
+
+
+    @Subscribe
+    @Override
+    public void subscribeSetListUserOwning(UserListEntity[] list){
+        setListUserOwning(list);
+    };
+
+
+    @Subscribe
+    @Override
+    public void subscribeSetValidateError(SetErrorEvent event) {
+        setValidateError(event);
+    }
+}
+
+/*
 public class ItemFormActivity extends AppCompatActivity {
 
     private static final String SERIALIZED_ITEM = "SerializedItem";
     public static final String LIST_NAME_TAG_ID_KEY = "ListNameTagIdKey";
-    private static final int IMAGE_CHOOSER_RESULTCODE = 100;
-    public static final int LIST_NAME_CHOOSER_RESULTCODE = 200;
+    public static final int LIST_NAME_CHOOSER_RESULTCODE = 100;
+    private static final int IMAGE_CHOOSER_FROM_CAMERA_RESULTCODE = 200;
+    private static final int IMAGE_CHOOSER_FROM_GALLERY_RESULTCODE = 300;
     private static final String TAG = "ItemFormActivity:";
 
     private FormPresenter formPresenter;
     private ItemEntity item;
     private Uri pictureUri;
     private List<TagEntity> tags = new ArrayList<>();
+    private Calendar currentCalendar = new GregorianCalendar();
 
-    @Bind(R.id.image_view) ImageView itemImage;
+    @Bind(R.id.new_image_container) FlowLayout imageContainer;
     @Bind(R.id.comp) TextView itemName;
     @Bind(R.id.searchView) TagCompletionView itemTag;
-    @Bind(R.id.spinner) Spinner spinner;
+    @Bind(R.id.description) TextView description;
+    @Bind(R.id.list_spinner) Spinner listSpinner;
+    @Bind(R.id.private_type) Spinner privateTypeSpinner;
     @Bind(R.id.list_name_prompt) TextView listNamePrompt;
+    @Bind(R.id.specify_list_name_by_input) LinearLayout inputListNameByInput;
+    @Bind(R.id.add_image_from_camera) FrameLayout imageAdderFromCamera;
+    @Bind(R.id.add_image_from_gallery) FrameLayout imageAdderFromGallery;
+    @Bind(R.id.validate_image) LinearLayout imageWarning;
+    @Bind(R.id.validate_image_below) LinearLayout imageWarningBelow;
+
 
     public static void startActivity(Context context, @Nullable ItemEntity i){
         Intent intent = new Intent(context, ItemFormActivity.class);
@@ -80,7 +169,8 @@ public class ItemFormActivity extends AppCompatActivity {
             i = new ItemEntity();
         }
         intent.putExtra(SERIALIZED_ITEM, i);
-        context.startActivity(intent);
+        Activity a = (Activity)context;
+        a.startActivityForResult(intent, ItemActivity.ITEM_CREATED_RESULTCODE);
     }
 
     @Override
@@ -100,16 +190,45 @@ public class ItemFormActivity extends AppCompatActivity {
 
         formPresenter.getUserListTree();
 
-        getTagList();
+        setPrivateTypeSpinner();
 
-        TextView camera = (TextView)findViewById(R.id.start_camera);
-        camera.setOnClickListener(new View.OnClickListener() {
+        tags.addAll(formPresenter.getTagEntities());
+
+        setNameAdapter();
+        setTagAdapter();
+
+        imageAdderFromCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchChooser();
+                launchImageChooserFromCamera();
             }
         });
 
+        imageAdderFromGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchImageChooserFromGallery();
+            }
+        });
+
+    }
+
+    private void setPrivateTypeSpinner(){
+        ArrayAdapter<Item.PrivateType> privateTypeSpinnerAdapter = new ArrayAdapter<Item.PrivateType>(this, android.R.layout.simple_spinner_item);
+        privateTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        for(Item.PrivateType type : Item.getPrivateTypeObj(this)) {
+            privateTypeSpinnerAdapter.add(type);
+            Timber.d("type id %s", type.getTypeId());
+        }
+
+        privateTypeSpinner.setAdapter(privateTypeSpinnerAdapter);
+
+        if (defaultPos != 0) {
+            privateTypeSpinner.setSelection(defaultPos);
+        }
+    }
+
+    private void setNameAdapter(){
         ArrayAdapter<TagEntity> adapter = new FilteredArrayAdapter<TagEntity>(this, android.R.layout.simple_list_item_1, tags) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -141,12 +260,14 @@ public class ItemFormActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Timber.d("item clicked!! id: %s", id);
                 TagEntity tag = new TagEntity();
-                TextView selected = (TextView)view;
+                TextView selected = (TextView) view;
                 tag.name = selected.getText().toString();
                 itemTag.addObject(tag);
             }
         });
+    }
 
+    private void setTagAdapter(){
         ArrayAdapter<TagEntity> tagAdapter = new FilteredArrayAdapter<TagEntity>(this, android.R.layout.simple_list_item_1, tags) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -173,26 +294,6 @@ public class ItemFormActivity extends AppCompatActivity {
         char[] splitChar = {',', ';', ' '};
         itemTag.setSplitChar(splitChar);
         itemTag.performBestGuess(false);
-    }
-
-    private List<Tag> getTagList(){
-        Realm realm = Realm.getInstance(this);
-        RealmResults<Tag> result = realm.where(Tag.class).equalTo("isDeleted", false).findAll();
-
-        for(Tag t: result){
-            TagEntity tagEntity = new TagEntity();
-
-            tagEntity.id = t.getId();
-            tagEntity.name = t.getName();
-            tagEntity.yomiJp = t.getYomiJp();
-            tagEntity.yomiRoma = t.getYomiRoma();
-            tagEntity.priority = t.getPriority();
-            tagEntity.tagType = t.getTagType();
-
-            tags.add(tagEntity);
-        }
-
-        return result;
     }
 
     @Override
@@ -226,12 +327,12 @@ public class ItemFormActivity extends AppCompatActivity {
             }
         }
 
-        spinner.setAdapter(spinnerAdapter);
+        listSpinner.setAdapter(spinnerAdapter);
         if (defaultPos != 0) {
-            spinner.setSelection(defaultPos);
+            listSpinner.setSelection(defaultPos);
         }
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        listSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 TextView t = (TextView) view;
@@ -245,6 +346,39 @@ public class ItemFormActivity extends AppCompatActivity {
         });
     }
 
+    @Subscribe
+    public void setValidateError(SetErrorEvent event){
+        switch(event.resourceId){
+            case R.id.comp:
+                showListNameInputView();
+                itemName.setError(getResources().getString(R.string.error_list_name_required));
+                itemName.requestFocus();
+                break;
+            case R.id.validate_image:
+                imageWarning.setVisibility(View.VISIBLE);
+                imageWarningBelow.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    @OnClick(R.id.test_button)
+    public void testClick(){
+        successToPost(item);
+    }
+
+    @Subscribe
+    public void successToPost(ItemEntity itemEntity){
+
+        Intent data = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putInt(ItemActivity.LIST_NAME_TAG_ID_KEY, itemEntity);
+        data.putExtras(bundle);
+
+        setResult(Activity.RESULT_OK, data);
+
+        finish();
+    }
+
     @OnClick(R.id.specify_list_name_from_tags)
     public void navigateToListNameSelecter(){
         ListNameSelectActivity.startActivity(this);
@@ -254,72 +388,25 @@ public class ItemFormActivity extends AppCompatActivity {
     public void focusToListNameInput(){
         showListNameInputView();
         itemName.requestFocus();
+        MultiAutoCompleteTextView nameEditor = (MultiAutoCompleteTextView) findViewById(R.id.comp);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(nameEditor, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @OnClick(R.id.post_item)
     public void postItem(){
+        clearWarning();
         constructItem();
-        //formPresenter.isValidItem();
 
-        HashMap<String, RequestBody> fileParams = new HashMap<String, RequestBody>();
-
-        // uriの存在チェック、複数画像のセット
-        Uri u = (Uri)itemImage.getTag();
-        File f = new File(u.getPath());
-        if(f.exists()){
-            Log.d("fileexist", f.getPath());
-        }else{
-            String fileName = System.currentTimeMillis() + "";
-            f = new File(this.getCacheDir(), fileName);
-            try {
-                Log.d("filename", fileName);
-                Log.d("create_file", String.valueOf(f.createNewFile()));
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        byte[] bitmapdata;
-        try{
-            InputStream is = getContentResolver().openInputStream(u);
-
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-            bitmapdata = bos.toByteArray();
-
-            FileOutputStream fos = new FileOutputStream(f);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-        }catch(Exception e){
-            e.printStackTrace();
-            bitmapdata = null;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("data:");
-        sb.append(ViewUtil.getMimeType(u, this));
-        sb.append(";base64,");
-        String base64Img = Base64.encodeToString(bitmapdata, Base64.NO_WRAP);
-        sb.append(base64Img);
-
-        Log.d(TAG, u.getPath());
-        Log.d(TAG, ViewUtil.getMimeType(u, this));
-
-        RequestBody req = RequestBody.create(MediaType.parse(ViewUtil.getMimeType(u, this)), f);
-        fileParams.put("aaaa", req);
-        ItemImageEntity itemImage = new ItemImageEntity();
-        itemImage.imageData = sb.toString();
+        List<ItemImageEntity> addedImages = formPresenter.constructAddingImage(getAddedImageViews());
         item.imageDataForPost = new ArrayList<ItemImageEntity>();
-        item.imageDataForPost.add(itemImage);
+        item.imageDataForPost.addAll(addedImages);
 
-        HashMap<String, ItemEntity> hashItem = new HashMap<String, ItemEntity>();
-        hashItem.put("item", item);
-        formPresenter.postItem(hashItem, fileParams);
+        formPresenter.attemptToCreateItem(item);
+        item.imageDataForPost = new ArrayList<ItemImageEntity>();
     }
 
     public void constructItem(){
-        //複数の画像に対応する
         item.name = itemName.getText().toString();
         StringBuilder sb = new StringBuilder();
 
@@ -328,33 +415,46 @@ public class ItemFormActivity extends AppCompatActivity {
             sb.append(token.toString());
             sb.append(",");
         }
-        sb.deleteCharAt(sb.length() - 1);
+        if(sb.length() > 1){
+            sb.deleteCharAt(sb.length() - 1);
+        }
         item.tagList = sb.toString();
 
-        UserListEntity selectedList = (UserListEntity)spinner.getSelectedItem();
+        item.description = description.getText().toString();
+
+        UserListEntity selectedList = (UserListEntity) listSpinner.getSelectedItem();
         item.listId = selectedList.id;
 
-        Timber.d("listid %s", String.valueOf(item.listId));
-
-        Log.d(TAG, item.name);
-        Log.d(TAG, item.tagList);
-        Log.d(TAG, itemTag.toString());
-        Log.d(TAG + "tagtpe", itemTag.getText().getClass().toString());
+        Item.PrivateType selectedPrivateType = (Item.PrivateType)privateTypeSpinner.getSelectedItem();
+        item.privateType = selectedPrivateType.getTypeId();
     }
 
-    private void launchChooser() {
-        // ギャラリーから選択
-        Intent i;
-        if (Build.VERSION.SDK_INT < 19) {
-            i = new Intent(Intent.ACTION_GET_CONTENT);
-            i.setType("image/*");
-        } else {
-            i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            i.setType("image/*");
+    private List<ImageView> getAddedImageViews(){
+        List<ImageView> addedImageViews = new ArrayList<ImageView>();
+        int childs = imageContainer.getChildCount();
+        for(int i = 0; i < childs; i++){
+            View parent = imageContainer.getChildAt(i);
+            ImageView imageView = (ImageView)parent.findViewById(R.id.added_image);
+
+            if(imageView == null) {
+                continue;
+            }
+
+            Object isAddedImage = imageView.getTag(R.id.IS_ADDED_IMAGE_FROM_FORM);
+            if(isAddedImage != null && (boolean)isAddedImage){
+                addedImageViews.add(imageView);
+            }
         }
 
-        // カメラで撮影
+        return addedImageViews;
+    }
+
+    private void clearWarning(){
+        imageWarning.setVisibility(View.GONE);
+        imageWarningBelow.setVisibility(View.GONE);
+    }
+
+    private void launchImageChooserFromCamera(){
         String filename = System.currentTimeMillis() + ".jpg";
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, filename);
@@ -362,19 +462,26 @@ public class ItemFormActivity extends AppCompatActivity {
         // http://taka-say.hateblo.jp/entry/2015/06/05/010000
         pictureUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-        Intent i2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        i2.putExtra(MediaStore.EXTRA_OUTPUT, pictureUri);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, pictureUri);
+        startActivityForResult(intent, IMAGE_CHOOSER_FROM_CAMERA_RESULTCODE);
+    }
 
-        // ギャラリー選択のIntentでcreateChooser()
-        Intent chooserIntent = Intent.createChooser(i, "画像を選択する");
-        // EXTRA_INITIAL_INTENTS にカメラ撮影のIntentを追加
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{i2});
-
-        startActivityForResult(chooserIntent, IMAGE_CHOOSER_RESULTCODE);
+    private void launchImageChooserFromGallery(){
+        Intent intent;
+        if (Build.VERSION.SDK_INT < 19) {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+        } else {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+        }
+        startActivityForResult(intent, IMAGE_CHOOSER_FROM_GALLERY_RESULTCODE);
     }
 
     private void showListNameInputView(){
-        listNamePrompt.setVisibility(View.GONE);
+        inputListNameByInput.setVisibility(View.GONE);
         itemName.setVisibility(View.VISIBLE);
     }
 
@@ -391,35 +498,113 @@ public class ItemFormActivity extends AppCompatActivity {
         itemTag.addObject(tagEntity);
     }
 
+    private void addPicture(Uri imageUri){
+        final View pictureView = getLayoutInflater().inflate(R.layout.partial_added_image_in_form, imageContainer, false);
+        final ImageView image = (ImageView) pictureView.findViewById(R.id.added_image);
+        image.setImageURI(imageUri);
+        image.setTag(R.id.IS_ADDED_IMAGE_FROM_FORM, true);
+        image.setTag(R.id.ADDED_IMAGE_URI, imageUri);
+
+        final Activity act = this;
+
+        final TextView imageDate = (TextView)pictureView.findViewById(R.id.image_date);
+        final Date currentDate = new Date(currentCalendar.getTimeInMillis());
+        imageDate.setText(ViewUtil.dateToString(currentDate, true));
+        image.setTag(R.id.IMAGE_DATE, currentDate);
+
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener(){
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                GregorianCalendar d = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+                Date date = new Date(d.getTimeInMillis());
+                imageDate.setText(ViewUtil.dateToString(date, true));
+                image.setTag(R.id.IMAGE_DATE, currentDate);
+            }
+        };
+
+        imageDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePicker = new DatePickerDialog(act, dateSetListener, currentCalendar.get(Calendar.YEAR), currentCalendar.get(Calendar.MONTH), currentCalendar.get(Calendar.DAY_OF_MONTH));
+                datePicker.show();
+            }
+        });
+
+        final TextView imageMemo = (TextView)pictureView.findViewById(R.id.image_memo);
+        imageMemo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText editor = new EditText(act);
+                if(!imageMemo.getText().equals(act.getString(R.string.prompt_image_memo))){
+                    editor.setText(imageMemo.getText());
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(act);
+                builder.setTitle(R.string.prompt_image_memo)
+                        .setView(editor);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        imageMemo.setText(editor.getText());
+                        image.setTag(R.id.IMAGE_MEMO, editor.getText());
+                    }
+                });
+                builder.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder.create().show();
+            }
+        });
+
+        ImageView delete = (ImageView)pictureView.findViewById(R.id.delete_image);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageContainer.removeView(pictureView);
+            }
+        });
+
+        int index = imageContainer.getChildCount();
+        imageContainer.addView(pictureView, index);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == IMAGE_CHOOSER_RESULTCODE) {
-
-            if (resultCode != RESULT_OK) {
-                if (pictureUri != null) {
-                    Timber.d("image delete");
-                    getContentResolver().delete(pictureUri, null, null);
-                    pictureUri = null;
+        switch(requestCode){
+            case IMAGE_CHOOSER_FROM_CAMERA_RESULTCODE:
+                if (resultCode != RESULT_OK) {
+                    if (pictureUri != null) {
+                        Timber.d("image delete");
+                        getContentResolver().delete(pictureUri, null, null);
+                        pictureUri = null;
+                    }
+                    return;
                 }
-                return;
-            }
 
-            // 画像を取得
-            Uri result = (data == null) ? pictureUri : data.getData();
+                // 画像を取得
+                Uri resultFromCamera = (data == null) ? pictureUri : data.getData();
 
-            ImageView iv = (ImageView) findViewById(R.id.image_view);
-            iv.setTag(result);
-            iv.setImageURI(result);
+                addPicture(resultFromCamera);
 
-            pictureUri = null;
+                pictureUri = null;
+                break;
+            case IMAGE_CHOOSER_FROM_GALLERY_RESULTCODE:
+                Uri resultFromGallery = (data == null) ? pictureUri : data.getData();
 
-        }else if(requestCode == LIST_NAME_CHOOSER_RESULTCODE){
-            if (resultCode == RESULT_OK) {
-                Bundle bundle = data.getExtras();
+                addPicture(resultFromGallery);
 
-                addListName(bundle.getInt(LIST_NAME_TAG_ID_KEY));
-            }
+                pictureUri = null;
+                break;
+            case LIST_NAME_CHOOSER_RESULTCODE:
+                if (resultCode == RESULT_OK) {
+                    Bundle bundle = data.getExtras();
+
+                    addListName(bundle.getInt(LIST_NAME_TAG_ID_KEY));
+                }
+                break;
         }
+
     }
 
 }
+*/

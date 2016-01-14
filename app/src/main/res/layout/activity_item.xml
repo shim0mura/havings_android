@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
-        android:visibility="gone"
+        android:visibility="visible"
         >
 
         <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
@@ -74,9 +74,11 @@
                         android:paddingRight="@dimen/app_basic_padding"
                         android:layout_below="@id/image_wrapper">
 
+
                             <include layout="@layout/item_metadata" />
                             <include layout="@layout/item_action_buttons" />
                             <include layout="@layout/item_timer" />
+
 
                             <RelativeLayout
                                 android:id="@+id/item_tag_wrapper"
@@ -202,41 +204,44 @@
         </RelativeLayout>
         </RelativeLayout>
 
-        <com.github.clans.fab.FloatingActionMenu
-            android:id="@+id/menu_labels_right"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            fab:menu_labels_ellipsize="end"
-            fab:menu_labels_singleLine="true"
-            fab:menu_backgroundColor="#ccffffff"
-            fab:menu_labels_position="left">
-
-            <com.github.clans.fab.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_image_black_18dp"
-                fab:fab_size="mini"
-                fab:fab_label="Menu item 1" />
-
-            <com.github.clans.fab.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_visibility_black_18dp"
-                fab:fab_size="mini"
-                fab:fab_label="Menu item 2" />
-
-            <com.github.clans.fab.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_add_black_18dp"
-                fab:fab_size="mini"
-                fab:fab_label="aaa" />
-
-        </com.github.clans.fab.FloatingActionMenu>
-
     </FrameLayout>
+
+    <com.github.clans.fab.FloatingActionMenu
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/menu_labels_right"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        fab:menu_labels_ellipsize="end"
+        fab:menu_labels_singleLine="true"
+        fab:menu_backgroundColor="#ccffffff"
+        fab:menu_labels_position="left"
+        app:layout_behavior="work.t_s.shim0mura.havings.util.FloatingActionMenuBehavior"
+        >
+
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_image_black_18dp"
+            fab:fab_size="mini"
+            fab:fab_label="Menu item 1" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_visibility_black_18dp"
+            fab:fab_size="mini"
+            fab:fab_label="Menu item 2" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_black_18dp"
+            fab:fab_size="mini"
+            fab:fab_label="aaa" />
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

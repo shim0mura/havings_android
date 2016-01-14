@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
+import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.di.Api;
 import work.t_s.shim0mura.havings.model.di.ApiComponent;
 import work.t_s.shim0mura.havings.model.di.ApiModule;
@@ -173,7 +174,7 @@ public class ApiServiceManager {
             Response response = chain.proceed(request);
             String rawJson = response.body().string();
 
-            Log.d("raw json", String.format("raw JSON response is: %s", rawJson));
+            Timber.d("raw JSON response is: %s", rawJson);
 
             // Re-create the response before returning it because body can be read only once
             return response.newBuilder().body(ResponseBody.create(response.body().contentType(), rawJson)).build();

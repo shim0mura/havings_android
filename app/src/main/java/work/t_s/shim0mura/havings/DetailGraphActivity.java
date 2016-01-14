@@ -35,6 +35,7 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
+import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
@@ -195,8 +196,11 @@ public class DetailGraphActivity extends AppCompatActivity {
                         x = (int)touchX + 10;
                     }
                     if(touchY + popupHeight > chartHeight){
+                        Timber.d("touchY: %s, popupHeight: %s, chartHeight: %s", touchY, popupHeight, chartHeight);
                         y = (int)touchY - ((int)touchY + popupHeight - chartHeight);
                     }else{
+                        Timber.d("touchY: %s, popupHeight: %s, chartHeight: %s", touchY, popupHeight, chartHeight);
+
                         y = (int)touchY - 50;
                     }
                     popup.setX(x);
@@ -226,9 +230,8 @@ public class DetailGraphActivity extends AppCompatActivity {
 
                 ViewGroup.LayoutParams lp = popup.getLayoutParams();
 
-                popupWidth = lp.width;
-                popupHeight = lp.height;
                 popupWrapper.addView(popup);
+
                 hidePopup();
             }
         });
@@ -254,13 +257,11 @@ public class DetailGraphActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         BusHolder.get().register(this);
-        Log.d(TAG, "regist action");
     }
 
     @Override
     protected void onPause() {
         BusHolder.get().unregister(this);
-        Log.d(TAG, "unregist action");
 
         super.onPause();
     }
@@ -268,7 +269,6 @@ public class DetailGraphActivity extends AppCompatActivity {
     private void hidePopup(){
         popup.setVisibility(View.GONE);
         valueSelected = false;
-        Log.d("popup", "hide");
     }
 
     private void showPopup(){
@@ -280,7 +280,6 @@ public class DetailGraphActivity extends AppCompatActivity {
         String thumbnail = null;
         int size = data.events.size();
         for(int i = 0; i < size; i++){
-            Log.d("find-thumbnail", "sss");
             if(data.events.get(i).item.thumbnail != null){
                 thumbnail = data.events.get(i).item.thumbnail;
                 break;

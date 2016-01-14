@@ -19,8 +19,10 @@
     <string name="error_invalid_password">パスワードが短すぎます。</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">必須入力です。</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
+    <string name="error_list_name_required">リスト名を入力してください。</string>
+    <string name="error_item_name_required">アイテム名を入力してください。</string>
+    <string name="error_image_required">画像を最低1枚指定してください。</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
     </string>
 
     <string name="action_share_item">共有する</string>
@@ -44,18 +46,53 @@
     <string name="event_type_drop_item">アイテムの手放し</string>
 
     <string name="prompt_list_name">リスト名（必須）</string>
+    <string name="prompt_item_name">アイテム名（必須）</string>
     <string name="prompt_list_image">画像の追加（必須）</string>
+    <string name="prompt_edit_image">画像の編集・削除</string>
     <string name="prompt_list_image_from_camera">カメラから追加</string>
     <string name="prompt_list_image_from_gallery">ギャラリーから追加</string>
+    <string name="prompt_image_memo">メモの追加</string>
+    <string name="prompt_optional_image">画像の追加</string>
+    <string name="prompt_image_not_added">画像はありません。</string>
+    <string name="prompt_cancel_delete_image">削除を取消</string>
+    <string name="prompt_tag">タグ</string>
+    <string name="prompt_item_count">アイテムの数</string>
+    <string name="prompt_add_to_list">属するリストの指定</string>
+    <string name="prompt_private_type">公開範囲</string>
+    <string name="prompt_description">メモ</string>
+    <string name="prompt_garbage_reason">手放す理由</string>
+
+
+    <string name="unit_item_count">個</string>
+
+    <string name="hint_to_item_name">アイテム名（必須）</string>
+    <string name="hint_to_description_of_list">リストについてのメモ、コメント…</string>
+    <string name="hint_to_description_of_item">アイテムについてのメモ、コメント…</string>
+    <string name="hint_to_garbage_reason">手放す理由...</string>
     <string name="specify_list_name_from_tags">場所・収納アイテム・カテゴリから選ぶ</string>
+    <string name="add_list_name_from_tags">場所・収納アイテム・カテゴリから追加</string>
     <string name="specify_list_name_by_input">自分で入力</string>
+    <string name="prompt_private_type_global">全体に公開</string>
+    <string name="prompt_private_type_follower">フォロワーまで公開</string>
+    <string name="prompt_private_type_friends">相互フォロワーまで公開</string>
+    <string name="prompt_private_type_secret">誰にも公開しない</string>
+
+
+    <string name="prompt_dump_fellow_items_explanation">一緒に手放すアイテム/リストを選択</string>
+    <string name="prompt_dump_fellow_items_sub_explanation">このリストに含まれるアイテム・リストのうち、選択したものも同時に手放します。\n選択したリスト内のアイテムも全て手放されます。\n選択しなかったアイテム・リストは手放されず</string>
+
+    <string name="prompt_delete_list">このリストを削除したことは履歴に残りません。他の人に通知もされません。\nまた、このリストは削除すると見ることができなくなります。</string>
+    <string name="prompt_delete_item">このアイテムを削除したことは履歴に残りません。他の人に通知もされません。\nまた、このアイテムは削除すると見ることができなくなります。</string>
+
+    <string name="prompt_delete_fellow_items_explanation">一緒に削除するアイテム/リストを選択</string>
+    <string name="prompt_delete_fellow_items_sub_explanation">このリストに含まれるアイテム・リストのうち、選択したものも同時に削除します。\n選択したリスト内のアイテムも全て削除されます。\n選択しなかったアイテム・リストは削除されず</string>
+
+
 
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>
     <string name="tag_image_url">imageUrl</string>
     <string name="tag_event">event</string>
-
-    <string name="fab_type">fabType</string>
 
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_home">HomeActivity</string>
@@ -78,4 +115,9 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="title_activity_image_detail">ImageDetailActivity</string>
     <string name="title_activity_item_form">ItemFormActivity</string>
     <string name="title_activity_list_select">ListSelectActivity</string>
+    <string name="title_activity_item_edit">ItemEditActivity</string>
+    <string name="title_activity_item_image_edit">ItemImageEditActivity</string>
+    <string name="title_activity_item_dump">ItemDumpActivity</string>
+    <string name="title_activity_item_delete">ItemDeleteActivity</string>
+    <string name="title_activity_timer_form">TimerFormActivity</string>
 </resources>

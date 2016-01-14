@@ -5,11 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,11 +16,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,26 +29,28 @@ import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.squareup.otto.Subscribe;
 import com.wefika.flowlayout.FlowLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.presenter.FormPresenter;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
-import work.t_s.shim0mura.havings.view.TestFragment;
 
 public class ItemActivity extends AppCompatActivity {
 
     private static final String TAG = "ItemActivity";
     private static final String ITEM_ID = "ItemId";
-
-    private static final String FAB_TYPE_ADD_ITEM = "addItem";
+    public static final int ITEM_CREATED_RESULTCODE = 400;
+    public static final int ITEM_UPDATED_RESULTCODE = 500;
+    public static final String CREATED_ITEM = "ItemCreated";
+    public static final String UPDATED_ITEM = "ItemUpdated";
 
     public ItemPresenter itemPresenter;
     private StickyScrollPresenter stickyScrollPresenter;
@@ -77,7 +75,7 @@ public class ItemActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private PagerAdapter pagerAdapter;
+    private ItemPresenter.ItemPagerAdapter pagerAdapter;
 
     @Bind(R.id.image) ImageView thumbnail;
     @Bind(R.id.overlay) View overlay;
@@ -217,25 +215,50 @@ public class ItemActivity extends AppCompatActivity {
 
         final FloatingActionButton programFab1 = new FloatingActionButton(this);
         programFab1.setButtonSize(FloatingActionButton.SIZE_MINI);
-        programFab1.setLabelText("Programmatically added button");
+        programFab1.setLabelText("add item");
         programFab1.setImageResource(R.drawable.ic_already_favorite_18dp);
-        programFab1.setTag(R.string.fab_type, FAB_TYPE_ADD_ITEM);
+        programFab1.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_ADD_ITEM);
         programFab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, (String)v.getTag(R.string.fab_type));
-                switch((String)v.getTag(R.string.fab_type)){
-                    case FAB_TYPE_ADD_ITEM:
-                        ItemFormActivity.startActivity(act, item);
-                        break;
-                }
+                ItemFormActivity.startActivity(act, item, false);
             }
         });
         fab.addMenuButton(programFab1);
 
+        final FloatingActionButton programFab2 = new FloatingActionButton(this);
+        programFab2.setButtonSize(FloatingActionButton.SIZE_MINI);
+        programFab2.setLabelText("edit image");
+        programFab2.setImageResource(R.drawable.ic_already_favorite_18dp);
+        programFab2.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+        programFab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemImageEditActivity.startActivity(act, item, item.isList);
+            }
+        });
+        fab.addMenuButton(programFab2);
+
+        final FloatingActionButton programFab3 = new FloatingActionButton(this);
+        programFab3.setButtonSize(FloatingActionButton.SIZE_MINI);
+        programFab3.setLabelText("edit item");
+        programFab3.setImageResource(R.drawable.ic_already_favorite_18dp);
+        programFab3.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+        programFab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //ItemEditActivity.startActivity(act, item, item.isList);
+                ItemDeleteActivity.startActivity(act, item, item.isList);
+
+                Timber.d(description.getText().toString());
+                ViewGroup.LayoutParams l = description.getLayoutParams();
+                Timber.d("descheight: %s", l.height);
+            }
+        });
+        fab.addMenuButton(programFab3);
+
         ButterKnife.bind(this);
         itemPresenter.getItem(itemId);
-
     }
 
     @Override
@@ -317,6 +340,11 @@ public class ItemActivity extends AppCompatActivity {
             description.setText("");
         }
 
+        description.requestLayout();
+
+        Timber.d("description height %s", description.getHeight());
+        Timber.d("tag height %s", itemTag.getMeasuredHeight());
+
         pagerAdapter = new ItemPresenter.ItemPagerAdapter(this, stickyScrollPresenter, itemPresenter, item);
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -340,7 +368,42 @@ public class ItemActivity extends AppCompatActivity {
         wrapperView.removeViewAt(0);
         ButterKnife.findById(this, R.id.frame_wrapper).setVisibility(View.VISIBLE);
 
+        final View des = findViewById(R.id.desc);
+        ViewTreeObserver vto = findViewById(R.id.desc).getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT >= 16) {
+                    des.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    des.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                Timber.d("desc height aftrer vto %s", des.getHeight());
+                stickyScrollPresenter.initialize();
+
+            }
+        });
+
+    }
+
+    private void updateItemData(){
+        title.setText(item.name);
+        itemCount.setText(String.valueOf(item.count));
+
+        if(item.tags != null && item.tags.size() > 0){
+            setTag(item.tags);
+        }else{
+
+        }
+
+        if(item.description != null) {
+            description.setText(item.description);
+        }else{
+            description.setText("");
+        }
+
         stickyScrollPresenter.initialize();
+
     }
 
     private void setItemThumbnail(String thumbnailUrl){
@@ -359,6 +422,7 @@ public class ItemActivity extends AppCompatActivity {
     }
 
     private void setTag(List<String> tags){
+        itemTag.removeAllViews();
         for(String tagString : tags){
             TextView tag = ItemPresenter.createTag(this, tagString, true);
             itemTag.addView(tag);
@@ -371,4 +435,34 @@ public class ItemActivity extends AppCompatActivity {
         //onScrollChanged(mScrollView.getCurrentScrollY(), false, false);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Timber.d("activity result");
+        if (resultCode == RESULT_OK) {
+            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+
+            if (requestCode == ITEM_CREATED_RESULTCODE) {
+
+                Timber.d("list created");
+                Snackbar.make(coordinatorLayout, "すなっくばーテスト", Snackbar.LENGTH_LONG).show();
+                Bundle extras = data.getExtras();
+                ItemEntity addedItem = (ItemEntity)extras.getSerializable(CREATED_ITEM);
+                if(item.isList && addedItem.listId == item.id) {
+                    pagerAdapter.unshiftItem(addedItem);
+                }
+
+            } else if (requestCode == ITEM_UPDATED_RESULTCODE) {
+
+                Timber.d("list updated");
+
+                Bundle extras = data.getExtras();
+                item = (ItemEntity)extras.getSerializable(UPDATED_ITEM);
+
+                updateItemData();
+                Snackbar.make(coordinatorLayout, "すなっくばーUPDATE", Snackbar.LENGTH_LONG).show();
+            }
+        }
+    }
 }

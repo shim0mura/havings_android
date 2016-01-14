@@ -1,192 +1,352 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_item_form"
-    tools:context="work.t_s.shim0mura.havings.ItemFormActivity"
-    android:orientation="vertical">
-
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="itemform"/>
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_image_black_18dp"
-            android:paddingTop="12dp"/>
+        android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:showIn="@layout/activity_item_form"
+        tools:context="work.t_s.shim0mura.havings.ItemFormActivity"
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <MultiAutoCompleteTextView
-                android:id="@+id/comp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_image_black_18dp"
+                />
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/prompt_list_name"
-                android:maxLines="1"
-                android:imeOptions="actionNext"
-                android:singleLine="true"
-                android:focusableInTouchMode="true"
-                android:visibility="visible"/>
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/list_name_prompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_list_name"
+                    />
+
+                <MultiAutoCompleteTextView
+                    android:id="@+id/comp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_list_name"
+                    android:maxLines="1"
+                    android:imeOptions="actionDone"                    android:singleLine="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textSize="16dp"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/specify_list_name_from_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/padding_between_content"
+                    android:layout_marginBottom="@dimen/padding_between_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    >
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_add_black_18dp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/specify_list_name_from_tags"
+                        android:textSize="16dp"
+                        android:paddingBottom="2dp"
+                        android:background="@drawable/border_underline"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/specify_list_name_by_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_add_black_18dp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/specify_list_name_by_input"
+                        android:textSize="16dp"
+                        android:paddingBottom="2dp"
+                        android:background="@drawable/border_underline"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/app_basic_padding">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_image_black_18dp"
+                android:layout_marginRight="4dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/add_image_prompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_list_image"/>
+                <LinearLayout
+                    android:id="@+id/validate_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_warning_red_600_18dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/error_image_required"
+                        android:textColor="@color/alert"
+                        android:textStyle="bold"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+                <com.wefika.flowlayout.FlowLayout
+                    android:id="@+id/new_image_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_between_content">
+
+                    <include
+                        layout="@layout/partial_add_image_from_camera"
+                        android:id="@+id/add_image_from_camera" />
+                    <include
+                        layout="@layout/partial_add_image_from_gallery"
+                        android:id="@+id/add_image_from_gallery" />
+
+                </com.wefika.flowlayout.FlowLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/app_basic_padding"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
                 <TextView
-                    android:id="@+id/list_name_prompt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/prompt_list_name"/>
-                <LinearLayout
+                    android:text="@string/prompt_description"/>
+                <EditText
+                    android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <Button
-                        android:id="@+id/specify_list_name_from_tags"
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
+                    android:textSize="16dp"
+                    android:hint="@string/hint_to_description_of_list"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/app_basic_padding"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_label"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_tag"/>
+                <work.t_s.shim0mura.havings.util.TagCompletionView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_tag"
+                    android:imeOptions="actionDone"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="16dp"
+                    android:inputType="text|textNoSuggestions|textMultiLine"
+                    android:focusableInTouchMode="true" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/item_count_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/app_basic_padding"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_exposure_plus_1_black_18dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_item_count"/>
+
+                <LinearLayout
+                    android:id="@+id/item_count_changer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@drawable/border_underline"
+                    >
+                    <TextView
+                        android:id="@+id/item_count"
                         android:layout_height="wrap_content"
-                        android:text="@string/specify_list_name_from_tags"/>
-                    <Button
-                        android:id="@+id/specify_list_name_by_input"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:textSize="18dp"
+                        android:text="1"
+                        android:paddingLeft="@dimen/padding_between_content"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/specify_list_name_by_input"/>
+                        android:text="@string/unit_item_count"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="@dimen/padding_between_content"
+                        android:src="@drawable/ic_tune_black_18dp"/>
                 </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_image_black_18dp"
-            android:layout_marginRight="4dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/app_basic_padding"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/prompt_list_image"/>
+                android:src="@drawable/ic_lock"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_between_content">
-                <FrameLayout
-                    android:id="@+id/add_image_from_camera"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@color/addImageButtonBackground"
-                    >
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="center"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/ic_photo_camera_black_48dp"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:gravity="center"
-                        android:layout_gravity="bottom"
-                        android:text="@string/prompt_list_image_from_camera"
-                        android:textColor="#ffffff"
-                        android:textSize="16dp"/>
-                </FrameLayout>
-                <FrameLayout
-                    android:id="@+id/add_image_from_gallery"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@color/addImageButtonBackground"
-                    >
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="center"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/ic_photo_library_black_48dp"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:gravity="center"
-                        android:layout_gravity="bottom"
-                        android:text="@string/prompt_list_image_from_gallery"
-                        android:textColor="#ffffff"
-                        android:textSize="16dp"/>
-                </FrameLayout>
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_private_type"/>
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/private_type" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp" />
-
-    <TextView
-        android:id="@+id/start_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="sssssssssss"/>
-
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp">
-
-        <work.t_s.shim0mura.havings.util.TagCompletionView
-            android:id="@+id/searchView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="aaa"
-            android:imeOptions="actionDone"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="19sp"
-            android:nextFocusDown="@+id/editText"
-            android:inputType="text|textNoSuggestions|textMultiLine"
-            android:focusableInTouchMode="true" />
+            android:layout_marginTop="@dimen/app_basic_padding"
+            android:orientation="horizontal">
 
-    </android.support.design.widget.TextInputLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_playlist_add"/>
 
-    <Button
-        android:id="@+id/post_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/action_post_item"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_add_to_list"/>
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/list_spinner" />
+            </LinearLayout>
+        </LinearLayout>
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinner" />
+        <LinearLayout
+            android:id="@+id/validate_image_below"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/padding_between_content"
+            android:layout_marginBottom="@dimen/padding_between_content"
+            android:visibility="gone">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_warning_red_600_18dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/error_image_required"
+                android:textColor="@color/alert"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+        </LinearLayout>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/test_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="test"/>
+
+        <Button
+            android:id="@+id/post_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/action_post_item"/>
+
+    </LinearLayout>
+</ScrollView>
+

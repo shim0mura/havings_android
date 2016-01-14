@@ -41,8 +41,6 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
         layoutResource = resource;
         context = c;
         item = i;
-        Log.d("item aaa", item.name);
-        Log.d("item sss", item.owningItems.get(0).name);
         addItem(i);
     }
 
@@ -74,6 +72,10 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
             lastItemId = item.owningItems.get(item.owningItems.size() - 1).id;
         }
         hasNextItemToLoad = item.hasNextItem;
+    }
+
+    public void unshiftItem(ItemEntity item){
+        itemList.add(0, item);
     }
 
     @Override
@@ -128,6 +130,8 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
                 holder.tags.addView(tag);
             }
             Log.d("tags", item.tags.toString());
+        }else if(item.tags != null && item.tags.size() == 0){
+            holder.tags.removeAllViews();
         }
 
         return convertView;

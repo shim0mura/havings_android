@@ -25,6 +25,7 @@ android {
         exclude 'NOTICE'
         pickFirst 'META-INF/services/javax.annotation.processing.Processor'
     }
+
 }
 
 dependencies {

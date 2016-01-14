@@ -8,6 +8,10 @@ public class SetErrorEvent {
     public int resourceId;
     public String errorStr;
 
+    public SetErrorEvent(int resourceId){
+        this.resourceId = resourceId;
+    }
+
     public SetErrorEvent(int resourceId, String errorStr){
         this.resourceId = resourceId;
         this.errorStr = errorStr;

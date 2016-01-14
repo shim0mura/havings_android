@@ -12,10 +12,17 @@ import java.util.Date;
  */
 public class ItemImageEntity implements Serializable {
 
+    public static int MAX_MEMO_SIZE = 100;
+
     public int id;
     public String url;
     public String imageData;
 
     @JsonFormat(shape=JsonFormat.Shape.STRING)
     public Date date;
+
+    @JsonFormat(shape=JsonFormat.Shape.STRING)
+    public Date addedDate;
+
+    public String memo;
 }

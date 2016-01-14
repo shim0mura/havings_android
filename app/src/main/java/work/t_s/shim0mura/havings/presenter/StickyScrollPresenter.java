@@ -30,6 +30,7 @@ import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import java.io.InputStream;
 
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.User;
@@ -95,6 +96,17 @@ public class StickyScrollPresenter {
         int descHeight = descView.getHeight();
         android.view.ViewGroup.LayoutParams descLayout = descView.getLayoutParams();
         descLayout.height = descHeight;
+
+        android.view.ViewGroup.LayoutParams descriLayout = activity.findViewById(R.id.description).getLayoutParams();
+        android.view.ViewGroup.LayoutParams tagLayout = activity.findViewById(R.id.item_tag).getLayoutParams();
+
+        TextView tt = (TextView)activity.findViewById(R.id.description);
+        Timber.d(tt.getText().toString());
+        Timber.d("description height %s",  breadcrumbView.getPaddingBottom());
+        Timber.d("breadcrumb height %s", breadcrumbHeight);
+
+
+        Timber.d("desc height %s", descHeight);
 
         /*
         Log.d("image", String.valueOf(activity.findViewById(R.id.image).getMeasuredHeight()));

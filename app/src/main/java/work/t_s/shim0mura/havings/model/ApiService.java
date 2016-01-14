@@ -10,11 +10,13 @@ import java.util.List;
 
 import retrofit.Call;
 import retrofit.http.Body;
+import retrofit.http.DELETE;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Part;
 import retrofit.http.PartMap;
 import retrofit.http.Path;
@@ -75,10 +77,28 @@ public interface ApiService {
     //@FormUrlEncoded
     //@Multipart
     @POST("/items.json")
-    Call<ItemEntity> postItem(
+    Call<ItemEntity> createItem(
             //@Body ItemEntity item
             @Body HashMap<String, ItemEntity> item
             //@PartMap HashMap<String, RequestBody> fileParams
+    );
+
+    @PUT("/items/{item_id}")
+    Call<ItemEntity> updateItem(
+            @Path("item_id") int item_id,
+            @Body HashMap<String, ItemEntity> item
+    );
+
+    @PUT("/items/{item_id}/dump")
+    Call<ItemEntity> dumpItem(
+            @Path("item_id") int item_id,
+            @Body HashMap<String, ItemEntity> item
+    );
+
+    @DELETE("/items/{item_id}")
+    Call<ItemEntity> deleteItem(
+            @Path("item_id") int item_id,
+            @Query("fellow_ids[]") List<Integer> fellowIds
     );
 
     @GET("/tags/default_tag_migration/")

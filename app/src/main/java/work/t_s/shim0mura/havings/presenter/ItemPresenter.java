@@ -2,6 +2,7 @@ package work.t_s.shim0mura.havings.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
@@ -198,12 +199,19 @@ public class ItemPresenter {
         private ItemEntity item;
         private View loader;
 
+        private ItemListAdapter itemListAdapter;
+
         public ItemPagerAdapter(Activity a, StickyScrollPresenter s, ItemPresenter ip, ItemEntity i){
             activity = a;
             stickyScrollPresenter = s;
             itemPresenter = ip;
             item = i;
             loader = View.inflate(a, R.layout.loading, null);
+        }
+
+        public void unshiftItem(ItemEntity itemEntity) {
+            itemListAdapter.unshiftItem(itemEntity);
+            itemListAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -226,11 +234,11 @@ public class ItemPresenter {
 
                 final ListView listView = (ListView) v.findViewById(R.id.page_text);
 
-                final ItemListAdapter adapter = new ItemListAdapter(activity, R.layout.item_list, item);
+                itemListAdapter = new ItemListAdapter(activity, R.layout.item_list, item);
                 //BusHolder.get().register(adapter);
                 //listView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, items));
 
-                listView.setAdapter(adapter);
+                listView.setAdapter(itemListAdapter);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                     @Override
@@ -256,12 +264,12 @@ public class ItemPresenter {
                         //一番下にいったかどうかと次があるかのフラグのチェック
                         //trueならapi取得
                         //callback+eventbusでなんとかする
-                        if ((totalItemCount == firstVisibleItem + visibleItemCount) && adapter.hasNextItem()) {
+                        if ((totalItemCount == firstVisibleItem + visibleItemCount) && itemListAdapter.hasNextItem()) {
                             Log.d("request", "to api");
-                            if (!adapter.getIsLoadingNextItem()) {
-                                adapter.startLoadNextItem();
+                            if (!itemListAdapter.getIsLoadingNextItem()) {
+                                itemListAdapter.startLoadNextItem();
                                 listView.addFooterView(loader);
-                                itemPresenter.getNextItemList(item.id, adapter.getLastItemId(), adapter, listView, loader);
+                                itemPresenter.getNextItemList(item.id, itemListAdapter.getLastItemId(), itemListAdapter, listView, loader);
                             }
                         }
                     }
@@ -279,7 +287,6 @@ public class ItemPresenter {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            Log.d("customview", "destroyed:" + position);
             container.removeView((View) object);
         }
 
@@ -294,7 +301,6 @@ public class ItemPresenter {
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                 @Override
                                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                    Log.d("image click position", String.valueOf(position));
                                                     ImageDetailActivity.startActivity(activity, item, (String)view.getTag(R.string.tag_image_url), (Date)view.getTag(R.string.tag_image_date));
                                                 }
                                             }

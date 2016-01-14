@@ -46,8 +46,6 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
         layoutResource = resource;
         context = c;
         item = i;
-        Log.d("item aaa", item.name);
-        Log.d("item sss", item.owningItems.get(0).name);
         addItem(i);
     }
 
@@ -56,7 +54,6 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
     }
 
     public int getLastItemImageId(){
-        Log.d("last item id", String.valueOf(lastItemImageId));
         return lastItemImageId;
     }
 
@@ -73,7 +70,6 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
     }
 
     public void addItem(ItemEntity item){
-        Log.d("item", "added");
         if(item.images != null) {
             itemImageList.addAll(item.images);
             lastItemImageId = item.images.get(item.images.size() - 1).id;
@@ -95,8 +91,6 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
-        Log.d("item create", "start");
-        Log.d("item size", String.valueOf(itemImageList.size()));
         if (convertView == null) {
             convertView = layoutInflater.inflate(layoutResource, null);
             holder = new ViewHolder();
@@ -116,8 +110,6 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
 
         String thumbnailUrl = ApiService.BASE_URL + itemImage.url;
         Glide.with(context).load(thumbnailUrl).into(holder.image);
-
-        Log.d("image-date", itemImage.date.toString());
 
         holder.imageDate.setText(ViewUtil.dateToString(itemImage.date, true));
 

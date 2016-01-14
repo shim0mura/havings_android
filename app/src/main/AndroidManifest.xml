@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="work.t_s.shim0mura.havings" >
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -84,6 +83,31 @@
         <activity
             android:name=".ListNameSelectActivity"
             android:label="@string/title_activity_list_select"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".ItemEditActivity"
+            android:label="@string/title_activity_item_edit"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".ItemImageEditActivity"
+            android:label="@string/title_activity_item_image_edit"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".ItemDumpActivity"
+            android:label="@string/title_activity_item_dump"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".ItemDeleteActivity"
+            android:label="@string/title_activity_item_delete"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".TimerFormActivity"
+            android:label="@string/title_activity_timer_form"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
