@@ -219,9 +219,11 @@ public class HomeActivity extends AppCompatActivity {
     @OnClick(R.id.item)
     public void navigateToItem(View v){
         ItemActivity.startActivity(this, 2);
+
         //Log.d("ssss", "to item");
 
-        //Intent intent = new Intent(this, ItemActivity.class);
+        //Intent intent = new Intent(this, TimerFormActivity.class);
         //intent.putExtra("itemId", 2);
+        //startActivity(intent);
     }
 }

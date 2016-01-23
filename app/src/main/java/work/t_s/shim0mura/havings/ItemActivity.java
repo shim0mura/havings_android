@@ -17,9 +17,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
@@ -38,10 +39,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
+import work.t_s.shim0mura.havings.model.Timer;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.presenter.FormPresenter;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
+import work.t_s.shim0mura.havings.presenter.TimerPresenter;
 
 public class ItemActivity extends AppCompatActivity {
 
@@ -49,11 +53,15 @@ public class ItemActivity extends AppCompatActivity {
     private static final String ITEM_ID = "ItemId";
     public static final int ITEM_CREATED_RESULTCODE = 400;
     public static final int ITEM_UPDATED_RESULTCODE = 500;
+    public static final int TIMER_CREATED_RESULTCODE = 600;
+    public static final int TIMER_UPDATED_RESULTCODE = 700;
     public static final String CREATED_ITEM = "ItemCreated";
     public static final String UPDATED_ITEM = "ItemUpdated";
+    public static final String POSTED_TIMER = "PostedTimer";
 
     public ItemPresenter itemPresenter;
     private StickyScrollPresenter stickyScrollPresenter;
+    private TimerPresenter timerPresenter;
     private Activity act;
     private Toolbar toolbar;
 
@@ -91,6 +99,8 @@ public class ItemActivity extends AppCompatActivity {
     @Bind(R.id.action_favorite_text) TextView actionFavoriteText;
     @Bind(R.id.item_tag) FlowLayout itemTag;
     @Bind(R.id.description) TextView description;
+    @Bind(R.id.timer_wrapper) LinearLayout timerWrapper;
+    @Bind(R.id.add_timer_button) Button addTimerButton;
 
     public static void startActivity(Context context, int itemId){
         Intent intent = new Intent(context, ItemActivity.class);
@@ -281,17 +291,6 @@ public class ItemActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    @OnClick(R.id.item_count)
-    public void testClick(View v){
-        Log.d("test click", "cliced");
-        Toast.makeText(this, "テスト", Toast.LENGTH_LONG).show();
-    }
-
-    @OnClick(R.id.title)
-    public void testClick1(View v){
-        Toast.makeText(this, "テスト comment", Toast.LENGTH_LONG).show();
-    }
-
     @Subscribe
     public void setItemData(ItemEntity item){
         Log.d("item set", "start");
@@ -301,8 +300,21 @@ public class ItemActivity extends AppCompatActivity {
 
         breadcrumb.setText(item.breadcrumb.replaceAll("\\s>\\s", " >\n"));
 
-        if(item.isList){
+        if(item.isList) {
             itemTypeIcon.setImageResource(R.drawable.list_icon);
+        }
+
+        if(item.isList){
+            timerPresenter = new TimerPresenter(this, item, new TimerEntity());
+            if(item.timers.size() > 0) {
+                timerPresenter.renderListTimers(timerWrapper);
+            }
+            if(!item.canAddTimer) {
+                addTimerButton.setVisibility(View.GONE);
+            }
+        }else {
+            timerWrapper.setVisibility(View.GONE);
+            addTimerButton.setVisibility(View.GONE);
         }
 
         if(item.thumbnail != null){
@@ -406,6 +418,29 @@ public class ItemActivity extends AppCompatActivity {
 
     }
 
+    @Subscribe
+    public void updateTimerLayout(TimerEntity timerEntity){
+        Timber.d("timer update id %s", timerEntity.id);
+        if(timerWrapper != null && timerEntity.isActive){
+            timerPresenter.reRenderTimerLayout(timerWrapper, timerEntity);
+        }else if(timerWrapper != null && !timerEntity.isActive && !timerEntity.isDeleted){
+            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+            timerPresenter.removeTimerLayout(timerWrapper, timerEntity);
+            Snackbar.make(coordinatorLayout, "タイマー終了しました", Snackbar.LENGTH_LONG).show();
+            addTimerButton.setVisibility(View.VISIBLE);
+        }else if(timerWrapper != null && !timerEntity.isActive && timerEntity.isDeleted){
+            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+            timerPresenter.removeTimerLayout(timerWrapper, timerEntity);
+            Snackbar.make(coordinatorLayout, "タイマー削除しました", Snackbar.LENGTH_LONG).show();
+            addTimerButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @OnClick(R.id.add_timer_button)
+    public void addNewTimer(){
+        TimerFormActivity.startActivity(this, item, new TimerEntity());
+    }
+
     private void setItemThumbnail(String thumbnailUrl){
         thumbnailUrl = ApiService.BASE_URL + thumbnailUrl;
         Glide.with(this).load(thumbnailUrl).into(thumbnail);
@@ -462,6 +497,21 @@ public class ItemActivity extends AppCompatActivity {
 
                 updateItemData();
                 Snackbar.make(coordinatorLayout, "すなっくばーUPDATE", Snackbar.LENGTH_LONG).show();
+            } else if (requestCode == TIMER_CREATED_RESULTCODE){
+                Bundle extras = data.getExtras();
+                TimerEntity addedTimer = (TimerEntity)extras.getSerializable(POSTED_TIMER);
+                timerPresenter.addTimerLayout(timerWrapper, addedTimer);
+                Snackbar.make(coordinatorLayout, "すなっくばーTimerCreated", Snackbar.LENGTH_LONG).show();
+                if(timerPresenter.getTimerCounts() >= Timer.MAX_COUNT_PER_LIST){
+                    addTimerButton.setVisibility(View.GONE);
+                }
+            } else if (requestCode == TIMER_UPDATED_RESULTCODE){
+                Bundle extras = data.getExtras();
+                TimerEntity updatedTimer = (TimerEntity)extras.getSerializable(POSTED_TIMER);
+                timerPresenter.reRenderTimerLayout(timerWrapper, updatedTimer);
+
+                Snackbar.make(coordinatorLayout, "すなっくばーTimerupdated", Snackbar.LENGTH_LONG).show();
+
             }
         }
     }

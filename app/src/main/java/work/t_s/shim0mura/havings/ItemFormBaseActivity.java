@@ -24,13 +24,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.NumberPicker;
-import android.widget.SimpleExpandableListAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -151,7 +149,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     protected void showItemCountChanger(){
         final Dialog d = new Dialog(this);
         d.setTitle("NumberPicker");
-        d.setContentView(R.layout.partial_item_count_dialog);
+        d.setContentView(R.layout.dialog_item_count);
         Button b1 = (Button) d.findViewById(R.id.button1);
         Button b2 = (Button) d.findViewById(R.id.button2);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
@@ -454,19 +452,6 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
 
 
     abstract public void successToPost(ItemEntity itemEntity);
-    /*
-    {
-
-        Intent data = new Intent();
-        Bundle bundle = new Bundle();
-        bundle.putInt(ItemActivity.LIST_NAME_TAG_ID_KEY, itemEntity);
-        data.putExtras(bundle);
-
-        setResult(Activity.RESULT_OK, data);
-
-        finish();
-    }
-    */
 
     @Nullable @OnClick(R.id.specify_list_name_from_tags)
     public void navigateToListNameSelecter(){

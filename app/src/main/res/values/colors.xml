@@ -17,4 +17,12 @@
     <color name="unable">#b6b6b6</color>
 
     <color name="addImageButtonBackground">#212121</color>
+
+    <color name="timerActionBackground">#ff5722</color>
+    <color name="timerActionDoneNow">#9CCC65</color>
+    <color name="timerActionDone">#4FC3F7</color>
+    <color name="timerActionDoLater">#FFB74D</color>
+    <color name="timerActionClose">#9CCC65</color>
+
+
 </resources>

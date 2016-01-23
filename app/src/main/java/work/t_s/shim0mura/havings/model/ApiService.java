@@ -24,6 +24,7 @@ import retrofit.http.Query;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.TagMigrationEntity;
+import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
 
@@ -99,6 +100,40 @@ public interface ApiService {
     Call<ItemEntity> deleteItem(
             @Path("item_id") int item_id,
             @Query("fellow_ids[]") List<Integer> fellowIds
+    );
+
+    @POST("/timers")
+    Call<TimerEntity> createTimer(
+            @Body HashMap<String, TimerEntity> timer
+    );
+
+    @PUT("/timers/{timer_id}")
+    Call<TimerEntity> updateTimer(
+            @Path("timer_id") int timer_id,
+            @Body HashMap<String, TimerEntity> timer
+    );
+
+    @POST("/timers/{timer_id}/done")
+    Call<TimerEntity> doneTimer(
+            @Path("timer_id") int timer_id,
+            @Body HashMap<String, TimerEntity> timer
+    );
+
+    @POST("/timers/{timer_id}/do_later")
+    Call<TimerEntity> doLaterTimer(
+            @Path("timer_id") int timer_id,
+            @Body HashMap<String, TimerEntity> timer
+    );
+
+    @POST("/timers/{timer_id}/end")
+    Call<TimerEntity> endTimer(
+            @Path("timer_id") int timer_id,
+            @Body HashMap<String, TimerEntity> timer
+    );
+
+    @DELETE("/timers/{timer_id}")
+    Call<TimerEntity> deleteTimer(
+            @Path("timer_id") int timer_id
     );
 
     @GET("/tags/default_tag_migration/")

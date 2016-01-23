@@ -56,6 +56,9 @@ public class ItemEntity implements Serializable {
 
     public List<CountDataEntity> countProperties;
 
+    public List<TimerEntity> timers;
+    public Boolean canAddTimer;
+
     // dumpとdeleteの選択時に使う
     // listAdapter側での制御がうまく出来ないのでしょうがなくここで使用…
     public Boolean isSelectedForSomething;

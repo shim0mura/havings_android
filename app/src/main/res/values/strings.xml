@@ -22,6 +22,9 @@
     <string name="error_list_name_required">リスト名を入力してください。</string>
     <string name="error_item_name_required">アイテム名を入力してください。</string>
     <string name="error_image_required">画像を最低1枚指定してください。</string>
+    <string name="error_invalid_timer_due_at">"現在時刻より前の時間は指定できません。"</string>
+    <string name="error_invalid_timer_done_at">"現在時刻より先の時間は指定できません。"</string>
+
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
     </string>
 
@@ -87,6 +90,82 @@
     <string name="prompt_delete_fellow_items_explanation">一緒に削除するアイテム/リストを選択</string>
     <string name="prompt_delete_fellow_items_sub_explanation">このリストに含まれるアイテム・リストのうち、選択したものも同時に削除します。\n選択したリスト内のアイテムも全て削除されます。\n選択しなかったアイテム・リストは削除されず</string>
 
+    <string name="prompt_setting_timers">設定中のタイマー</string>
+    <string name="prompt_add_timer_button">タイマーを追加</string>
+    <string name="prompt_timer_no_repeat">繰り返し無し</string>
+    <string name="prefix_remaining_due_time">残り</string>
+    <string name="postfix_remaining_due_time">オーバー</string>
+    <string name="prompt_timer_done">タスク完了</string>
+    <string name="prompt_timer_already_done">もうやった</string>
+    <string name="prompt_timer_later_do">あとでやる</string>
+    <string name="prefix_timer_next_due">次回:</string>
+    <string name="prompt_timer_done_date">完了日時を選択…</string>
+    <string name="prefix_timer_done_date">完了:</string>
+    <string name="prompt_timer_later_do_date">やる予定日時を選択…</string>
+    <string name="prompt_close">閉じる</string>
+
+    <string name="prompt_timer_done_desc">タスクを完了した日時を選択</string>
+    <string name="prompt_timer_do_later_desc">タスクを行う予定の日時を選択</string>
+
+    <string name="prompt_minute">分</string>
+    <string name="prompt_hour">時間</string>
+    <string name="prompt_day">日</string>
+
+    <string name="button_positive">OK</string>
+    <string name="button_negative">キャンセル</string>
+
+    <string name="menu_item_edit_timer">編集</string>
+    <string name="menu_item_end_timer">タイマーを終了</string>
+    <string name="menu_item_delete_timer">削除</string>
+
+    <string name="postfix_end_of_something">の終了</string>
+    <string name="postfix_delete_of_something">の削除</string>
+
+    <string name="prefix_timer">タイマー:</string>
+    <string name="postfix_end_of_timer">を終了します。</string>
+    <string name="postfix_delete_of_timer">を削除します。</string>
+
+    <string name="text_end_timer">終了をすると、このタイマーからの通知は一切されなくなります。\nこのタイマーを終了しても、このタイマーのタスクを行った履歴は履歴ページから見ることが出来ます。</string>
+    <string name="text_delete_timer">削除をすると、このタイマーからの通知は一切されなくなります。\nこのタイマーを削除すると、このタイマーのタスクを行った履歴は見ることが出来なくなります。履歴を後から確認したい場合は「タイマーの終了」を行ってください。</string>
+
+
+    <string name="prompt_timer_name">タイマータスク名(必須)</string>
+    <string name="prompt_timer_select_date">通知日時の設定</string>
+    <string name="prompt_timer_select_time">通知時刻</string>
+
+    <string name="prompt_timer_done_at">タスクの完了日時</string>
+    <string name="prompt_next_due_at">次回の通知日時</string>
+    <string name="postfix_prompt_next_due_at_again">に再通知</string>
+    <string name="postfix_prompt_next_due_at">に通知</string>
+    <string name="postfix_prompt_timer_done_at">に完了</string>
+    <string name="prompt_is_repeating_or_not">タスクの繰り返し</string>
+    <string name="prompt_is_repeating">このタスクを繰り返す</string>
+    <string name="prompt_repeat_by_day">日にちで指定</string>
+    <string name="prompt_repeat_by_week">曜日で指定</string>
+    <string name="prompt_clear">クリア</string>
+    <string name="prompt_add_timer">タイマーを追加</string>
+    <string name="prompt_update_timer">タイマーを編集</string>
+
+    <string name="prompt_repeat_by_day_every_month">毎月</string>
+    <string name="prompt_repeat_by_day_every_two_month">2ヶ月に1回</string>
+    <string name="prompt_repeat_by_day_every_three_month">3ヶ月に1回</string>
+    <string name="prompt_repeat_by_day_every_four_month">4ヶ月に1回</string>
+    <string name="prompt_repeat_by_day_every_six_month">半年に1回</string>
+
+    <string name="prompt_repeat_by_week_every_week">毎週</string>
+    <string name="prompt_repeat_by_week_first_week">第一週</string>
+    <string name="prompt_repeat_by_week_second_week">第二週</string>
+    <string name="prompt_repeat_by_week_third_week">第三週</string>
+    <string name="prompt_repeat_by_week_fourth_week">第四週</string>
+    <string name="prompt_repeat_by_week_last_week">最終週</string>
+
+    <string name="prompt_repeat_by_week_sunday">日曜日</string>
+    <string name="prompt_repeat_by_week_monday">月曜日</string>
+    <string name="prompt_repeat_by_week_tuesday">火曜日</string>
+    <string name="prompt_repeat_by_week_wednesday">水曜日</string>
+    <string name="prompt_repeat_by_week_thursday">木曜日</string>
+    <string name="prompt_repeat_by_week_friday">金曜日</string>
+    <string name="prompt_repeat_by_week_saturday">土曜日</string>
 
 
     <string name="tag_item_id">itemId</string>

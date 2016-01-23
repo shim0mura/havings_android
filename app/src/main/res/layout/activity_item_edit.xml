@@ -216,7 +216,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:paddingLeft="@dimen/padding_between_content"
-                            android:src="@drawable/ic_tune_black_18dp"/>
+                            android:src="@drawable/ic_unfold_more_black_18dp"/>
                     </LinearLayout>
 
                 </LinearLayout>

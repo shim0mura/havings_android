@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/edit_timer" android:title="@string/menu_item_edit_timer" />
+    <item android:id="@+id/end_timer" android:title="@string/menu_item_end_timer" />
+    <item android:id="@+id/delete_timer" android:title="@string/menu_item_delete_timer" />
+</menu>

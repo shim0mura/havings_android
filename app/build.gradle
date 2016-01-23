@@ -56,4 +56,8 @@ dependencies {
     compile 'com.splitwise:tokenautocomplete:2.0.2@aar'
     compile 'com.jakewharton.timber:timber:4.1.0'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    compile "com.daimajia.swipelayout:library:1.1.8@aar"
+    compile 'com.prolificinteractive:material-calendarview:1.1.0'
+    compile 'com.akexorcist:RoundCornerProgressBar:2.0.3'
+
 }
