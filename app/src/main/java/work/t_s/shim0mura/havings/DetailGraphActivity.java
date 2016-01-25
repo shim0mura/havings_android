@@ -115,7 +115,10 @@ public class DetailGraphActivity extends AppCompatActivity {
 
                 switch(tag.eventType){
                     case EventEntity.EVENT_TYPE_ADD_IMAGE:
-                        ImageDetailActivity.startActivity(act, item, tag.item.thumbnail, tag.date);
+                        //ImageDetailActivity.startActivity(act, item, tag.item.thumbnail, tag.date);
+                        Timber.d(tag.toString());
+                        Timber.d("item image id %s", tag.item.itemImageId);
+                        ImageDetailActivity.startActivity(act, item, tag.item.itemImageId);
                         break;
                     case EventEntity.EVENT_TYPE_ADD_ITEM:
                         ItemActivity.startActivity(act, item.id);

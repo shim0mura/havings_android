@@ -110,6 +110,8 @@
             android:label="@string/title_activity_timer_form"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity android:name=".UserListActivity" >
+        </activity>
     </application>
 
 </manifest>

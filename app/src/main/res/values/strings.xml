@@ -41,8 +41,10 @@
     <string name="item_graph_date_range_from_to">から</string>
     <string name="navigate_to_detailgraph">グラフを詳しく見る</string>
 
-    <string name="action_post_item">アイテムを追加する</string>
+    <string name="postfix_prompt_of_item_image">の画像</string>
+    <string name="prefix_added_at">追加日: </string>
 
+    <string name="action_post_item">アイテムを追加する</string>
     <string name="event_type_add_item">アイテムの追加</string>
     <string name="event_type_add_list">リストの追加</string>
     <string name="event_type_add_image">画像の追加</string>
@@ -67,6 +69,9 @@
 
 
     <string name="unit_item_count">個</string>
+    <string name="unit_item_count_en">items</string>
+    <string name="prefix_unit_item_count_en">having</string>
+
 
     <string name="hint_to_item_name">アイテム名（必須）</string>
     <string name="hint_to_description_of_list">リストについてのメモ、コメント…</string>
@@ -167,6 +172,7 @@
     <string name="prompt_repeat_by_week_friday">金曜日</string>
     <string name="prompt_repeat_by_week_saturday">土曜日</string>
 
+    <string name="prompt_no_favorited_user">いいね!をしているユーザーはいません。</string>
 
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>

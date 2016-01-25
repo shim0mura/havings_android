@@ -23,6 +23,8 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
+import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TagMigrationEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
@@ -100,6 +102,42 @@ public interface ApiService {
     Call<ItemEntity> deleteItem(
             @Path("item_id") int item_id,
             @Query("fellow_ids[]") List<Integer> fellowIds
+    );
+
+    @POST("/items/{item_id}/favorite")
+    Call<ResultEntity> favoriteItem(
+            @Path("item_id") int item_id
+    );
+
+    @DELETE("/items/{item_id}/favorite")
+    Call<ResultEntity> unfavoriteItem(
+            @Path("item_id") int item_id
+    );
+
+    @GET("/items/{item_id}/favorited_users")
+    Call<List<UserEntity>> getItemFavoritedUsers(
+            @Path("item_id") int item_id
+    );
+
+    @GET("/items/{item_id}/image/{image_id}")
+    Call<ItemImageEntity> getItemImage(
+            @Path("item_id") int item_id,
+            @Path("image_id") int image_id
+    );
+
+    @POST("/items/image/{image_id}/favorite")
+    Call<ResultEntity> favoriteItemImage(
+            @Path("image_id") int image_id
+    );
+
+    @DELETE("/items/image/{image_id}/favorite")
+    Call<ResultEntity> unfavoriteItemImage(
+            @Path("image_id") int image_id
+    );
+
+    @GET("/items/image/{image_id}/favorited_users")
+    Call<List<UserEntity>> getItemImageFavoritedUsers(
+            @Path("image_id") int image_id
     );
 
     @POST("/timers")

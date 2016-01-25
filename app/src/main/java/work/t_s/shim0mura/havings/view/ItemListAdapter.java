@@ -92,8 +92,6 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
-        Log.d("item create", "start");
-        Log.d("item size", String.valueOf(itemList.size()));
         if (convertView == null) {
             convertView = layoutInflater.inflate(layoutResource, null);
             holder = new ViewHolder();

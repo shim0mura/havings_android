@@ -36,16 +36,21 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import lecho.lib.hellocharts.model.Line;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
+import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.Timer;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
+import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.presenter.FormPresenter;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 import work.t_s.shim0mura.havings.presenter.TimerPresenter;
+import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 
 public class ItemActivity extends AppCompatActivity {
 
@@ -182,7 +187,6 @@ public class ItemActivity extends AppCompatActivity {
         tabLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d("item_list_tab touch", String.valueOf(v.getScrollY()));
                 return v.onTouchEvent(event);
             }
         });
@@ -216,8 +220,6 @@ public class ItemActivity extends AppCompatActivity {
 
 
         //tabLayout.getTabAt(0).setIcon(R.drawable.ic_already_favorite_18dp);
-
-        Log.d("activity", "oncread end");
         act = this;
 
         final FloatingActionMenu fab = (FloatingActionMenu)findViewById(R.id.menu_labels_right);
@@ -280,14 +282,13 @@ public class ItemActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         BusHolder.get().register(this);
-        Log.d(TAG, "regist action");
+        Timber.d("regist action");
     }
 
     @Override
     protected void onPause() {
         BusHolder.get().unregister(this);
-        Log.d(TAG, "unregist action");
-
+        Timber.d("unregist action");
         super.onPause();
     }
 
@@ -450,6 +451,85 @@ public class ItemActivity extends AppCompatActivity {
             overlay.setBackground(ContextCompat.getDrawable(this, R.drawable.shadow));
         }
     }
+
+    @OnClick(R.id.action_favorite)
+    public void actionFavorite(){
+        if(item.isFavorited){
+            itemPresenter.unfavoriteItem(item.id);
+        }else{
+            itemPresenter.favoriteItem(item.id);
+        }
+    }
+
+    @OnClick(R.id.favorite_count_wrapper)
+    public void redirectToFavoritedUserList(){
+        UserListActivity.startActivity(this, UserListPresenter.ITEM_FAVORITE_USER_LIST, item.id);
+    }
+
+    @Subscribe
+    public void applyGereralResult(ResultEntity resultEntity){
+        Timber.d("get general result %s", resultEntity.resultType);
+        switch(resultEntity.resultType){
+            case GeneralResult.RESULT_FAVORITE_ITEM:
+                updateFavoriteProperties(true);
+                break;
+            case GeneralResult.RESULT_UNFAVORITE_ITEM:
+                updateFavoriteProperties(false);
+                break;
+            default:
+                Timber.w("Unexpected ResultCode Returned... code: %s, relatedId: %s", resultEntity.resultType, resultEntity.relatedId);
+                break;
+        }
+    }
+
+    @Subscribe
+    public void applyGereralError(SetErrorEvent errorEvent){
+        switch(errorEvent.resultType){
+            case GeneralResult.RESULT_FAVORITE_ITEM:
+                Timber.d("failed to favorite item");
+                break;
+            case GeneralResult.RESULT_UNFAVORITE_ITEM:
+                Timber.d("failed to unfavorite item");
+                break;
+            case GeneralResult.RESULT_FAVORITE_ITEM_IMAGE:
+                Timber.d("failed to favorite item image");
+                break;
+            case GeneralResult.RESULT_UNFAVORITE_ITEM_IMAGE:
+                Timber.d("failed to unfavorite item image");
+                break;
+            default:
+                Timber.w("Unexpected ResultCode in Error Returned... code: %s, relatedId: %s", errorEvent.resultType);
+                break;
+        }
+    }
+
+    private void updateFavoriteProperties(Boolean isFavorited){
+        item.isFavorited = isFavorited;
+        int count = Integer.parseInt(favoriteCount.getText().toString());
+        if(isFavorited){
+            favoriteCount.setText(String.valueOf(count + 1));
+        }else{
+            count = count - 1;
+            if(count < 0){
+                count = 0;
+            }
+            favoriteCount.setText(String.valueOf(count));
+        }
+        toggleFavoriteState();
+    }
+
+    private void toggleFavoriteState(){
+        if(item.isFavorited){
+            actionFavoriteIcon.setImageResource(R.drawable.ic_already_favorite_18dp);
+            actionFavoriteText.setText(R.string.already_favorite_item);
+            actionFavoriteText.setTextColor(ContextCompat.getColor(this, R.color.favorite));
+        }else{
+            actionFavoriteIcon.setImageResource(R.drawable.ic_favorite_black_18dp);
+            actionFavoriteText.setText(R.string.action_favorite_item);
+            actionFavoriteText.setTextColor(ContextCompat.getColor(this, R.color.secondaryText));
+        }
+    }
+
 
     private void setItemHeaderBackground(){
         Log.d(TAG, "thumbnail not set");

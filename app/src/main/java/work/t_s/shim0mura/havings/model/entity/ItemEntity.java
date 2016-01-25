@@ -25,6 +25,8 @@ public class ItemEntity implements Serializable {
     public int count;
     public int privateType;
 
+    public int itemImageId;
+
     public String breadcrumb;
     public int favoriteCount;
     public Boolean isFavorited;

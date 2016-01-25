@@ -23,7 +23,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.wefika.flowlayout.FlowLayout;
 
+import java.sql.ResultSet;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import lecho.lib.hellocharts.view.LineChartView;
@@ -31,6 +34,7 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import timber.log.Timber;
 import work.t_s.shim0mura.havings.DetailGraphActivity;
 import work.t_s.shim0mura.havings.ImageDetailActivity;
 import work.t_s.shim0mura.havings.ItemActivity;
@@ -38,9 +42,15 @@ import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
+import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
+import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
+import work.t_s.shim0mura.havings.model.entity.ResultEntity;
+import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
+import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 import work.t_s.shim0mura.havings.view.ItemImageListAdapter;
@@ -147,7 +157,128 @@ public class ItemPresenter {
         });
     }
 
+    public void getItemImage(int itemId, int itemImageId){
+        Call<ItemImageEntity> call = service.getItemImage(itemId, itemImageId);
 
+        call.enqueue(new Callback<ItemImageEntity>() {
+            @Override
+            public void onResponse(Response<ItemImageEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ItemImageEntity itemImage = response.body();
+                    BusHolder.get().post(itemImage);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    BusHolder.get().post(new SetErrorEvent(GeneralResult.RESULT_GET_ITEM_IMAGE, error));
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("user", "get failed");
+            }
+        });
+    }
+
+    public void favoriteItem(int itemId){
+        Call<ResultEntity> call = service.favoriteItem(itemId);
+        call.enqueue(getCallbackOfSuccessToPostItem(GeneralResult.RESULT_FAVORITE_ITEM));
+    }
+
+    public void unfavoriteItem(int itemId){
+        Call<ResultEntity> call = service.unfavoriteItem(itemId);
+        call.enqueue(getCallbackOfSuccessToPostItem(GeneralResult.RESULT_UNFAVORITE_ITEM));
+    }
+
+    public void favoriteItemImage(int itemImageId){
+        Call<ResultEntity> call = service.favoriteItemImage(itemImageId);
+        call.enqueue(getCallbackOfSuccessToPostItem(GeneralResult.RESULT_FAVORITE_ITEM_IMAGE));
+    }
+
+    public void unfavoriteItemImage(int itemImageId){
+        Call<ResultEntity> call = service.unfavoriteItemImage(itemImageId);
+        call.enqueue(getCallbackOfSuccessToPostItem(GeneralResult.RESULT_UNFAVORITE_ITEM_IMAGE));
+    }
+
+    public void favoriteItemImageFromAdapter(int itemImageId, ItemImageListAdapter adapter){
+        Call<ResultEntity> call = service.favoriteItemImage(itemImageId);
+        call.enqueue(getCallbackOfSuccessToChangeItemImageData(itemImageId, true, adapter, GeneralResult.RESULT_FAVORITE_ITEM_IMAGE));
+    }
+
+    public void unfavoriteItemImageFromAdapter(int itemImageId, ItemImageListAdapter adapter){
+        Call<ResultEntity> call = service.unfavoriteItemImage(itemImageId);
+        call.enqueue(getCallbackOfSuccessToChangeItemImageData(itemImageId, false, adapter, GeneralResult.RESULT_UNFAVORITE_ITEM_IMAGE));
+    }
+
+    private Callback<ResultEntity> getCallbackOfSuccessToPostItem(final int resultType){
+        return new Callback<ResultEntity>() {
+            @Override
+            public void onResponse(Response<ResultEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ResultEntity result = response.body();
+                    if(result.resultType == 0){
+                        result.resultType = resultType;
+                    }
+                    Timber.d("result %s, result.resultType: %s, result.id: %s", resultType, result.resultType, result.relatedId);
+                    BusHolder.get().post(result);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    BusHolder.get().post(new SetErrorEvent(resultType, error));
+
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("failed to post item");
+                t.printStackTrace();
+            }
+        };
+    }
+
+    private Callback<ResultEntity> getCallbackOfSuccessToChangeItemImageData(final int imageId, final Boolean isFavorited, final ItemImageListAdapter adapter, final int resultType){
+        return new Callback<ResultEntity>() {
+            @Override
+            public void onResponse(Response<ResultEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ResultEntity result = response.body();
+                    if(result.resultType == 0){
+                        result.resultType = resultType;
+                    }
+                    Timber.d("result %s, result.resultType: %s, result.id: %s", resultType, result.resultType, result.relatedId);
+                    adapter.changeImageFavoriteState(imageId, isFavorited);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    BusHolder.get().post(new SetErrorEvent(resultType, error));
+
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("failed to post item");
+                t.printStackTrace();
+            }
+        };
+    }
 
     public View getTabView(int position, int count){
         View tab = activity.getLayoutInflater().inflate(R.layout.item_tab_header, null);
@@ -295,13 +426,16 @@ public class ItemPresenter {
 
             final ProgressBar imageLoader = (ProgressBar)v.findViewById(R.id.image_loader);
             final GridView gridView = (GridView)v.findViewById(R.id.item_image_tab);
-            final ItemImageListAdapter adapter = new ItemImageListAdapter(activity, R.layout.item_image_list, item);
+            final ItemImageListAdapter adapter = new ItemImageListAdapter(activity, R.layout.item_image_list, item, itemPresenter);
             gridView.setAdapter(adapter);
 
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                 @Override
                                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                    ImageDetailActivity.startActivity(activity, item, (String)view.getTag(R.string.tag_image_url), (Date)view.getTag(R.string.tag_image_date));
+                                                    Timber.d("image id %s ", adapter.getItem(position).id);
+                                                    //ImageDetailActivity.startActivity(activity, item, (String) view.getTag(R.string.tag_image_url), (Date) view.getTag(R.string.tag_image_date));
+                                                    ImageDetailActivity.startActivity(activity, item, adapter.getItem(position));
+
                                                 }
                                             }
             );

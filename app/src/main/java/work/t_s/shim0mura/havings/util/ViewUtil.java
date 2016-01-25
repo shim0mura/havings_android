@@ -1,16 +1,22 @@
 package work.t_s.shim0mura.havings.util;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import work.t_s.shim0mura.havings.model.event.ToggleLoadingEvent;
 
 /**
  * Created by shim0mura on 2015/11/10.
@@ -57,5 +63,35 @@ public class ViewUtil {
             mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
         }
         return mimeType;
+    }
+
+    public static void toggleLoading(Activity activity, final ToggleLoadingEvent event){
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress listSpinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = activity.getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            event.hiding.setVisibility(View.GONE);
+            event.hiding.animate().setDuration(shortAnimTime).alpha(0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    event.hiding.setVisibility(View.GONE);
+                }
+            });
+
+            event.showing.setVisibility(View.VISIBLE);
+            event.showing.animate().setDuration(shortAnimTime).alpha(1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    event.showing.setVisibility(View.VISIBLE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            event.showing.setVisibility(View.VISIBLE);
+            event.hiding.setVisibility(View.GONE);
+        }
     }
 }

@@ -432,6 +432,7 @@ public class TimerPresenter {
         int percentage = Timer.getPercentageUntilDueDate(due, timerEntity.latestCalcAt);
         dueProgress.setMax(100);
         dueProgress.setProgress(percentage);
+        Timber.d("progress %s %s", timerEntity.name, percentage);
         dueProgress.setProgressColor(Timer.getProgressBarColor(percentage));
 
         swipeLayout.findViewById(R.id.timer_content).setOnClickListener(new View.OnClickListener() {

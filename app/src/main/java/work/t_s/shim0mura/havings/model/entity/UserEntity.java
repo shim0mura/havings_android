@@ -14,6 +14,7 @@ public class UserEntity implements Serializable {
     public String name;
     public String image;
     public String description;
+    public int count;
     public String path;
 
     public String email;

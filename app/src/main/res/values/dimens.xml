@@ -14,6 +14,8 @@
     <dimen name="app_basic_padding">16dp</dimen>
     <dimen name="padding_between_content">8dp</dimen>
     <dimen name="padding_between_grid">4dp</dimen>
+    <dimen name="padding_to_highlight_text">2dp</dimen>
+
 
     <item name="title_scale_start" type="dimen" format="float">0.5</item>
 </resources>
