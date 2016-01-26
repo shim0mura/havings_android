@@ -29,6 +29,7 @@
             android:textColor="@color/primaryText"
             android:gravity="center"
             android:layout_below="@id/item_count_anchor"
+            android:text="1"
             />
         <TextView
             android:layout_width="wrap_content"
@@ -98,7 +99,7 @@
                     android:layout_height="wrap_content">
                     <ImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="20dp"
                         android:src="@drawable/ic_favorite_black_18dp"
                         />
                     <TextView
@@ -106,13 +107,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="111"
-                        android:paddingRight="@dimen/app_basic_padding"
-                        android:paddingEnd="@dimen/app_basic_padding"
+                        android:textSize="18dp"
+                        android:layout_marginRight="@dimen/app_basic_padding"
+                        android:layout_marginEnd="@dimen/app_basic_padding"
                         />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/comment_count_wrapper"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="20dp">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -123,7 +126,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="111"
-                        android:paddingRight="@dimen/app_basic_padding"
+                        android:textSize="18dp"
+                        android:layout_marginRight="@dimen/app_basic_padding"
+                        android:layout_marginEnd="@dimen/app_basic_padding"
+
                         />
                 </LinearLayout>
             </LinearLayout>

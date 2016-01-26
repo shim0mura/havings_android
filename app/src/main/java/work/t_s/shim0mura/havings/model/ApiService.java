@@ -21,6 +21,7 @@ import retrofit.http.Part;
 import retrofit.http.PartMap;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import work.t_s.shim0mura.havings.model.entity.CommentEntity;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
@@ -173,6 +174,25 @@ public interface ApiService {
     Call<TimerEntity> deleteTimer(
             @Path("timer_id") int timer_id
     );
+
+    @GET("/items/{item_id}/comment")
+    Call<List<CommentEntity>> getComments(
+            @Path("item_id") int item_id
+    );
+
+    @POST("/items/{item_id}/comment")
+    Call<CommentEntity> postComment(
+            @Path("item_id") int item_id,
+            @Body HashMap<String, CommentEntity> comment
+    );
+
+    @DELETE("/items/{item_id}/comment/{comment_id}")
+    Call<CommentEntity> deleteComment(
+            @Path("item_id") int item_id,
+            @Path("comment_id") int comment_id
+    );
+
+
 
     @GET("/tags/default_tag_migration/")
     Call<List<TagMigrationEntity>> getDefaultTag();

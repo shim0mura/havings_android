@@ -25,8 +25,9 @@
     <string name="error_invalid_timer_due_at">"現在時刻より前の時間は指定できません。"</string>
     <string name="error_invalid_timer_done_at">"現在時刻より先の時間は指定できません。"</string>
 
-    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
-    </string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+
+    <string name="prefix_user_by">by </string>
 
     <string name="action_share_item">共有する</string>
     <string name="action_favorite_item">いいね!する</string>
@@ -174,6 +175,13 @@
 
     <string name="prompt_no_favorited_user">いいね!をしているユーザーはいません。</string>
 
+    <string name="prompt_no_comment">コメントはありません。\nこのアイテムへの最初のコメントをしてみませんか?</string>
+    <string name="prompt_to_delete_comment">コメントの削除</string>
+    <string name="text_delete_comment">次のコメントを削除します。\n</string>
+    <string name="error_to_post_comment">コメントの投稿に失敗しました。しばらく時間をおいてから再度お試しください。</string>
+    <string name="error_to_delete_comment">コメントの削除に失敗しました。しばらく時間をおいてから再度お試しください。</string>
+    <string name="error_to_post_empty_comment">空のコメントは投稿できません。</string>
+
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>
     <string name="tag_image_url">imageUrl</string>
@@ -205,4 +213,5 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="title_activity_item_dump">ItemDumpActivity</string>
     <string name="title_activity_item_delete">ItemDeleteActivity</string>
     <string name="title_activity_timer_form">TimerFormActivity</string>
+    <string name="title_activity_comment">CommentActivity</string>
 </resources>

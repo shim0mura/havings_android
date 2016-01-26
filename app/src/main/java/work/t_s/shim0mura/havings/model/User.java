@@ -93,19 +93,6 @@ public class User {
             e.printStackTrace();
         }
 
-        /*
-        UserEntity user = new UserEntity();
-        user.setRegisterInfo(name, email, password);
-        ObjectMapper mapper = new ObjectMapper();
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(user);
-        }catch(JsonProcessingException e){
-            e.printStackTrace();
-        }
-        Log.d("sssss", json);
-        */
-
         // 基本的にapi通信はretrofit任せだけど
         // ログイン周りはX_ACCESS_TOKENヘッダなどが必要なかったり
         // リクエストとレスポンスのjson形式がdevise依存で自分で変更しにくくjacksonでの変換が面倒

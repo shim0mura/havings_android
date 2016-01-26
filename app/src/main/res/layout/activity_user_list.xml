@@ -17,6 +17,7 @@
 
         </ListView>
     </LinearLayout>
+
     <TextView
         android:id="@+id/no_user"
         android:layout_width="match_parent"

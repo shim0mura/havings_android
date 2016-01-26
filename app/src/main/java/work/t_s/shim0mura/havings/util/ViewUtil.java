@@ -16,6 +16,7 @@ import android.webkit.MimeTypeMap;
 import java.util.Calendar;
 import java.util.Date;
 
+import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.event.ToggleLoadingEvent;
 
 /**
@@ -43,6 +44,26 @@ public class ViewUtil {
         s.append(calendar.get(Calendar.MONTH) + 1).append('/')
                 .append(calendar.get(Calendar.DAY_OF_MONTH)).append(' ');
         return s.toString();
+    }
+
+    public static String secondsToEasyDateFormat(Activity activity, long seconds){
+        StringBuilder sb = new StringBuilder();
+
+        if(seconds < 0){
+            sb.append("0");
+            sb.append(activity.getString(R.string.prompt_minute));
+        }else if(seconds < 60 * 60 * 1000){
+            sb.append(String.format("%d", seconds / (60 * 1000)));
+            sb.append(activity.getString(R.string.prompt_minute));
+        }else if(seconds < 24 * 60 * 60 * 1000){
+            sb.append(String.format("%d", seconds / (60 * 60 * 1000)));
+            sb.append(activity.getString(R.string.prompt_hour));
+        }else{
+            sb.append(String.format("%d", seconds / (24 * 60 * 60 * 1000)));
+            sb.append(activity.getString(R.string.prompt_day));
+        }
+
+        return sb.toString();
     }
 
     public static int dpToPix(Context context, int dp){

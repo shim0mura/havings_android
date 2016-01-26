@@ -16,6 +16,8 @@
 
     <color name="unable">#b6b6b6</color>
 
+    <color name="send">#81D4FA</color>
+
     <color name="addImageButtonBackground">#212121</color>
 
     <color name="timerActionBackground">#ff5722</color>

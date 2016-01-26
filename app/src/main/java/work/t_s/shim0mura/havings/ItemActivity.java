@@ -466,6 +466,11 @@ public class ItemActivity extends AppCompatActivity {
         UserListActivity.startActivity(this, UserListPresenter.ITEM_FAVORITE_USER_LIST, item.id);
     }
 
+    @OnClick(R.id.comment_count_wrapper)
+    public void redirectToCommentList(){
+        CommentActivity.startActivity(this, item.id);
+    }
+
     @Subscribe
     public void applyGereralResult(ResultEntity resultEntity){
         Timber.d("get general result %s", resultEntity.resultType);

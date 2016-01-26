@@ -30,7 +30,6 @@ public class Timer {
     public static final String DUE_DATEFORMAT = "yyyy年MM月dd日(E) HH時mm分";
     public static final String DUE_DATEFORMAT_WITHOUT_YEAR = "MM月dd日(E) HH時mm分";
 
-
     public static final String IS_REPEATING = "IsRepeating";
     public static final String REPEAT_BY = "RepeatBy";
     public static final String MONTH_INTERVAL = "MonthInterval";
