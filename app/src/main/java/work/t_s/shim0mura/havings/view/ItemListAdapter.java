@@ -26,14 +26,14 @@ import work.t_s.shim0mura.havings.presenter.ItemPresenter;
  */
 public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
 
-    private LayoutInflater layoutInflater;
-    private int layoutResource;
-    private Context context;
-    private List<ItemEntity> itemList = new ArrayList<ItemEntity>();
-    private ItemEntity item;
-    private int lastItemId = 0;
-    private Boolean hasNextItemToLoad;
-    private Boolean isLoadingNextItem = false;
+    protected LayoutInflater layoutInflater;
+    protected int layoutResource;
+    protected Context context;
+    protected List<ItemEntity> itemList = new ArrayList<ItemEntity>();
+    protected ItemEntity item;
+    protected int lastItemId = 0;
+    protected Boolean hasNextItemToLoad;
+    protected Boolean isLoadingNextItem = false;
 
     public ItemListAdapter(Context c, int resource, ItemEntity i){
         super(c, resource);
@@ -66,8 +66,7 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
     }
 
     public void addItem(ItemEntity item){
-        Log.d("item", "added");
-        if(item.owningItems != null) {
+        if(item.owningItems != null && !item.owningItems.isEmpty()) {
             itemList.addAll(item.owningItems);
             lastItemId = item.owningItems.get(item.owningItems.size() - 1).id;
         }
@@ -127,7 +126,6 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
                 TextView tag = ItemPresenter.createTag(context, tagString, false);
                 holder.tags.addView(tag);
             }
-            Log.d("tags", item.tags.toString());
         }else if(item.tags != null && item.tags.size() == 0){
             holder.tags.removeAllViews();
         }
@@ -135,14 +133,14 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
         return convertView;
     }
 
-    class ViewHolder{
+    public static class ViewHolder {
 
-        CircleImageView thumbnail;
-        ImageView itemType;
-        TextView name;
-        TextView count;
-        TextView favoriteCount;
-        FlowLayout tags;
+        public CircleImageView thumbnail;
+        public ImageView itemType;
+        public TextView name;
+        public TextView count;
+        public TextView favoriteCount;
+        public FlowLayout tags;
 
     }
 }

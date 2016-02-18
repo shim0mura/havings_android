@@ -17,6 +17,8 @@ public class ItemImageEntity implements Serializable {
     public static int MAX_MEMO_SIZE = 100;
 
     public int id;
+    public int itemId;
+    public String itemName;
     public String url;
     public String imageData;
 
@@ -30,4 +32,6 @@ public class ItemImageEntity implements Serializable {
 
     public int imageFavoriteCount;
     public Boolean isFavorited;
+
+    public String ownerName;
 }

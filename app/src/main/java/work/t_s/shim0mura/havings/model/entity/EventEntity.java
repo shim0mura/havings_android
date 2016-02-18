@@ -17,7 +17,6 @@ public class EventEntity implements Serializable{
     public static final String EVENT_TYPE_ADD_IMAGE = "add_image";
     public static final String EVENT_TYPE_DUMP_ITEM = "dump";
 
-
     public int id;
     public String eventType;
     public Date date;

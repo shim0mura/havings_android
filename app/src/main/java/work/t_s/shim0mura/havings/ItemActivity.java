@@ -125,7 +125,7 @@ public class ItemActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int itemId = intent.getIntExtra(ITEM_ID, 0);
 
-        stickyScrollPresenter = new StickyScrollPresenter(this);
+        stickyScrollPresenter = new StickyScrollPresenter(this, StickyScrollPresenter.SCROLL_TYPE_ITEM);
         itemPresenter = new ItemPresenter(this);
 
         mImageView = findViewById(R.id.image);
@@ -259,8 +259,8 @@ public class ItemActivity extends AppCompatActivity {
         programFab3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ItemEditActivity.startActivity(act, item, item.isList);
-                ItemDeleteActivity.startActivity(act, item, item.isList);
+                ItemEditActivity.startActivity(act, item, item.isList);
+                //ItemDeleteActivity.startActivity(act, item, item.isList);
 
                 Timber.d(description.getText().toString());
                 ViewGroup.LayoutParams l = description.getLayoutParams();
@@ -571,6 +571,7 @@ public class ItemActivity extends AppCompatActivity {
                 ItemEntity addedItem = (ItemEntity)extras.getSerializable(CREATED_ITEM);
                 if(item.isList && addedItem.listId == item.id) {
                     pagerAdapter.unshiftItem(addedItem);
+                    pagerAdapter.notifyDataSetChanged();
                 }
 
             } else if (requestCode == ITEM_UPDATED_RESULTCODE) {

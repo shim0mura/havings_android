@@ -24,11 +24,13 @@ import com.bumptech.glide.Glide;
 import com.wefika.flowlayout.FlowLayout;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
+import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.view.LineChartView;
 import retrofit.Call;
 import retrofit.Callback;
@@ -45,6 +47,8 @@ import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.User;
+import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
+import work.t_s.shim0mura.havings.model.entity.EventEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
@@ -140,7 +144,7 @@ public class ItemPresenter {
                     ItemEntity item = response.body();
                     adapter.finishLoadNextItem();
                     footerView.setVisibility(View.GONE);
-                    adapter.addItem(item);
+                    adapter.addItem(item.itemImages);
                     adapter.notifyDataSetChanged();
 
                 } else if (response.code() == StatusCode.Unauthorized) {
@@ -331,6 +335,7 @@ public class ItemPresenter {
         private View loader;
 
         private ItemListAdapter itemListAdapter;
+        private ListView itemListView;
 
         public ItemPagerAdapter(Activity a, StickyScrollPresenter s, ItemPresenter ip, ItemEntity i){
             activity = a;
@@ -358,7 +363,7 @@ public class ItemPresenter {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
 
-            Log.d("customview", "position;" + position);
+            Timber.d("customview ,position %s", position);
             View v;
             if(position == 0) {
                 v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
@@ -472,26 +477,12 @@ public class ItemPresenter {
         public View attachGraph(ViewGroup container){
             View v = activity.getLayoutInflater().inflate(R.layout.item_graph_tab, container, false);
 
-            /*
-            final ProgressBar imageLoader = (ProgressBar)v.findViewById(R.id.image_loader);
-            final GridView gridView = (GridView)v.findViewById(R.id.item_image_tab);
-            final ItemImageListAdapter adapter = new ItemImageListAdapter(activity, R.layout.item_image_list, item);
-            gridView.setAdapter(adapter);
-            */
             final RelativeLayout graphView = (RelativeLayout)v.findViewById(R.id.item_graph_tab_wrapper);
-
-            graphView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("graph", "clicked");
-
-                }
-            });
 
             LineChartView lineChartView = (LineChartView)graphView.findViewById(R.id.item_graph);
 
             lineChartView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
-            GraphRenderer.renderSimpleGraph(lineChartView, item.countProperties);
+            GraphRenderer.renderSimpleGraph(lineChartView, new ArrayList<CountDataEntity>(item.countProperties));
             graphView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
 
             v.findViewById(R.id.navigate_to_detailgraph).setOnClickListener(new View.OnClickListener() {
@@ -500,6 +491,69 @@ public class ItemPresenter {
                     DetailGraphActivity.startActivity(activity, item);
                 }
             });
+
+            LinearLayout graphAct = (LinearLayout)v.findViewById(R.id.graph_activity);
+
+            int activityCount = 0;
+            for(int i = 0; i < item.countProperties.size(); i++){
+                CountDataEntity countDataEntity = item.countProperties.get(item.countProperties.size() - 1 - i);
+                View activityWrapper = activity.getLayoutInflater().inflate(R.layout.partial_recent_activity_wrapper, null);
+
+                TextView eventDate = (TextView)activityWrapper.findViewById(R.id.event_date);
+                eventDate.setText(ViewUtil.dateToString(countDataEntity.date, true));
+                TextView itemCount = (TextView)activityWrapper.findViewById(R.id.item_count);
+                itemCount.setText(String.valueOf(countDataEntity.count));
+                LinearLayout recentActivity = (LinearLayout)activityWrapper.findViewById(R.id.recent_activity);
+
+                if(countDataEntity.events != null && !countDataEntity.events.isEmpty()) {
+                    for (EventEntity eventEntity : countDataEntity.events) {
+                        if(eventEntity.item == null) {
+                            continue;
+                        }
+
+                        View activityItem = activity.getLayoutInflater().inflate(R.layout.partial_recent_activity_item, null);
+
+                        TextView eventTypeText = (TextView) activityItem.findViewById(R.id.event_type_text);
+                        ImageView eventType = (ImageView) activityItem.findViewById(R.id.event_type_icon);
+                        switch (eventEntity.eventType) {
+                            case EventEntity.EVENT_TYPE_ADD_ITEM:
+                                eventType.setImageResource(R.drawable.ic_add_black_18dp);
+                                eventTypeText.setText(eventEntity.item.name + activity.getString(R.string.event_type_add_something_to));
+                                break;
+                            case EventEntity.EVENT_TYPE_ADD_LIST:
+                                eventType.setImageResource(R.drawable.ic_add_black_18dp);
+                                eventTypeText.setText(eventEntity.item.name + activity.getString(R.string.event_type_add_something_to));
+                                break;
+                            case EventEntity.EVENT_TYPE_ADD_IMAGE:
+                                eventType.setImageResource(R.drawable.ic_image_black_18dp);
+                                eventTypeText.setText(eventEntity.item.name + activity.getString(R.string.event_type_add_image_to));
+                                break;
+                            case EventEntity.EVENT_TYPE_DUMP_ITEM:
+                                eventType.setImageResource(R.drawable.ic_delete_black_18dp);
+                                eventTypeText.setText(eventEntity.item.name + activity.getString(R.string.event_type_drop_something_to));
+                                break;
+                        }
+                        activityCount += 1;
+                        Timber.d("activicount %s", activityCount);
+                        if(activityCount > 3){
+                            break;
+                        }
+                        recentActivity.addView(activityItem);
+
+                    }
+
+
+                }
+
+                graphAct.addView(activityWrapper);
+                activityCount += 1;
+                Timber.d("activicount %s", activityCount);
+
+                if(activityCount > 3){
+                    break;
+                }
+
+            }
 
             int countSize = item.countProperties.size();
             TextView graphFrom = (TextView)v.findViewById(R.id.item_graph_date_from);

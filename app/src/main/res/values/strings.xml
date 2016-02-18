@@ -27,6 +27,8 @@
 
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
 
+    <string name="prompt_no_notification">お知らせはありません</string>
+
     <string name="prefix_user_by">by </string>
 
     <string name="action_share_item">共有する</string>
@@ -34,22 +36,33 @@
     <string name="already_favorite_item">いいね!済み</string>
 
     <string name="item_list">モノリスト</string>
+    <string name="prompt_no_item">アイテムはありません</string>
     <string name="item_images">画像</string>
+    <string name="prompt_no_image">画像はありません</string>
     <string name="item_graph">グラフ</string>
     <string name="item_count_prefix">モノの数: </string>
+    <string name="favorite_item_list">いいね!したモノ</string>
+    <string name="favorite_image_list">いいね!した画像</string>
 
-    <string name="item_graph_date_range_prefix">記録期間</string>
+    <string name="item_graph_date_range_prefix">記録期間 :</string>
     <string name="item_graph_date_range_from_to">から</string>
     <string name="navigate_to_detailgraph">グラフを詳しく見る</string>
+    <string name="prompt_recent_activity">最近のアクティビティ</string>
 
     <string name="postfix_prompt_of_item_image">の画像</string>
     <string name="prefix_added_at">追加日: </string>
 
+    <string name="owning_item">のアイテム</string>
+    <string name="owning_list">のリスト</string>
+
     <string name="action_post_item">アイテムを追加する</string>
-    <string name="event_type_add_item">アイテムの追加</string>
-    <string name="event_type_add_list">リストの追加</string>
-    <string name="event_type_add_image">画像の追加</string>
-    <string name="event_type_drop_item">アイテムの手放し</string>
+    <string name="event_type_add_item">アイテムを追加しました</string>
+    <string name="event_type_add_list">リストを追加しました</string>
+    <string name="event_type_add_something_to">を追加しました</string>
+    <string name="event_type_add_image">画像を追加しました</string>
+    <string name="event_type_add_image_to">に画像を追加しました</string>
+    <string name="event_type_drop_item">アイテムを手放しました</string>
+    <string name="event_type_drop_something_to">を手放しました</string>
 
     <string name="prompt_list_name">リスト名（必須）</string>
     <string name="prompt_item_name">アイテム名（必須）</string>
@@ -174,6 +187,8 @@
     <string name="prompt_repeat_by_week_saturday">土曜日</string>
 
     <string name="prompt_no_favorited_user">いいね!をしているユーザーはいません。</string>
+    <string name="prompt_no_following_user">フォローしているユーザーはいません。</string>
+    <string name="prompt_no_followed_user">このユーザーをフォローしている人はいません。</string>
 
     <string name="prompt_no_comment">コメントはありません。\nこのアイテムへの最初のコメントをしてみませんか?</string>
     <string name="prompt_to_delete_comment">コメントの削除</string>
@@ -181,6 +196,27 @@
     <string name="error_to_post_comment">コメントの投稿に失敗しました。しばらく時間をおいてから再度お試しください。</string>
     <string name="error_to_delete_comment">コメントの削除に失敗しました。しばらく時間をおいてから再度お試しください。</string>
     <string name="error_to_post_empty_comment">空のコメントは投稿できません。</string>
+
+    <string name="prompt_following">フォロー</string>
+    <string name="prompt_follower">フォロワー</string>
+    <string name="prompt_dump_count">手放した数</string>
+    <string name="prompt_favorite_count">いいね!</string>
+    <string name="prompt_favorite_list">いいね! 一覧</string>
+    <string name="prompt_dump_list">手放したモノ一覧</string>
+    <string name="prompt_follows_onesidely">あなたをフォローしています</string>
+
+    <string name="action_follow">フォローする</string>
+    <string name="action_already_follow">フォロー中</string>
+    <string name="action_follow_short">フォロー</string>
+    <string name="action_unfollow">フォロー解除</string>
+    <string name="prompt_action_unfollow">さんのフォローを解除しますか？</string>
+
+    <string name="prefix_item_having">having</string>
+
+    <string name="prompt_show_nested_item_list">階層を表示</string>
+    <string name="prompt_show_item_list">一覧を表示</string>
+
+    <string name="honorific">さん</string>
 
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>
@@ -202,7 +238,7 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="lipsum_short">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam cursus sem et ante rhoncus pharetra. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Curabitur lacinia mattis quam, non laoreet felis vestibulum ac. Curabitur pharetra vel est quis cursus. Etiam faucibus turpis in nunc semper sollicitudin. Nam fermentum commodo ligula. Aliquam a tellus sollicitudin, ultricies est ac, porta ante. Nam aliquet mi nulla, ut laoreet nunc vestibulum ut. Quisque non purus urna. Aliquam sed porta lectus. In a ipsum varius, imperdiet magna in, hendrerit arcu. Donec porta, nulla non viverra sollicitudin, nisl mi suscipit nisl, nec pellentesque est mi ut neque. Duis viverra laoreet nibh at malesuada.</string>
     <string name="title_activity_test">TestActivity</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_test_graph">TestGraphActivity</string>
     <string name="title_activity_image_detail">ImageDetailActivity</string>
@@ -214,4 +250,8 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="title_activity_item_delete">ItemDeleteActivity</string>
     <string name="title_activity_timer_form">TimerFormActivity</string>
     <string name="title_activity_comment">CommentActivity</string>
+    <string name="title_activity_user">UserActivity</string>
+    <string name="title_activity_user_favorites">UserFavoritesActivity</string>
+    <string name="title_activity_dump_list">DumpListActivity</string>
+    <string name="title_activity_notification">NotificationActivity</string>
 </resources>

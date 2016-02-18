@@ -23,8 +23,12 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 import work.t_s.shim0mura.havings.model.entity.CommentEntity;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
+import work.t_s.shim0mura.havings.model.entity.FavoriteItemImageListEntity;
+import work.t_s.shim0mura.havings.model.entity.FavoriteItemListEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
+import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TagMigrationEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
@@ -50,6 +54,56 @@ public interface ApiService {
 
     @GET("/user/{user_id}")
     Call<UserEntity> getUser(
+            @Path("user_id") int user_id
+    );
+
+    @GET("/user/{user_id}/item_list")
+    Call<ItemEntity> getUserItemList(
+            @Path("user_id") int user_id,
+            @Query("from") int offset
+    );
+
+    @GET("/user/{user_id}/item_images")
+    Call<ItemImageListEntity> getUserItemImages(
+            @Path("user_id") int user_id,
+            @Query("from") int offset
+    );
+
+    @GET("/user/{user_id}/favorite_items")
+    Call<FavoriteItemListEntity> getFavoriteItemList(
+            @Path("user_id") int user_id,
+            @Query("from") int offset
+    );
+
+    @GET("/user/{user_id}/favorite_images")
+    Call<FavoriteItemImageListEntity> getFavoriteItemImages(
+            @Path("user_id") int user_id,
+            @Query("from") int offset
+    );
+
+    @GET("/user/{user_id}/following")
+    Call<List<UserEntity>> getFollowingUsers(
+            @Path("user_id") int user_id
+    );
+
+    @GET("/user/{user_id}/followers")
+    Call<List<UserEntity>> getFollowedUsers(
+            @Path("user_id") int user_id
+    );
+
+    @GET("/user/{user_id}/dump_items")
+    Call<ItemEntity> getDumpItemList(
+            @Path("user_id") int user_id,
+            @Query("from") int offset
+    );
+
+    @POST("/user/{user_id}/follow")
+    Call<ResultEntity> followUser(
+            @Path("user_id") int user_id
+    );
+
+    @DELETE("/user/{user_id}/follow")
+    Call<ResultEntity> unfollowUser(
             @Path("user_id") int user_id
     );
 
@@ -192,7 +246,14 @@ public interface ApiService {
             @Path("comment_id") int comment_id
     );
 
+    @GET("/notification/")
+    Call<List<NotificationEntity>> getNotifications();
 
+    @GET("/notification/unread_count/")
+    Call<List<NotificationEntity>> getNotificationCount();
+
+    @PUT("/notification/read")
+    Call<ResultEntity> readNotifications();
 
     @GET("/tags/default_tag_migration/")
     Call<List<TagMigrationEntity>> getDefaultTag();

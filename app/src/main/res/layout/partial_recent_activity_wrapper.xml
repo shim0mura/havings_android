@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/date_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding_between_grid"
+        android:paddingBottom="@dimen/padding_between_grid"
+        android:background="@color/dateHeader">
+        <TextView
+            android:id="@+id/event_date"
+            android:layout_width="100dp"
+            android:paddingLeft="@dimen/padding_between_content"
+            android:paddingStart="@dimen/padding_between_content"
+
+            android:layout_height="wrap_content"
+            android:text="2016/01/01"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/item_count_prefix"/>
+        <TextView
+            android:id="@+id/item_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/recent_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginRight="@dimen/app_basic_padding"
+        android:layout_marginEnd="@dimen/app_basic_padding"
+        >
+    </LinearLayout>
+
+
+</LinearLayout>

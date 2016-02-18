@@ -27,6 +27,7 @@ import work.t_s.shim0mura.havings.UserListActivity;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 import work.t_s.shim0mura.havings.util.ViewUtil;
@@ -35,16 +36,17 @@ import work.t_s.shim0mura.havings.util.ViewUtil;
  * Created by shim0mura on 2015/12/10.
  */
 public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
-    private LayoutInflater layoutInflater;
-    private int layoutResource;
-    private Context context;
-    private List<ItemImageEntity> itemImageList = new ArrayList<ItemImageEntity>();
-    private ItemEntity item;
-    private ItemPresenter itemPresenter;
-    private int lastItemImageId = 0;
-    private Boolean hasNextItemToLoad;
-    private Boolean isLoadingNextItem = false;
-    private ItemImageListAdapter self;
+
+    protected LayoutInflater layoutInflater;
+    protected int layoutResource;
+    protected Context context;
+    protected List<ItemImageEntity> itemImageList = new ArrayList<ItemImageEntity>();
+    protected ItemEntity item;
+    protected ItemPresenter itemPresenter;
+    protected int lastItemImageId = 0;
+    protected Boolean hasNextItemToLoad;
+    protected Boolean isLoadingNextItem = false;
+    protected ItemImageListAdapter self;
 
     public ItemImageListAdapter(Context c, int resource, ItemEntity i, ItemPresenter p){
         super(c, resource);
@@ -54,7 +56,7 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
         item = i;
         itemPresenter = p;
         self = this;
-        addItem(i);
+        addItem(i.itemImages);
     }
 
     public Boolean hasNextItem(){
@@ -77,12 +79,15 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
         return isLoadingNextItem;
     }
 
-    public void addItem(ItemEntity item){
-        if(item.images != null) {
-            itemImageList.addAll(item.images);
-            lastItemImageId = item.images.get(item.images.size() - 1).id;
+    public void addItem(ItemImageListEntity itemImageListEntity){
+        if(itemImageListEntity != null && !itemImageListEntity.images.isEmpty()) {
+            itemImageList.addAll(itemImageListEntity.images);
+            lastItemImageId = itemImageListEntity.images.get(itemImageListEntity.images.size() - 1).id;
+            hasNextItemToLoad = itemImageListEntity.hasNextImage;
+        }else{
+            lastItemImageId = 0;
+            hasNextItemToLoad = false;
         }
-        hasNextItemToLoad = item.hasNextImage;
     }
 
     public void changeImageFavoriteState(int imageId, Boolean isFavorited){
@@ -161,7 +166,7 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
         return convertView;
     }
 
-    class ViewHolder{
+    public static class ViewHolder {
 
         ImageView image;
         TextView imageDate;

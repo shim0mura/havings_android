@@ -56,6 +56,12 @@ public class UserListPresenter {
             case ITEM_IMAGE_FAVORITE_USER_LIST:
                 call = service.getItemImageFavoritedUsers(relatedId);
                 break;
+            case FOLLOWING_USER_LIST:
+                call = service.getFollowingUsers(relatedId);
+                break;
+            case FOLLOWED_USER_LIST:
+                call = service.getFollowedUsers(relatedId);
+                break;
             default:
                 Timber.w("Unexpected listTypeId specified to get users... listTypeId: %s", listTypeId);
                 return;

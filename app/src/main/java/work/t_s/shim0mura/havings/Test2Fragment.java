@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -19,13 +20,20 @@ import java.util.ArrayList;
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 
 /**
  * Created by shim0mura on 2015/11/26.
  */
 public class Test2Fragment extends Fragment {
 
+    private StickyScrollPresenter stickyScrollPresenter;
+
     public Test2Fragment() {
+    }
+
+    public void setScroll(StickyScrollPresenter s) {
+        stickyScrollPresenter = s;
     }
 
     public static Test2Fragment newInstance(int page) {
@@ -41,13 +49,16 @@ public class Test2Fragment extends Fragment {
         int page = getArguments().getInt("page", 0);
         View view = inflater.inflate(R.layout.category_list_tab, container, false);
         if(page == 1) {
-            final ExpandableStickyListHeadersListView listView = (ExpandableStickyListHeadersListView)view.findViewById(R.id.list);
+            //final ExpandableStickyListHeadersListView listView = (ExpandableStickyListHeadersListView)view.findViewById(R.id.list);
+
+            final StickyListHeadersListView listView = (StickyListHeadersListView)view.findViewById(R.id.list);
             ArrayList<String> items = new ArrayList<String>();
             for (int i = 1; i <= 100; i++) {
                 items.add("Item " + i);
             }
             //listView.setAdapter(new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, items));
             listView.setAdapter(new MyAdapter(getContext()));
+            /*
             listView.setOnHeaderClickListener(new StickyListHeadersListView.OnHeaderClickListener() {
                 @Override
                 public void onHeaderClick(StickyListHeadersListView l, View header, int itemPosition, long headerId, boolean currentlySticky) {
@@ -58,6 +69,7 @@ public class Test2Fragment extends Fragment {
                     }
                 }
             });
+            */
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                 @Override
@@ -93,7 +105,9 @@ public class Test2Fragment extends Fragment {
             });
             */
 
+            listView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
 
+            /*
             listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
                 @Override
@@ -108,6 +122,7 @@ public class Test2Fragment extends Fragment {
                     //view.setEnabled(false);
                 }
             });
+            */
 
         }else{
             //((TextView) view.findViewById(R.id.page_text)).setText("Page " + page);
@@ -153,7 +168,7 @@ public class Test2Fragment extends Fragment {
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.test_list_item, parent, false);
-                holder.text = (TextView) convertView.findViewById(R.id.text);
+                holder.text = (TextView) convertView.findViewById(R.id.item_text);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -171,6 +186,8 @@ public class Test2Fragment extends Fragment {
                 holder = new HeaderViewHolder();
                 convertView = inflater.inflate(R.layout.stickylistview_header, parent, false);
                 holder.text = (TextView) convertView.findViewById(R.id.header);
+                convertView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+
                 convertView.setTag(holder);
             } else {
                 holder = (HeaderViewHolder) convertView.getTag();

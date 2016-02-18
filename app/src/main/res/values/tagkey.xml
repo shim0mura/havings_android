@@ -17,4 +17,8 @@
 
     <item name="FAB_MENU_TYPE" type="id" />
 
+    <item name="NOTIFICATION_TYPE" type="id" />
+    <item name="NOTIFICATION_RELATED_ID" type="id" />
+    <item name="NOTIFICATION_EXIST" type="id" />
+
 </resources>

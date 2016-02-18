@@ -35,6 +35,8 @@ public class ItemEntity implements Serializable {
     public int owningItemCount;
     public int imageCount;
 
+    public int nest;
+
     public UserEntity owner;
 
     // tag_idをもったtagEntityに置き換える
@@ -43,8 +45,9 @@ public class ItemEntity implements Serializable {
     // POST,PUTするとき用 タグをひとまとめにしたもの
     public String tagList;
 
-    public List<ItemImageEntity> images;
-    public Boolean hasNextImage;
+    //public List<ItemImageEntity> images;
+    //public Boolean hasNextImage;
+    public ItemImageListEntity itemImages;
 
     // 画像追加時のみに使用するやつ
     public List<ItemImageEntity> imageDataForPost;

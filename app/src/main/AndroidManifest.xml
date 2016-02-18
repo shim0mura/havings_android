@@ -30,8 +30,7 @@
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SignInByOauthActivity"
             android:label="@string/title_activity_sign_in_by_oauth"
@@ -48,73 +47,77 @@
                     android:scheme="tswork_havings" />
             </intent-filter>
         </activity>
-        <activity android:name=".SessionBaseActivity" >
-        </activity>
+        <activity android:name=".SessionBaseActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_sign_in"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemActivity"
             android:label="@string/title_activity_item"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TestActivity"
             android:label="@string/title_activity_test"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DetailGraphActivity"
             android:label="@string/title_activity_test_graph"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ImageDetailActivity"
             android:label="@string/title_activity_image_detail"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemFormActivity"
             android:label="@string/title_activity_item_form"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ListNameSelectActivity"
             android:label="@string/title_activity_list_select"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemEditActivity"
             android:label="@string/title_activity_item_edit"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemImageEditActivity"
             android:label="@string/title_activity_item_image_edit"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemDumpActivity"
             android:label="@string/title_activity_item_dump"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemDeleteActivity"
             android:label="@string/title_activity_item_delete"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TimerFormActivity"
             android:label="@string/title_activity_timer_form"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
-        <activity android:name=".UserListActivity" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".UserListActivity" />
         <activity
             android:name=".CommentActivity"
             android:label="@string/title_activity_comment"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UserActivity"
+            android:label="@string/title_activity_user"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UserFavoritesActivity"
+            android:label="@string/title_activity_user_favorites"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".DumpListActivity"
+            android:label="@string/title_activity_dump_list"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".NotificationActivity"
+            android:label="@string/title_activity_notification"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>

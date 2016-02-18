@@ -123,6 +123,12 @@ public class UserListActivity extends AppCompatActivity {
                 case UserListPresenter.ITEM_FAVORITE_USER_LIST:
                     noUser.setText(getText(R.string.prompt_no_favorited_user));
                     break;
+                case UserListPresenter.FOLLOWING_USER_LIST:
+                    noUser.setText(getText(R.string.prompt_no_following_user));
+                    break;
+                case UserListPresenter.FOLLOWED_USER_LIST:
+                    noUser.setText(getText(R.string.prompt_no_followed_user));
+                    break;
             }
             event = new ToggleLoadingEvent(noUser, loadingProgress);
         }

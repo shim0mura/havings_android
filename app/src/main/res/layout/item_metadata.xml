@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="having"
+            android:text="@string/prefix_item_having"
             />
         <TextView
             android:id="@+id/item_count"
@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="items"
+            android:text="@string/unit_item_count_en"
             android:layout_toRightOf="@id/item_count"
             android:layout_alignBaseline="@id/item_count"
             android:paddingLeft="5dp"

@@ -1,11 +1,15 @@
 package work.t_s.shim0mura.havings;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -25,6 +30,8 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.listener.ViewportChangeListener;
 import lecho.lib.hellocharts.model.Axis;
@@ -43,12 +50,11 @@ import work.t_s.shim0mura.havings.model.entity.EventEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.presenter.DetailGraphPresenter;
 import work.t_s.shim0mura.havings.util.ViewUtil;
+import work.t_s.shim0mura.havings.view.EventListByDayAdapter;
 import work.t_s.shim0mura.havings.view.EventListInPopupAdapter;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 
 public class DetailGraphActivity extends AppCompatActivity {
-
-    private static final String TAG = "detailGraphActivity:";
 
     private static final String SERIALIZED_ITEM = "SerializedItem";
 
@@ -56,10 +62,12 @@ public class DetailGraphActivity extends AppCompatActivity {
     private ItemEntity item;
     private List<CountDataEntity> countData;
     private LineChartView chart;
+    private EventListByDayAdapter adapter;
+
     private PreviewLineChartView previewChart;
     private View popup;
     private ListView eventListView;
-    private EventListInPopupAdapter adapter;
+    //private EventListInPopupAdapter adapter;
     private FrameLayout popupWrapper;
 
     private int chartHeight;
@@ -73,6 +81,7 @@ public class DetailGraphActivity extends AppCompatActivity {
     private Boolean valueSelected = false;
     private int selectedPointIndex = 0;
 
+    @Bind(R.id.event_history) ListView eventHistory;
 
     public static void startActivity(Context context, ItemEntity item){
         Intent intent = new Intent(context, DetailGraphActivity.class);
@@ -97,12 +106,15 @@ public class DetailGraphActivity extends AppCompatActivity {
         setTitle(item.name + "のグラフ");
 
         detailGraphPresenter = new DetailGraphPresenter(this);
-        detailGraphPresenter.getShowingEvent(item.id);
+        //detailGraphPresenter.getShowingEvent(item.id);
 
-        popupWrapper = (FrameLayout)findViewById(R.id.popup);
+        ButterKnife.bind(this);
+
+        //popupWrapper = (FrameLayout)findViewById(R.id.popup);
         chart = (LineChartView)findViewById(R.id.chart);
-        previewChart = (PreviewLineChartView)findViewById(R.id.chart_preview);
+        //previewChart = (PreviewLineChartView)findViewById(R.id.chart_preview);
 
+        /*
         popup = getLayoutInflater().inflate(R.layout.test_popup, popupWrapper, false);
 
         eventListView = (ListView)popup.findViewById(R.id.event_list);
@@ -135,7 +147,9 @@ public class DetailGraphActivity extends AppCompatActivity {
                 }
             }
         });
+        */
 
+        /*
         chart.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -149,22 +163,27 @@ public class DetailGraphActivity extends AppCompatActivity {
                 return r;
             }
         });
+        */
+        GraphRenderer.renderSimpleGraph(chart, item.countProperties);
+
+        adapter = new EventListByDayAdapter(this, R.layout.partial_recent_activity_wrapper, item.countProperties);
+        eventHistory.setAdapter(adapter);
+        Timber.d("size %s", item.countProperties.size());
 
         chart.setOnValueTouchListener(new LineChartOnValueSelectListener() {
             @Override
-            public void onValueSelected(int lineIndex, int pointIndex, PointValue pointValue) {
-                Log.d("test", pointValue.toString());
-                Log.d("event position", "i:"+lineIndex+", i1:"+pointIndex);
-                selectedPointIndex = pointIndex;
-                valueSelected = true;
+            public void onValueSelected(int lineIndex, final int pointIndex, PointValue pointValue) {
+                Timber.d("point %s, position %s, size %s", pointIndex, item.countProperties.size() - pointIndex, item.countProperties.size());
+                //eventHistory.setSelection(item.countProperties.size() - pointIndex - 1);
+                eventHistory.smoothScrollToPosition(item.countProperties.size() - pointIndex - 1);
             }
 
             @Override
             public void onValueDeselected() {
-                Log.d("test deselect", "sss");
             }
         });
 
+        /*
         chart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,7 +236,9 @@ public class DetailGraphActivity extends AppCompatActivity {
 
             }
         });
+        */
 
+        /*
         chart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -238,21 +259,21 @@ public class DetailGraphActivity extends AppCompatActivity {
                 hidePopup();
             }
         });
+        */
 
         // prepare preview data, is better to use separate deep copy for preview chart.
         // Set color to grey to make preview area more visible.
-        GraphRenderer.renderSimpleGraph(chart, item.countProperties);
-        GraphRenderer.renderSimpleGraph(previewChart, item.countProperties);
+        //GraphRenderer.renderSimpleGraph(previewChart, item.countProperties);
 
-        chart.setZoomEnabled(false);
-        chart.setScrollEnabled(false);
+        chart.setZoomEnabled(true);
+        chart.setScrollEnabled(true);
 
-        previewChart.setViewportChangeListener(new ViewportListener());
+        //previewChart.setViewportChangeListener(new ViewportListener());
 
         Viewport tempViewport = new Viewport(chart.getMaximumViewport());
         float dx = tempViewport.width() / 4;
         tempViewport.inset(dx, 0);
-        previewChart.setCurrentViewport(tempViewport);
+        //previewChart.setCurrentViewport(tempViewport);
 
     }
 

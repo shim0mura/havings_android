@@ -7,12 +7,21 @@
 
     <color name="primaryText">#212121</color>
     <color name="secondaryText">#727272</color>
+
+    <color name="primaryTextWhite">#ffffff</color>
+    <color name="secondaryTextWhite">#bcbcbc</color>
+
     <color name="divider">#b6b6b6</color>
+
+    <color name="dateHeader">#E0E0E0</color>
 
     <color name="tagColor">#77ff0000</color>
     <color name="favorite">#FF4081</color>
+    <color name="following">#42A5F5</color>
 
     <color name="alert">#FF5252</color>
+
+    <color name="unreadNotification">#C8E6C9</color>
 
     <color name="unable">#b6b6b6</color>
 
@@ -25,6 +34,7 @@
     <color name="timerActionDone">#4FC3F7</color>
     <color name="timerActionDoLater">#FFB74D</color>
     <color name="timerActionClose">#9CCC65</color>
+
 
 
 </resources>

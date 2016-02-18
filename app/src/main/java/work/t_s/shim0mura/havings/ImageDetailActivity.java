@@ -42,13 +42,16 @@ import work.t_s.shim0mura.havings.util.ViewUtil;
 public class ImageDetailActivity extends AppCompatActivity {
 
     private static final String SERIALIZED_ITEM = "SerializedItem";
+    private static final String SERIALIZED_ITEM_ID = "SerializedItemId";
     private static final String SERIALIZED_ITEM_IMAGE = "SerializedItemImage";
     private static final String SERIALIZED_ITEM_IMAGE_ID = "SerializedItemImageId";
 
+    private int itemId;
     private ItemEntity item;
     private ItemImageEntity itemImageEntity;
     private ItemPresenter itemPresenter;
 
+    @Bind(R.id.item_name) TextView itemName;
     @Bind(R.id.image_date) TextView imageDate;
     @Bind(R.id.detail_image) ImageView detailImage;
     @Bind(R.id.image_memo) TextView imageMemo;
@@ -57,7 +60,7 @@ public class ImageDetailActivity extends AppCompatActivity {
 
 
     public static void startActivity(Context context, ItemEntity item, ItemImageEntity itemImage){
-        Intent intent = new Intent(context, ImageDetailActivity.class);
+        Intent intent = new Intent(context, new Object() {}.getClass().getEnclosingClass());
         intent.putExtra(SERIALIZED_ITEM, item);
         intent.putExtra(SERIALIZED_ITEM_IMAGE, itemImage);
 
@@ -67,6 +70,13 @@ public class ImageDetailActivity extends AppCompatActivity {
     public static void startActivity(Context context, ItemEntity item, int itemImageId){
         Intent intent = new Intent(context, ImageDetailActivity.class);
         intent.putExtra(SERIALIZED_ITEM, item);
+        intent.putExtra(SERIALIZED_ITEM_IMAGE_ID, itemImageId);
+        context.startActivity(intent);
+    }
+
+    public static void startActivity(Context context, int itemId, int itemImageId){
+        Intent intent = new Intent(context, ImageDetailActivity.class);
+        intent.putExtra(SERIALIZED_ITEM_ID, itemId);
         intent.putExtra(SERIALIZED_ITEM_IMAGE_ID, itemImageId);
         context.startActivity(intent);
     }
@@ -85,16 +95,22 @@ public class ImageDetailActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        setTitle(item.name + getString(R.string.postfix_prompt_of_item_image));
+        setTitle(null);
 
         int itemImageId = extras.getInt(SERIALIZED_ITEM_IMAGE_ID, 0);
+
         if(itemImageId == 0) {
             itemImageEntity = (ItemImageEntity)extras.getSerializable(SERIALIZED_ITEM_IMAGE);
             renderImages();
-        }else{
+        }else if(item != null){
             itemPresenter.getItemImage(item.id, itemImageId);
-        }
+        }else {
+            itemId = extras.getInt(SERIALIZED_ITEM_ID, 0);
+            if(itemId != 0) {
+                itemPresenter.getItemImage(itemId, itemImageId);
+            }
 
+        }
     }
 
     @Override
@@ -118,6 +134,21 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void renderImages(){
+        String title;
+        if(item != null) {
+            title = item.name + getString(R.string.postfix_prompt_of_item_image);
+        }else if(itemImageEntity.itemName != null){
+            title = itemImageEntity.itemName + getString(R.string.postfix_prompt_of_item_image);
+        }else {
+            title = null;
+        }
+        setTitle(title);
+
+        if(itemId != 0 && itemImageEntity.itemName != null){
+            itemName.setVisibility(View.VISIBLE);
+            itemName.setText(itemImageEntity.itemName);
+        }
+
         imageDate.setText(ViewUtil.dateToString(itemImageEntity.addedDate, true));
         imageFavoriteCount.setText(String.valueOf(itemImageEntity.imageFavoriteCount));
         if(itemImageEntity.memo.isEmpty()){
@@ -158,6 +189,12 @@ public class ImageDetailActivity extends AppCompatActivity {
     @OnClick(R.id.favorite_count_wrapper)
     public void redirectToFavoritedUserList(){
         UserListActivity.startActivity(this, UserListPresenter.ITEM_IMAGE_FAVORITE_USER_LIST, itemImageEntity.id);
+    }
+
+    @OnClick(R.id.item_name)
+    public void redirectToItem(){
+        int id = (itemId != 0 ? itemId : itemImageEntity.itemId);
+        ItemActivity.startActivity(this, id);
     }
 
     @Subscribe

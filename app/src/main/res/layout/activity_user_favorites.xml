@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fitsSystemWindows="true"
+    tools:context="work.t_s.shim0mura.havings.UserFavoritesActivity">
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/frame_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:visibility="visible"
+        >
+
+        <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <View
+                    android:id="@+id/scroll_gap"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:paddingBottom="@dimen/app_basic_padding"
+                    android:id="@+id/desc">
+
+                    <RelativeLayout
+                        android:id="@+id/image_wrapper"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/flexible_space_height">
+
+                        <ImageView
+                            android:id="@+id/image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:background="@color/colorPrimaryDark"
+                            />
+                        <View
+                            android:id="@+id/overlay"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:padding="@dimen/app_basic_padding"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/page_breadcrumb"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/app_basic_padding"
+                                android:textSize="16dp"
+                                android:textColor="#dddddd"/>
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical">
+                                <ImageView
+                                    android:id="@+id/page_icon"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_alignTop="@+id/page_title"
+                                    android:layout_alignBottom="@+id/page_title"
+                                    android:src="@drawable/ic_favorite_white_36dp"/>
+                                <TextView
+                                    android:id="@+id/page_title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_toRightOf="@id/page_icon"
+                                    android:text="@string/prompt_favorite_list"
+                                    android:textSize="30dp"
+                                    android:textColor="#ffffff"/>
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </FrameLayout>
+
+        </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tab_wrapper"
+            >
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabTextAppearance="@style/MyCustomTextAppearance"
+                />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="300dp"
+                android:layout_below="@id/tabs"
+                />
+
+        </RelativeLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar"
+            />
+
+    </FrameLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

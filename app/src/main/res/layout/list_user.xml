@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,10 +18,13 @@
         app:civ_border_color="@color/divider"
         />
     <LinearLayout
+        android:id="@+id/user_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingLeft="16dp"
+        android:paddingTop="@dimen/app_basic_padding"
+        android:paddingLeft="@dimen/app_basic_padding"
+        android:layout_toRightOf="@id/user_thumbnail"
+        android:layout_toLeftOf="@+id/following_state"
         android:orientation="vertical">
 
         <TextView
@@ -65,5 +68,34 @@
             />
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/following_state"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/user_info"
+        android:layout_alignBottom="@id/user_info"
+        android:layout_marginTop="@dimen/app_basic_padding"
+        android:layout_marginBottom="@dimen/app_basic_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="visible">
+        <Button
+            android:id="@+id/follow_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_person_add_black_18dp"
+            android:drawableStart="@drawable/ic_person_add_black_18dp"
+            android:text="@string/action_follow_short"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/unfollow_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_already_follow"
+            android:textColor="@color/primaryTextWhite"
+            android:background="@color/following" />
+    </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

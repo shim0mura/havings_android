@@ -15,6 +15,11 @@ public class GeneralResult {
 
     public static final int RESULT_GET_USERS = 5000;
 
+    public static final int RESULT_FOLLOW_USER = 6000;
+    public static final int RESULT_UNFOLLOW_USER = 6100;
+
+    public static final int RESULT_READ_NOTIFICATIONS = 6500;
+
     public static final int RESULT_GET_ITEM_IMAGE = 8000;
 
 

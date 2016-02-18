@@ -125,7 +125,9 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
             showItemNameInputView();
             listNamePrompt.setText(getText(R.string.prompt_item_name));
             itemName.setHint(R.string.hint_to_item_name);
-            addImagePrompt.setText(getText(R.string.prompt_optional_image));
+            if(addImagePrompt != null) {
+                addImagePrompt.setText(getText(R.string.prompt_optional_image));
+            }
             description.setHint(R.string.hint_to_description_of_item);
         }
     }
@@ -671,13 +673,13 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     }
 
     protected void addExistPicture(){
-        if(item.images.size() < 1){
+        if(item.itemImages.images.size() < 1){
             return;
         }
 
         existImageContainer.removeViewAt(0);
 
-        for(ItemImageEntity imageEntity : item.images){
+        for(ItemImageEntity imageEntity : item.itemImages.images){
             View pictureView = getLayoutInflater().inflate(R.layout.partial_added_image_in_form, existImageContainer, false);
             ImageView image = (ImageView) pictureView.findViewById(R.id.added_image);
             String imageUrl = ApiService.BASE_URL + imageEntity.url;

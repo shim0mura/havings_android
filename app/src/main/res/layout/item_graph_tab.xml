@@ -50,22 +50,48 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/item_graph_wrapper"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/to_detail_graph"
-        android:layout_below="@id/graph_date_range"
-        android:paddingRight="@dimen/padding_between_content"
-        android:paddingLeft="@dimen/padding_between_content"
+        android:layout_below="@id/graph_date_range">
 
-        >
-        <lecho.lib.hellocharts.view.LineChartView
-            android:id="@+id/item_graph"
+
+        <LinearLayout
+            android:id="@+id/graph_activity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:paddingTop="@dimen/app_basic_padding"
+            android:paddingBottom="@dimen/padding_between_content"
+            android:background="@drawable/border_top"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/padding_between_content"
+                android:paddingStart="@dimen/padding_between_content"
+                android:paddingBottom="@dimen/padding_between_content"
+                android:text="@string/prompt_recent_activity"/>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/item_graph_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            />
-    </FrameLayout>
+            android:layout_above="@id/graph_activity"
+            android:paddingRight="@dimen/padding_between_content"
+            android:paddingLeft="@dimen/padding_between_content"
+
+            >
+            <lecho.lib.hellocharts.view.LineChartView
+                android:id="@+id/item_graph"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </FrameLayout>
+    </RelativeLayout>
+
 
 
 

@@ -27,6 +27,18 @@ import work.t_s.shim0mura.havings.model.di.DaggerApiComponent;
 public class User {
     @Inject Api okhttpClient;
 
+    public static final int RELATION_NOTHING = 0;
+    public static final int RELATION_FOLLOWED = 1;
+    public static final int RELATION_FRIEND = 2;
+    public static final int RELATION_HIMSELF = 3;
+
+    public static final String NOTIFICATION_TYPE_TIMER = "timer";
+    public static final String NOTIFICATION_TYPE_FAVORITE = "favorite";
+    public static final String NOTIFICATION_TYPE_IMAGE_FAVORITE = "image_favorite";
+    public static final String NOTIFICATION_TYPE_COMMENT = "comment";
+    public static final String NOTIFICATION_TYPE_FOLLOW = "follow";
+
+
     private static User user;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+");

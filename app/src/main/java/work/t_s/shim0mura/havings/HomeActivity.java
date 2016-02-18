@@ -1,8 +1,10 @@
 package work.t_s.shim0mura.havings;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,7 +20,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,9 +36,12 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
+import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.DefaultTag;
 import work.t_s.shim0mura.havings.model.StatusCode;
+import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
+import work.t_s.shim0mura.havings.presenter.UserPresenter;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -50,6 +60,9 @@ public class HomeActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    private UserPresenter userPresenter;
+    private View notificationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +70,41 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        /*
+        toolbar.inflateMenu(R.menu.menu_home);
+
+        Menu menu = toolbar.getMenu();
+        MenuItem notification = menu.findItem(R.id.notification);
+        MenuItemCompat.setActionView(notification, R.layout.partial_notification);
+        View view = MenuItemCompat.getActionView(notification);
+
+        TextView badge = (TextView)view.findViewById(R.id.notification_badge);
+        badge.setVisibility(View.VISIBLE);
+        badge.setText(String.valueOf(27));
+        */
+
+        /*
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                Timber.d("clicked id %s", id);
+                switch(id){
+                    case R.id.notification:
+                        Timber.d("notification clicked");
+                        View view = MenuItemCompat.getActionView(item);
+
+                        TextView badge = (TextView)view.findViewById(R.id.notification_badge);
+                        badge.setVisibility(View.VISIBLE);
+                        badge.setText(String.valueOf(10));
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
+        */
 
 
         // Create the adapter that will return a fragment for each of the three
@@ -73,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Replace with your own bccb", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -84,14 +132,14 @@ public class HomeActivity extends AppCompatActivity {
         call.enqueue(new Callback<UserEntity>() {
             @Override
             public void onResponse(Response<UserEntity> response, Retrofit retrofit) {
-                if(response.isSuccess()) {
+                if (response.isSuccess()) {
                     UserEntity user = response.body();
                     Log.d("user", response.toString());
                     Log.d("user", user.toString());
                     Log.d("user", user.name);
-                }else if(response.code() == StatusCode.Unauthorized){
+                } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");
-                }else{
+                } else {
 
                 }
             }
@@ -107,14 +155,52 @@ public class HomeActivity extends AppCompatActivity {
         tag.checkMigrationVersion();
         Timber.d("version %s", tag.getCurrentMigrationVersionOfLocal());
 
+        userPresenter = new UserPresenter(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BusHolder.get().register(this);
+        userPresenter.getNotificationCount();
+        Timber.d("register observer");
+    }
+
+    @Override
+    protected void onPause() {
+        BusHolder.get().unregister(this);
+        Timber.d("unregister observer");
+        super.onPause();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_home, menu);
-        return true;
+        MenuItem notification = menu.findItem(R.id.notification);
+        MenuItemCompat.setActionView(notification, R.layout.partial_notification);
+        View view = MenuItemCompat.getActionView(notification);
+
+        final Activity act = this;
+
+        notificationView = view;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Timber.d("notification clicked");
+                /*
+                if((boolean)notificationView.getTag(R.id.NOTIFICATION_EXIST)) {
+                    TextView badge = (TextView) v.findViewById(R.id.notification_badge);
+                    badge.setVisibility(View.VISIBLE);
+                    badge.setText(String.valueOf(10));
+                }
+                */
+                NotificationActivity.startActivity(act);
+            }
+        });
+
+        //return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -123,6 +209,7 @@ public class HomeActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Timber.d("id %s", id);
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -220,10 +307,42 @@ public class HomeActivity extends AppCompatActivity {
     public void navigateToItem(View v){
         ItemActivity.startActivity(this, 2);
 
-        //Log.d("ssss", "to item");
+        //UserActivity.startActivity(this, 10);
 
-        //Intent intent = new Intent(this, TimerFormActivity.class);
+        //Intent intent = new Intent(this, UserActivity.class);
         //intent.putExtra("itemId", 2);
         //startActivity(intent);
+    }
+
+    @OnClick(R.id.user_10)
+    public void navigateToUser(View v){
+        UserActivity.startActivity(this, 10);
+    }
+
+    @OnClick(R.id.user_6)
+    public void navigateToUser6(View v){
+        UserActivity.startActivity(this, 6);
+    }
+
+    @Subscribe
+    public void getUnreadNotificationCount(ArrayList<NotificationEntity> notificationEntities){
+        Timber.d("get unread notification %s", notificationEntities.size());
+        setNotificationBadge(notificationEntities.size());
+    }
+
+    private void setNotificationBadge(int count){
+        TextView badge = (TextView) notificationView.findViewById(R.id.notification_badge);
+        ImageView icon = (ImageView) notificationView.findViewById(R.id.notification_icon);
+
+        if(count != 0) {
+            notificationView.setTag(R.id.NOTIFICATION_EXIST, true);
+            badge.setVisibility(View.VISIBLE);
+            badge.setText(String.valueOf(count));
+            icon.setImageResource(R.drawable.ic_notifications_white_36dp);
+        }else{
+            notificationView.setTag(R.id.NOTIFICATION_EXIST, false);
+            badge.setVisibility(View.GONE);
+            icon.setImageResource(R.drawable.ic_notifications_none_white_36dp);
+        }
     }
 }
