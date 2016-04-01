@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -21,14 +23,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import lecho.lib.hellocharts.view.PieChartView;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -39,9 +45,15 @@ import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.DefaultTag;
 import work.t_s.shim0mura.havings.model.StatusCode;
-import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
+import work.t_s.shim0mura.havings.model.event.GenericEvent;
+import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
+import work.t_s.shim0mura.havings.model.event.NotificationEvent;
+import work.t_s.shim0mura.havings.presenter.HomePresenter;
+import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
+import work.t_s.shim0mura.havings.view.GraphRenderer;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -59,53 +71,24 @@ public class HomeActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
     private UserPresenter userPresenter;
     private View notificationView;
+
+    private HomePresenter.HomeTabPagerAdapter pagerAdapter;
+
+    //@Bind(R.id.pager) ViewPager viewPager;
+    // @Bind(R.id.tabs) TabLayout tabLayout;
+
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*
-        toolbar.inflateMenu(R.menu.menu_home);
-
-        Menu menu = toolbar.getMenu();
-        MenuItem notification = menu.findItem(R.id.notification);
-        MenuItemCompat.setActionView(notification, R.layout.partial_notification);
-        View view = MenuItemCompat.getActionView(notification);
-
-        TextView badge = (TextView)view.findViewById(R.id.notification_badge);
-        badge.setVisibility(View.VISIBLE);
-        badge.setText(String.valueOf(27));
-        */
-
-        /*
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id = item.getItemId();
-                Timber.d("clicked id %s", id);
-                switch(id){
-                    case R.id.notification:
-                        Timber.d("notification clicked");
-                        View view = MenuItemCompat.getActionView(item);
-
-                        TextView badge = (TextView)view.findViewById(R.id.notification_badge);
-                        badge.setVisibility(View.VISIBLE);
-                        badge.setText(String.valueOf(10));
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
-        */
-
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -114,8 +97,6 @@ public class HomeActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        ButterKnife.bind(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +137,46 @@ public class HomeActivity extends AppCompatActivity {
         Timber.d("version %s", tag.getCurrentMigrationVersionOfLocal());
 
         userPresenter = new UserPresenter(this);
+
+        viewPager = (ViewPager)findViewById(R.id.pager);
+        tabLayout = (TabLayout)findViewById(R.id.tabs);
+
+        pagerAdapter = new HomePresenter.HomeTabPagerAdapter(getSupportFragmentManager(), this);
+        viewPager.setAdapter(pagerAdapter);
+
+        // http://androhi.hatenablog.com/entry/2015/06/17/083000
+        // setupWithViewPagerだとontabselectedがうまく指定できない
+        tabLayout.setTabsFromPagerAdapter(pagerAdapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                tab.setIcon(pagerAdapter.getTabIcon(position, true));
+                toolbar.setTitle(pagerAdapter.getTabTitle(position));
+                super.onTabSelected(tab);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                tab.setIcon(pagerAdapter.getTabIcon(tab.getPosition(), false));
+                super.onTabUnselected(tab);
+            }
+        });
+
+        // タブ周りの初期化
+        toolbar.setTitle(pagerAdapter.getTabTitle(0));
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if(tab != null) {
+                if(i == 0){
+                    tab.setIcon(pagerAdapter.getTabIcon(tab.getPosition(), true));
+                }else{
+                    tab.setIcon(pagerAdapter.getTabIcon(tab.getPosition(), false));
+                }
+            }
+        }
+
     }
 
     @Override
@@ -293,53 +314,22 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.logout, R.id.fab})
-    public void logout(View v){
-        Log.d("ssss", "logout");
-        ApiServiceManager asm = ApiServiceManager.getSingleton(this);
-        asm.clearApiKey();
-        Intent intent = new Intent(this, RegisterActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    @OnClick(R.id.item)
-    public void navigateToItem(View v){
-        ItemActivity.startActivity(this, 2);
-
-        //UserActivity.startActivity(this, 10);
-
-        //Intent intent = new Intent(this, UserActivity.class);
-        //intent.putExtra("itemId", 2);
-        //startActivity(intent);
-    }
-
-    @OnClick(R.id.user_10)
-    public void navigateToUser(View v){
-        UserActivity.startActivity(this, 10);
-    }
-
-    @OnClick(R.id.user_6)
-    public void navigateToUser6(View v){
-        UserActivity.startActivity(this, 6);
-    }
-
     @Subscribe
-    public void getUnreadNotificationCount(ArrayList<NotificationEntity> notificationEntities){
-        Timber.d("get unread notification %s", notificationEntities.size());
-        setNotificationBadge(notificationEntities.size());
+    public void getUnreadNotificationCount(NotificationEvent event){
+        Timber.d("get unread notification %s", event.notificationEntities.size());
+        setNotificationBadge(event.notificationEntities.size());
     }
 
-    private void setNotificationBadge(int count){
+    private void setNotificationBadge(int count) {
         TextView badge = (TextView) notificationView.findViewById(R.id.notification_badge);
         ImageView icon = (ImageView) notificationView.findViewById(R.id.notification_icon);
 
-        if(count != 0) {
+        if (count != 0) {
             notificationView.setTag(R.id.NOTIFICATION_EXIST, true);
             badge.setVisibility(View.VISIBLE);
             badge.setText(String.valueOf(count));
             icon.setImageResource(R.drawable.ic_notifications_white_36dp);
-        }else{
+        } else {
             notificationView.setTag(R.id.NOTIFICATION_EXIST, false);
             badge.setVisibility(View.GONE);
             icon.setImageResource(R.drawable.ic_notifications_none_white_36dp);

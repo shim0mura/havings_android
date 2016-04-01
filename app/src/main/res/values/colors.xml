@@ -35,6 +35,9 @@
     <color name="timerActionDoLater">#FFB74D</color>
     <color name="timerActionClose">#9CCC65</color>
 
-
+    <color name="categoryClothing">#4FC3F7</color>
+    <color name="categoryFood">#FFB74D</color>
+    <color name="categoryLiving">#9CCC65</color>
+    <color name="categoryEtc">#b6b6b6</color>
 
 </resources>

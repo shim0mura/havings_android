@@ -124,8 +124,8 @@
     <orderEntry type="library" exported="" name="support-annotations-23.1.0" level="project" />
     <orderEntry type="library" exported="" name="timber-4.1.0" level="project" />
     <orderEntry type="library" exported="" name="jsr250-api-1.0" level="project" />
-    <orderEntry type="library" exported="" name="butterknife-7.0.1" level="project" />
     <orderEntry type="library" exported="" name="glide-3.6.1" level="project" />
+    <orderEntry type="library" exported="" name="butterknife-7.0.1" level="project" />
     <orderEntry type="library" exported="" name="material-calendarview-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="tokenautocomplete-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="conceal-1.0.1" level="project" />

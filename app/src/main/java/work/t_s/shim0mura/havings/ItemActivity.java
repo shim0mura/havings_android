@@ -259,8 +259,9 @@ public class ItemActivity extends AppCompatActivity {
         programFab3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemEditActivity.startActivity(act, item, item.isList);
+                //ItemEditActivity.startActivity(act, item, item.isList);
                 //ItemDeleteActivity.startActivity(act, item, item.isList);
+                ItemDumpActivity.startActivity(act, item, item.isList);
 
                 Timber.d(description.getText().toString());
                 ViewGroup.LayoutParams l = description.getLayoutParams();

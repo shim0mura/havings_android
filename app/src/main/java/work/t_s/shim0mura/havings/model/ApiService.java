@@ -28,6 +28,7 @@ import work.t_s.shim0mura.havings.model.entity.FavoriteItemListEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TagMigrationEntity;
@@ -245,6 +246,9 @@ public interface ApiService {
             @Path("item_id") int item_id,
             @Path("comment_id") int comment_id
     );
+
+    @GET("/home/graph")
+    Call<List<ItemPercentageEntity>> getItemPercentage();
 
     @GET("/notification/")
     Call<List<NotificationEntity>> getNotifications();

@@ -218,6 +218,8 @@
 
     <string name="honorific">さん</string>
 
+    <string name="item_total_count">全アイテム数</string>
+
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>
     <string name="tag_image_url">imageUrl</string>

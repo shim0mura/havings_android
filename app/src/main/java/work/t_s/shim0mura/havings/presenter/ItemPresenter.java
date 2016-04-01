@@ -2,7 +2,6 @@ package work.t_s.shim0mura.havings.presenter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
@@ -17,20 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.wefika.flowlayout.FlowLayout;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.ButterKnife;
-import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.view.LineChartView;
 import retrofit.Call;
 import retrofit.Callback;
@@ -285,7 +278,7 @@ public class ItemPresenter {
     }
 
     public View getTabView(int position, int count){
-        View tab = activity.getLayoutInflater().inflate(R.layout.item_tab_header, null);
+        View tab = activity.getLayoutInflater().inflate(R.layout.partial_item_tab_header, null);
         switch(position){
             case 0:
                 TextView itemCount = (TextView)tab.findViewById(R.id.tab_count);
@@ -482,7 +475,7 @@ public class ItemPresenter {
             LineChartView lineChartView = (LineChartView)graphView.findViewById(R.id.item_graph);
 
             lineChartView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
-            GraphRenderer.renderSimpleGraph(lineChartView, new ArrayList<CountDataEntity>(item.countProperties));
+            GraphRenderer.renderSimpleLineGraph(lineChartView, new ArrayList<CountDataEntity>(item.countProperties));
             graphView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
 
             v.findViewById(R.id.navigate_to_detailgraph).setOnClickListener(new View.OnClickListener() {

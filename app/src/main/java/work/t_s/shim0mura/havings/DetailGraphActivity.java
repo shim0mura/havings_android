@@ -1,24 +1,12 @@
 package work.t_s.shim0mura.havings;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,31 +15,24 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.listener.ViewportChangeListener;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.Viewport;
-import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
-import work.t_s.shim0mura.havings.model.entity.EventEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.presenter.DetailGraphPresenter;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.EventListByDayAdapter;
-import work.t_s.shim0mura.havings.view.EventListInPopupAdapter;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 
 public class DetailGraphActivity extends AppCompatActivity {
@@ -164,7 +145,7 @@ public class DetailGraphActivity extends AppCompatActivity {
             }
         });
         */
-        GraphRenderer.renderSimpleGraph(chart, item.countProperties);
+        GraphRenderer.renderSimpleLineGraph(chart, item.countProperties);
 
         adapter = new EventListByDayAdapter(this, R.layout.partial_recent_activity_wrapper, item.countProperties);
         eventHistory.setAdapter(adapter);
@@ -263,7 +244,7 @@ public class DetailGraphActivity extends AppCompatActivity {
 
         // prepare preview data, is better to use separate deep copy for preview chart.
         // Set color to grey to make preview area more visible.
-        //GraphRenderer.renderSimpleGraph(previewChart, item.countProperties);
+        //GraphRenderer.renderSimpleLineGraph(previewChart, item.countProperties);
 
         chart.setZoomEnabled(true);
         chart.setScrollEnabled(true);

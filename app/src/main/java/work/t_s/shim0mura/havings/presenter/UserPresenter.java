@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -17,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +25,6 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.DetailGraphActivity;
 import work.t_s.shim0mura.havings.ImageDetailActivity;
@@ -36,15 +35,16 @@ import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.StatusCode;
-import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
-import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
+import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
+import work.t_s.shim0mura.havings.model.event.NotificationEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 import work.t_s.shim0mura.havings.util.ViewUtil;
@@ -228,7 +228,47 @@ public class UserPresenter {
             public void onResponse(Response<List<NotificationEntity>> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     List<NotificationEntity> notifications = response.body();
-                    BusHolder.get().post(notifications);
+                    NotificationEvent event = new NotificationEvent(new ArrayList<NotificationEntity>(notifications));
+
+                    BusHolder.get().post(event);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    for(Map.Entry<String, List<String>> e: error.errors.entrySet()){
+                        switch(e.getKey()){
+                            default:
+                                //sendErrorToGetUser();
+                                break;
+                        }
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("user", "get failed");
+            }
+        });
+    }
+
+    public void getItemPercentage(){
+        Call<List<ItemPercentageEntity>> call = service.getItemPercentage();
+
+        call.enqueue(new Callback<List<ItemPercentageEntity>>() {
+            @Override
+            public void onResponse(Response<List<ItemPercentageEntity>> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    List<ItemPercentageEntity> itemPercentageEntities = response.body();
+                    ItemPercentageGraphEvent event = new ItemPercentageGraphEvent(new ArrayList<ItemPercentageEntity>(itemPercentageEntities));
+                    BusHolder.get().post(event);
 
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");
@@ -625,7 +665,7 @@ public class UserPresenter {
             LineChartView lineChartView = (LineChartView)graphView.findViewById(R.id.item_graph);
 
             lineChartView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
-            GraphRenderer.renderSimpleGraph(lineChartView, user.homeList.countProperties);
+            GraphRenderer.renderSimpleLineGraph(lineChartView, user.homeList.countProperties);
             graphView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
 
             v.findViewById(R.id.navigate_to_detailgraph).setOnClickListener(new View.OnClickListener() {
