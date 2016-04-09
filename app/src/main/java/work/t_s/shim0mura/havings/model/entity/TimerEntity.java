@@ -20,6 +20,7 @@ public class TimerEntity implements Serializable {
 
     public String name;
     public int listId;
+    public String listName;
     public Boolean isActive;
     public Boolean isDeleted;
 

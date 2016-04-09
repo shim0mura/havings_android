@@ -95,17 +95,16 @@ public class DumpListActivity extends AppCompatActivity {
 
     @Subscribe
     public void setDumpItemList(ItemEntity dumpItems){
-        dumpItemList.removeFooterView(loader);
+        loader.findViewById(R.id.progress).setVisibility(View.GONE);
 
         if(adapter == null){
             initializeAdapter(dumpItems);
         }else {
             adapter.finishLoadNextItem();
-            dumpItemList.removeFooterView(loader);
+            loader.findViewById(R.id.progress).setVisibility(View.GONE);
             adapter.addItem(dumpItems);
             adapter.notifyDataSetChanged();
         }
-
     }
 
     private void initializeAdapter(ItemEntity dumpItems){
@@ -136,7 +135,7 @@ public class DumpListActivity extends AppCompatActivity {
                 if ((totalItemCount == firstVisibleItem + visibleItemCount) && adapter.hasNextItem()) {
                     if (!adapter.getIsLoadingNextItem()) {
                         adapter.startLoadNextItem();
-                        dumpItemList.addFooterView(loader);
+                        loader.findViewById(R.id.progress).setVisibility(View.VISIBLE);
                         userPresenter.getDumpItemList(user.id, adapter.getLastItemId());
                     }
                 }

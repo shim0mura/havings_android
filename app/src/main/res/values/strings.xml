@@ -203,6 +203,7 @@
     <string name="prompt_favorite_count">いいね!</string>
     <string name="prompt_favorite_list">いいね! 一覧</string>
     <string name="prompt_dump_list">手放したモノ一覧</string>
+    <string name="prompt_timer_list">稼働中のタイマー 一覧</string>
     <string name="prompt_follows_onesidely">あなたをフォローしています</string>
 
     <string name="action_follow">フォローする</string>
@@ -219,6 +220,15 @@
     <string name="honorific">さん</string>
 
     <string name="item_total_count">全アイテム数</string>
+
+    <string name="view_more">もっと見る</string>
+
+    <string name="prompt_search">検索</string>
+    <string name="popular_tags">人気のタグ</string>
+    <string name="popular_list">人気のリスト</string>
+
+    <string name="postfix_search_result">%1$sの検索結果</string>
+    <string name="postfix_item_count">%1$d個のアイテム</string>
 
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>
@@ -256,4 +266,7 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="title_activity_user_favorites">UserFavoritesActivity</string>
     <string name="title_activity_dump_list">DumpListActivity</string>
     <string name="title_activity_notification">NotificationActivity</string>
+    <string name="title_activity_all_timer">AllTimerActivity</string>
+    <string name="title_activity_search_tag_result">SearchTagResultActivity</string>
+    <string name="title_activity_pickup">PickupActivity</string>
 </resources>

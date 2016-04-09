@@ -68,6 +68,14 @@
                     android:text="@string/lipsum_short"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/timers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

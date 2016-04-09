@@ -6,6 +6,9 @@
 
     <item name="TAG_USER_ID" type="id"/>
 
+    <item name="TAG_POPULAR_TAG_ID" type="id"/>
+    <item name="TAG_POPULAR_TAG_NAME" type="id"/>
+
     <item name="IS_ADDED_IMAGE_FROM_FORM" type="id"/>
     <item name="ADDED_IMAGE_URI" type="id"/>
     <item name="IMAGE_DATE" type="id"/>

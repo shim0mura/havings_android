@@ -51,6 +51,7 @@ import io.realm.Realm;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
+import work.t_s.shim0mura.havings.model.DefaultTag;
 import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
@@ -114,7 +115,9 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     protected void constructForm(){
         setPrivateTypeSpinner();
 
-        tags.addAll(formPresenter.getTagEntities());
+        DefaultTag defaultTag = DefaultTag.getSingleton(this);
+        //tags.addAll(formPresenter.getTagEntities());
+        tags.addAll(defaultTag.getTagEntities());
 
         setNameAdapter();
         setTagAdapter();

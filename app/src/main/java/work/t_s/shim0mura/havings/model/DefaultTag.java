@@ -24,6 +24,7 @@ import work.t_s.shim0mura.havings.model.realm.TagMigrationVersion;
 public class DefaultTag {
 
     private static DefaultTag tag;
+    private List<TagEntity> tagEntities = new ArrayList<TagEntity>();
     private Activity activity;
     static ApiService service;
 
@@ -97,6 +98,31 @@ public class DefaultTag {
         }else{
             return result.get(0).getCurrentVersion();
         }
+    }
+
+    public List<TagEntity> getTagEntities(){
+        if(tagEntities.isEmpty()) {
+            Realm realm = Realm.getInstance(activity);
+            RealmResults<Tag> result = realm.where(Tag.class).equalTo("isDeleted", false).findAll();
+
+            List<TagEntity> tags = new ArrayList<TagEntity>();
+
+            for (Tag t : result) {
+                TagEntity tagEntity = new TagEntity();
+
+                tagEntity.id = t.getId();
+                tagEntity.name = t.getName();
+                tagEntity.yomiJp = t.getYomiJp();
+                tagEntity.yomiRoma = t.getYomiRoma();
+                tagEntity.priority = t.getPriority();
+                tagEntity.tagType = t.getTagType();
+                tags.add(tagEntity);
+            }
+
+            tagEntities = tags;
+        }
+
+        return tagEntities;
     }
 
     private Callback<List<TagMigrationEntity>> getTagMigrateCallback(final String loggingTag){

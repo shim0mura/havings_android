@@ -395,21 +395,7 @@ public class TimerPresenter {
             }
         });
 
-        TextView timerName = (TextView)swipeLayout.findViewById(R.id.timer_name);
-        timerName.setText(timerEntity.name);
-        TextView noticeInterval = (TextView)swipeLayout.findViewById(R.id.notice_interval);
-        noticeInterval.setText(Timer.getIntervalString(activity, timerEntity));
-        TextView limitFrom = (TextView)swipeLayout.findViewById(R.id.limit_from);
-        Date due = (timerEntity.overDueFrom == null ? timerEntity.nextDueAt : timerEntity.overDueFrom);
-        limitFrom.setText(Timer.getRemainingTimeString(activity, due));
-        TextView noticeAt = (TextView)swipeLayout.findViewById(R.id.notice_at);
-        String noticeString = Timer.getFormatDueStringWithoutYear(timerEntity.nextDueAt);
-        if(timerEntity.overDueFrom == null){
-            noticeString = noticeString + activity.getString(R.string.postfix_prompt_next_due_at);
-        }else{
-            noticeString = noticeString + activity.getString(R.string.postfix_prompt_next_due_at_again);
-        }
-        noticeAt.setText(noticeString);
+        assignTimerText(swipeLayout, timerEntity, activity);
 
         TextView nextDueAt = (TextView)swipeLayout.findViewById(R.id.timer_next_due_at);
         if(!timerEntity.isRepeating){
@@ -428,12 +414,6 @@ public class TimerPresenter {
         }
         timerEntity.tmpNextDueAt = timerEntity.nextDueAt;
 
-        RoundCornerProgressBar dueProgress = (RoundCornerProgressBar)swipeLayout.findViewById(R.id.due_progress);
-        int percentage = Timer.getPercentageUntilDueDate(due, timerEntity.latestCalcAt);
-        dueProgress.setMax(100);
-        dueProgress.setProgress(percentage);
-        Timber.d("progress %s %s", timerEntity.name, percentage);
-        dueProgress.setProgressColor(Timer.getProgressBarColor(percentage));
 
         swipeLayout.findViewById(R.id.timer_content).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -487,6 +467,35 @@ public class TimerPresenter {
 
         parent.addView(swipeLayout);
         return swipeLayout;
+    }
+
+    public static View assignTimerText(View v, TimerEntity timer, Activity activity){
+        TextView timerName = (TextView)v.findViewById(R.id.timer_name);
+        timerName.setText(timer.name);
+
+        TextView noticeInterval = (TextView)v.findViewById(R.id.notice_interval);
+        noticeInterval.setText(Timer.getIntervalString(activity, timer));
+
+        TextView limitFrom = (TextView)v.findViewById(R.id.limit_from);
+        Date due = (timer.overDueFrom == null ? timer.nextDueAt : timer.overDueFrom);
+        limitFrom.setText(Timer.getRemainingTimeString(activity, due));
+
+        TextView noticeAt = (TextView)v.findViewById(R.id.notice_at);
+        String noticeString = Timer.getFormatDueStringWithoutYear(timer.nextDueAt);
+        if(timer.overDueFrom == null){
+            noticeString = noticeString + activity.getString(R.string.postfix_prompt_next_due_at);
+        }else{
+            noticeString = noticeString + activity.getString(R.string.postfix_prompt_next_due_at_again);
+        }
+        noticeAt.setText(noticeString);
+
+        RoundCornerProgressBar dueProgress = (RoundCornerProgressBar)v.findViewById(R.id.due_progress);
+        int percentage = Timer.getPercentageUntilDueDate(due, timer.latestCalcAt);
+        dueProgress.setMax(100);
+        dueProgress.setProgress(percentage);
+        dueProgress.setProgressColor(Timer.getProgressBarColor(percentage));
+
+        return v;
     }
 
     private View.OnClickListener getTimerActionDialogListener(final TimerEntity timerEntity, final boolean isDone){

@@ -83,6 +83,7 @@ public class FormPresenter {
         item = new Item();
     }
 
+    /*
     public List<TagEntity> getTagEntities(){
         Realm realm = Realm.getInstance(activity);
         RealmResults<Tag> result = realm.where(Tag.class).equalTo("isDeleted", false).findAll();
@@ -103,6 +104,7 @@ public class FormPresenter {
 
         return tags;
     }
+    */
 
     public void setItemImageDateListener(final ImageView image, final TextView imageDate, final Calendar currentCalendar){
         final Date currentDate = new Date(currentCalendar.getTimeInMillis());

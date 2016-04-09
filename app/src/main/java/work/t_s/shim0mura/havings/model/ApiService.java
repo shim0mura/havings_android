@@ -30,7 +30,9 @@ import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
+import work.t_s.shim0mura.havings.model.entity.PickupEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
+import work.t_s.shim0mura.havings.model.entity.SearchResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TagMigrationEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
@@ -196,6 +198,9 @@ public interface ApiService {
             @Path("image_id") int image_id
     );
 
+    @GET("/timers")
+    Call<List<TimerEntity>> getAllTimers();
+
     @POST("/timers")
     Call<TimerEntity> createTimer(
             @Body HashMap<String, TimerEntity> timer
@@ -250,6 +255,9 @@ public interface ApiService {
     @GET("/home/graph")
     Call<List<ItemPercentageEntity>> getItemPercentage();
 
+    @GET("/pickup")
+    Call<PickupEntity> getPickup();
+
     @GET("/notification/")
     Call<List<NotificationEntity>> getNotifications();
 
@@ -258,6 +266,13 @@ public interface ApiService {
 
     @PUT("/notification/read")
     Call<ResultEntity> readNotifications();
+
+    @GET("/search/{type}/")
+    Call<SearchResultEntity> getSearchResult(
+            @Path("type") int type,
+            @Query("page") int page,
+            @Query("tag") String tag
+    );
 
     @GET("/tags/default_tag_migration/")
     Call<List<TagMigrationEntity>> getDefaultTag();

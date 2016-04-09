@@ -26,7 +26,7 @@ public class ListSelectAdapter extends BaseAdapter implements StickyListHeadersA
 
     public static final String TAG_ID_KEY = "tagIdKey";
     public static final String TAG_KIND_KEY = "tagKindKey";
-    public static final String TAG_NAME = "tagName";
+    public static final String TAG_NAME = "searchTag";
     public static final String TAG_SUBTEXT_KEY = "tagSubtextKey";
 
     private final int subtextCount = 3;

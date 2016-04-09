@@ -1,17 +1,19 @@
 package work.t_s.shim0mura.havings.view;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
@@ -22,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lecho.lib.hellocharts.view.PieChartView;
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.AllTimerActivity;
 import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.RegisterActivity;
@@ -29,8 +32,12 @@ import work.t_s.shim0mura.havings.UserActivity;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
+import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.event.GenericEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
+import work.t_s.shim0mura.havings.model.event.TimerListRenderEvent;
+import work.t_s.shim0mura.havings.presenter.HomePresenter;
+import work.t_s.shim0mura.havings.presenter.TimerPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
 
 /**
@@ -39,11 +46,14 @@ import work.t_s.shim0mura.havings.presenter.UserPresenter;
 public class DashboardTabFragment extends Fragment {
 
     private static final String BUNDLE_ARG = "BundleArg";
+    private static final int MAX_TIMER_SHOWING = 3;
 
     @Bind(R.id.swipe) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.total_item_percentage_wrapper) LinearLayout graphDetailWrapper;
     @Bind(R.id.pie_chart) PieChartView pieChartView;
+    @Bind(R.id.timers) LinearLayout deadlineNearingTimers;
 
+    private HomePresenter homePresenter;
     private UserPresenter userPresenter;
     private ArrayList<ItemPercentageEntity> itemPercentageEntityArrayList;
 
@@ -66,6 +76,7 @@ public class DashboardTabFragment extends Fragment {
         }
         */
         userPresenter = new UserPresenter(getActivity());
+        homePresenter = new HomePresenter(getActivity());
     }
 
     @Override
@@ -75,6 +86,7 @@ public class DashboardTabFragment extends Fragment {
 
         if(itemPercentageEntityArrayList == null){
             userPresenter.getItemPercentage();
+            homePresenter.getAllTimers();
         }
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -114,6 +126,57 @@ public class DashboardTabFragment extends Fragment {
         itemPercentageEntityArrayList = graphEvent.itemPercentageEntities;
 
         GraphRenderer.renderPieChart(getActivity(), pieChartView, graphDetailWrapper, itemPercentageEntityArrayList);
+    }
+
+    @Subscribe
+    public void renderTimers(TimerListRenderEvent timersEvent){
+        Timber.d("deadlineNearingTimers");
+        for(TimerEntity timer : timersEvent.timerListEntities){
+            Timber.d("timer %s : %s %s", timer.id, timer.nextDueAt.toString(), timer.noticeHour);
+        }
+
+        final ArrayList<TimerEntity> timerEntities = timersEvent.timerListEntities;
+        final Activity activity = getActivity();
+        LayoutInflater layoutInflater = LayoutInflater.from(activity);
+
+        for(int i = 0; i < MAX_TIMER_SHOWING; i++){
+            TimerEntity timer = timerEntities.get(i);
+
+            View v = layoutInflater.inflate(R.layout.partial_timer_content, null);
+            TimerPresenter.assignTimerText(v, timer, activity);
+
+            if(timer.listName != null) {
+                LinearLayout listNameWrapper = (LinearLayout)v.findViewById(R.id.list_name_wrapper);
+                listNameWrapper.setVisibility(View.VISIBLE);
+                TextView listName = (TextView)v.findViewById(R.id.list_name);
+                listName.setText(timer.listName);
+            }
+            ImageView timerMenu = (ImageView)v.findViewById(R.id.timer_menu);
+            timerMenu.setVisibility(View.GONE);
+
+            v.setTag(R.id.TAG_ITEM_ID, timer.listId);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int itemId = (int)v.getTag(R.id.TAG_ITEM_ID);
+                    ItemActivity.startActivity(activity, itemId);
+                }
+            });
+
+            deadlineNearingTimers.addView(v);
+        }
+
+        if(timerEntities.size() > MAX_TIMER_SHOWING){
+            View v = layoutInflater.inflate(R.layout.partial_view_more, null);
+            deadlineNearingTimers.addView(v);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AllTimerActivity.startActivity(activity, timerEntities);
+                }
+            });
+        }
     }
 
     @Subscribe

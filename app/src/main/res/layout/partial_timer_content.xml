@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/timer_content"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:paddingBottom="@dimen/padding_between_content"
+android:paddingLeft="@dimen/padding_between_content"
+android:orientation="horizontal"
+android:background="#ffffff">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        >
+        <TextView
+            android:id="@+id/timer_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="16dp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_name_wrapper"
+            android:visibility="gone">
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/list_icon_for_tab"/>
+            <TextView
+                android:id="@+id/list_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_loop_black_18dp"/>
+
+            <TextView
+                android:id="@+id/notice_interval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="2dp"
+                android:paddingStart="2dp"
+                android:singleLine="true"
+                />
+
+            <TextView
+                android:id="@+id/limit_from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="2dp"
+                android:paddingStart="2dp"
+                android:singleLine="true"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_alarm_black_18dp"/>
+            <TextView
+                android:id="@+id/notice_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ssss"
+                android:singleLine="true"
+                />
+        </LinearLayout>
+
+        <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+            android:id="@+id/due_progress"
+            android:layout_marginTop="4dp"
+            android:layout_height="16dp"
+            android:layout_width="match_parent"
+            android:background="@color/primaryText"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        >
+        <ImageView
+            android:id="@+id/timer_menu"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_more_vert_black_36dp"
+            android:paddingLeft="@dimen/padding_between_content"
+            android:paddingRight="@dimen/padding_between_content"
+            />
+    </LinearLayout>
+</LinearLayout>

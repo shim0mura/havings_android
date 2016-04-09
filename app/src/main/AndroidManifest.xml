@@ -120,6 +120,21 @@
             android:label="@string/title_activity_notification"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".AllTimerActivity"
+            android:label="@string/title_activity_all_timer"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".SearchTagResultActivity"
+            android:label="@string/title_activity_search_tag_result"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".PickupActivity"
+            android:label="@string/title_activity_pickup"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>
