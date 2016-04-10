@@ -230,6 +230,17 @@
     <string name="postfix_search_result">%1$sの検索結果</string>
     <string name="postfix_item_count">%1$d個のアイテム</string>
 
+    <string name="postfix_timeline_commented">%1$sがアイテムにコメントしました</string>
+    <string name="postfix_timeline_image_favorite">%1$sがアイテムの画像にいいね!しました</string>
+    <string name="postfix_timeline_favorite">%1$sがアイテムにいいね!しました</string>
+    <string name="postfix_timeline_add_image">%1$sが画像を追加しました</string>
+    <string name="postfix_timeline_create_item">%1$sがアイテムを追加しました</string>
+    <string name="postfix_timeline_create_list">%1$sがリストを追加しました</string>
+    <string name="postfix_timeline_dump">%1$sがアイテムを手放しました</string>
+    <string name="postfix_timeline_follow">%1$sがユーザーをフォローしました</string>
+
+    <string name="prompt_no_timeline">アクティビティはありません。 \n \n誰かをフォローすると、その人がいいね!したアイテムや追加したアイテムの情報がここに表示されます。 \n \n気になる人たちをフォローしてみましょう！</string>
+
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>
     <string name="tag_image_url">imageUrl</string>

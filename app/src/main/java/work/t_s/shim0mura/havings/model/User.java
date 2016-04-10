@@ -37,7 +37,10 @@ public class User {
     public static final String NOTIFICATION_TYPE_IMAGE_FAVORITE = "image_favorite";
     public static final String NOTIFICATION_TYPE_COMMENT = "comment";
     public static final String NOTIFICATION_TYPE_FOLLOW = "follow";
-
+    public static final String NOTIFICATION_TYPE_CREATE_ITEM = "create_item";
+    public static final String NOTIFICATION_TYPE_CREATE_LIST = "create_list";
+    public static final String NOTIFICATION_TYPE_ADD_IMAGE = "add_image";
+    public static final String NOTIFICATION_TYPE_DUMP = "dump";
 
     private static User user;
 

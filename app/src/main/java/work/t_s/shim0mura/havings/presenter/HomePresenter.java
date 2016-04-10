@@ -39,6 +39,7 @@ import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.PopularTagEntity;
+import work.t_s.shim0mura.havings.model.entity.TimelineEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.TimerListRenderEvent;
@@ -46,6 +47,7 @@ import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.DashboardTabFragment;
 import work.t_s.shim0mura.havings.view.SearchTabFragment;
+import work.t_s.shim0mura.havings.view.SocialTabFragment;
 
 /**
  * Created by shim0mura on 2016/03/29.
@@ -73,6 +75,43 @@ public class HomePresenter {
                     List<TimerEntity> timers = response.body();
                     TimerListRenderEvent event = new TimerListRenderEvent(new ArrayList<TimerEntity>(timers));
                     BusHolder.get().post(event);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    for (Map.Entry<String, List<String>> e : error.errors.entrySet()) {
+                        switch (e.getKey()) {
+                            default:
+                                //sendErrorToGetUser();
+                                break;
+                        }
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("timer get failed");
+            }
+        });
+    }
+
+    public void getTimeline(int from){
+        Call<TimelineEntity> call = service.getTimeline(from);
+
+        call.enqueue(new Callback<TimelineEntity>() {
+            @Override
+            public void onResponse(Response<TimelineEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    TimelineEntity timeline = response.body();
+                    BusHolder.get().post(timeline);
 
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");
@@ -285,9 +324,11 @@ public class HomePresenter {
 
             if(position == 0) {
                 return DashboardTabFragment.newInstance();
+            }else if(position == 1){
+                return SocialTabFragment.newInstance();
+                //v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
             }else {
                 return SearchTabFragment.newInstance();
-                //v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
             }
         }
 

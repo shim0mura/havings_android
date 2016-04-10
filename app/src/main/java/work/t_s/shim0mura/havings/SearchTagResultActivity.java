@@ -89,7 +89,7 @@ public class SearchTagResultActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void setDumpItemList(SearchResultEntity searchResultEntity){
+    public void setSearchResultList(SearchResultEntity searchResultEntity){
         // addFooterとかaddHeaderした後にsetAdapterしないと
         // header/footerは表示されないし、動的にremoveやaddも出来ないので
         // 中身の表示非表示で切り替え

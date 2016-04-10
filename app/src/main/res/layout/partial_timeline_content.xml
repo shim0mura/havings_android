@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/timeline_wrapper"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/app_basic_padding"
+    android:paddingRight="@dimen/app_basic_padding"
+    android:paddingBottom="@dimen/app_basic_padding"
+    >
+    <ImageView
+        android:id="@+id/event_type_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="@dimen/app_basic_padding"
+        android:src="@drawable/ic_photo_library_black_48dp"/>
+    <LinearLayout
+        android:id="@+id/user_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/app_basic_padding"
+        android:paddingLeft="@dimen/app_basic_padding"
+        android:paddingStart="@dimen/app_basic_padding"
+        android:layout_toRightOf="@id/event_type_icon"
+        android:layout_toEndOf="@id/event_type_icon"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/acter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/link"/>
+            <TextView
+                android:id="@+id/notification_sub_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/target_image"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/bg"
+                app:civ_border_width="1dp"
+                app:civ_border_color="@color/divider"
+                />
+            <TextView
+                android:id="@+id/target"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/link"
+                android:textSize="18dp"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

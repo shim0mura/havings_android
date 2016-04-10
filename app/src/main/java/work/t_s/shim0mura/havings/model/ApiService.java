@@ -34,6 +34,7 @@ import work.t_s.shim0mura.havings.model.entity.PickupEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.SearchResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TagMigrationEntity;
+import work.t_s.shim0mura.havings.model.entity.TimelineEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
@@ -254,6 +255,11 @@ public interface ApiService {
 
     @GET("/home/graph")
     Call<List<ItemPercentageEntity>> getItemPercentage();
+
+    @GET("/home/timeline")
+    Call<TimelineEntity> getTimeline(
+            @Query("from") int from
+    );
 
     @GET("/pickup")
     Call<PickupEntity> getPickup();

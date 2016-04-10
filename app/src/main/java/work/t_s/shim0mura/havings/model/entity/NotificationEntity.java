@@ -15,6 +15,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class NotificationEntity implements Serializable {
 
+    public int eventId;
     public String type;
     public boolean unread;
     @JsonFormat(shape=JsonFormat.Shape.STRING)

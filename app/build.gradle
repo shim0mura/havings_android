@@ -60,4 +60,5 @@ dependencies {
     compile 'com.prolificinteractive:material-calendarview:1.1.0'
     compile 'com.akexorcist:RoundCornerProgressBar:2.0.3'
     compile "com.android.support:cardview-v7:+"
+    compile 'com.klinkerapps:link_builder:1.3.2'
 }
