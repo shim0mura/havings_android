@@ -71,7 +71,7 @@ public class SearchTagResultActivity extends AppCompatActivity {
         searchResultList.setAdapter(null);
 
         searchPresenter = new SearchPresenter(this);
-        searchPresenter.getSearchResult(tags, 1);
+        searchPresenter.getTagSearchResult(tags, 1);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class SearchTagResultActivity extends AppCompatActivity {
                     if (!adapter.getIsLoadingNextItem()) {
                         adapter.startLoadNextItem();
                         loader.findViewById(R.id.progress).setVisibility(View.VISIBLE);
-                        searchPresenter.getSearchResult(tags, adapter.getCurrentPage() + 1);
+                        searchPresenter.getTagSearchResult(tags, adapter.getCurrentPage() + 1);
                         Timber.d("footer count %s", searchResultList.getFooterViewsCount());
                     }
                 }

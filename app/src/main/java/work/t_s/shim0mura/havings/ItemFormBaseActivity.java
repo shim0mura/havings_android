@@ -4,16 +4,19 @@ package work.t_s.shim0mura.havings;
  * Created by shim0mura on 2016/01/04.
  */
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -60,6 +63,7 @@ import work.t_s.shim0mura.havings.model.entity.UserListEntity;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.model.realm.Tag;
 import work.t_s.shim0mura.havings.presenter.FormPresenter;
+import work.t_s.shim0mura.havings.util.PermissionUtil;
 import work.t_s.shim0mura.havings.util.SpaceTokenizer;
 import work.t_s.shim0mura.havings.util.TagCompletionView;
 import work.t_s.shim0mura.havings.view.FellowSelectExpandableListAdapter;
@@ -474,11 +478,20 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
 
     @Nullable @OnClick(R.id.add_image_from_camera)
     public void startImageChooserFromCamera(){
-        launchImageChooserFromCamera();
+        if (!PermissionUtil.hasSelfPermission(this, Manifest.permission.CAMERA)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtil.CAMERA_PERMISSION_REQUEST_CODE);
+        } else {
+            launchImageChooserFromCamera();
+        }
     }
 
     @Nullable @OnClick(R.id.add_image_from_gallery)
     public void startImageChooserFromGallery(){
+        if (!PermissionUtil.hasSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtil.WRITE_EXT_STORAGE_PERMISSION_REQUEST_CODE);
+        } else {
+            launchImageChooserFromGallery();
+        }
         launchImageChooserFromGallery();
     }
 
@@ -748,6 +761,25 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
                 break;
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PermissionUtil.CAMERA_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    launchImageChooserFromCamera();
+                } else {
+                }
+                break;
+
+            case PermissionUtil.WRITE_EXT_STORAGE_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    launchImageChooserFromGallery();
+                } else {
+                }
+                break;
+        }
     }
 
 }

@@ -42,6 +42,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
@@ -75,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private UserPresenter userPresenter;
     private View notificationView;
+    private int userId;
 
     private HomePresenter.HomeTabPagerAdapter pagerAdapter;
 
@@ -109,6 +111,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        /*
         ApiService service = ApiServiceManager.getService(this);
         Call<UserEntity> call = service.getUser(10);
 
@@ -132,6 +135,7 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d("user", "get failed");
             }
         });
+        */
 
         DefaultTag tag = DefaultTag.getSingleton(this);
         Timber.d("version %s", tag.getCurrentMigrationVersionOfLocal());
@@ -143,6 +147,8 @@ public class HomeActivity extends AppCompatActivity {
         viewPager = (ViewPager)findViewById(R.id.pager);
         tabLayout = (TabLayout)findViewById(R.id.tabs);
 
+        ApiKey apiKey = ApiKey.getSingleton(this);
+        //userId = apiKey.getUid();
         pagerAdapter = new HomePresenter.HomeTabPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(pagerAdapter);
 

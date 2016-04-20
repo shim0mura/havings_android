@@ -27,8 +27,6 @@ import work.t_s.shim0mura.havings.util.ApiErrorUtil;
  */
 public class SearchPresenter {
 
-    public static final int SEARCH_TYPE_TAG = 1;
-
     Activity activity;
     static ApiService service;
 
@@ -37,8 +35,8 @@ public class SearchPresenter {
         service = ApiServiceManager.getService(activity);
     }
 
-    public void getSearchResult(String searchWord, int page){
-        Call<SearchResultEntity> call = service.getSearchResult(SearchPresenter.SEARCH_TYPE_TAG, page, searchWord);
+    public void getTagSearchResult(String searchWord, int page){
+        Call<SearchResultEntity> call = service.getTagSearchResult(page, searchWord);
 
         call.enqueue(new Callback<SearchResultEntity>() {
             @Override
@@ -55,11 +53,52 @@ public class SearchPresenter {
                     ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
 
                     Timber.d(error.toString());
-                    for(Map.Entry<String, List<String>> e: error.errors.entrySet()){
-                        switch(e.getKey()){
-                            default:
-                                //sendErrorToGetUser();
-                                break;
+                    if(error.errors != null) {
+                        for (Map.Entry<String, List<String>> e : error.errors.entrySet()) {
+                            switch (e.getKey()) {
+                                default:
+                                    //sendErrorToGetUser();
+                                    break;
+                            }
+                        }
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("timer get failed");
+            }
+        });
+    }
+
+    public void getUserSearchResult(String searchWord, int page){
+        Call<SearchResultEntity> call = service.getUserSearchResult(page, searchWord);
+
+        call.enqueue(new Callback<SearchResultEntity>() {
+            @Override
+            public void onResponse(Response<SearchResultEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    SearchResultEntity searchResultEntity = response.body();
+                    BusHolder.get().post(searchResultEntity);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    if(error.errors != null) {
+                        for (Map.Entry<String, List<String>> e : error.errors.entrySet()) {
+                            switch (e.getKey()) {
+                                default:
+                                    //sendErrorToGetUser();
+                                    break;
+                            }
                         }
                     }
                 } else {

@@ -26,9 +26,11 @@ import lecho.lib.hellocharts.view.PieChartView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.AllTimerActivity;
 import work.t_s.shim0mura.havings.ItemActivity;
+import work.t_s.shim0mura.havings.ProfileEditActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.RegisterActivity;
 import work.t_s.shim0mura.havings.UserActivity;
+import work.t_s.shim0mura.havings.UserSearchActivity;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
@@ -219,5 +221,15 @@ public class DashboardTabFragment extends Fragment {
     @OnClick(R.id.user_6)
     public void navigateToUser6(View v){
         UserActivity.startActivity(getActivity(), 6);
+    }
+
+    @OnClick(R.id.edit_profile)
+    public void navigateToEditProfile(View v){
+        ProfileEditActivity.startActivity(getActivity(), 10);
+    }
+
+    @OnClick(R.id.user_search)
+    public void navigateToUserSearch(View v){
+        UserSearchActivity.startActivity(getActivity());
     }
 }

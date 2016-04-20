@@ -61,6 +61,9 @@ public interface ApiService {
             @Path("user_id") int user_id
     );
 
+    @GET("/user/self")
+    Call<UserEntity> getSelf();
+
     @GET("/user/{user_id}/item_list")
     Call<ItemEntity> getUserItemList(
             @Path("user_id") int user_id,
@@ -273,11 +276,22 @@ public interface ApiService {
     @PUT("/notification/read")
     Call<ResultEntity> readNotifications();
 
-    @GET("/search/{type}/")
-    Call<SearchResultEntity> getSearchResult(
-            @Path("type") int type,
+    @PUT("/users")
+    Call<ResultEntity> editProfile(
+            @Body HashMap<String, UserEntity> user
+    );
+
+
+    @GET("/search/tag/")
+    Call<SearchResultEntity> getTagSearchResult(
             @Query("page") int page,
             @Query("tag") String tag
+    );
+
+    @GET("/search/user/")
+    Call<SearchResultEntity> getUserSearchResult(
+            @Query("page") int page,
+            @Query("name") String name
     );
 
     @GET("/tags/default_tag_migration/")

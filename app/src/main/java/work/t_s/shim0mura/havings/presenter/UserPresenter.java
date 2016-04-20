@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,8 @@ import work.t_s.shim0mura.havings.view.UserListAdapter;
  */
 public class UserPresenter {
 
+    private static final String USER_POST_HASH_KEY = "user";
+
     Activity activity;
     static ApiService service;
 
@@ -69,6 +72,42 @@ public class UserPresenter {
 
     public void getUser(int userId){
         Call<UserEntity> call = service.getUser(userId);
+        call.enqueue(new Callback<UserEntity>() {
+            @Override
+            public void onResponse(Response<UserEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    UserEntity user = response.body();
+                    BusHolder.get().post(user);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    for(Map.Entry<String, List<String>> e: error.errors.entrySet()){
+                        switch(e.getKey()){
+                            default:
+                                //sendErrorToGetUser();
+                                break;
+                        }
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("failed to post timer");
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void getSelf(){
+        Call<UserEntity> call = service.getSelf();
         call.enqueue(new Callback<UserEntity>() {
             @Override
             public void onResponse(Response<UserEntity> response, Retrofit retrofit) {
@@ -363,6 +402,45 @@ public class UserPresenter {
         });
     }
 
+    public void editProfile(UserEntity userEntity){
+
+        HashMap<String, UserEntity> hashItem = new HashMap<String, UserEntity>();
+
+        if(isValidToEditProfile(userEntity)){
+            hashItem.put(USER_POST_HASH_KEY, userEntity);
+        }else{
+            return;
+        }
+
+        Call<ResultEntity> call = service.editProfile(hashItem);
+
+        call.enqueue(new Callback<ResultEntity>() {
+            @Override
+            public void onResponse(Response<ResultEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ResultEntity result = response.body();
+                    BusHolder.get().post(result);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    BusHolder.get().post(new SetErrorEvent(GeneralResult.RESULT_READ_NOTIFICATIONS, error));
+
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("user", "get failed");
+            }
+        });
+    }
+
     public void followUser(int userId){
         Call<ResultEntity> call = service.followUser(userId);
         call.enqueue(getCallbackOfSuccessToActionUser(GeneralResult.RESULT_FOLLOW_USER));
@@ -446,6 +524,14 @@ public class UserPresenter {
                 t.printStackTrace();
             }
         };
+    }
+
+    private boolean isValidToEditProfile(UserEntity userEntity){
+        if(userEntity.name != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public static class UserPagerAdapter extends PagerAdapter {

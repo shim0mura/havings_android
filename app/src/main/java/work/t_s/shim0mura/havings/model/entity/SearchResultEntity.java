@@ -12,6 +12,8 @@ import java.util.List;
 public class SearchResultEntity implements Serializable {
 
     public List<ItemEntity> items;
+    public List<UserEntity> users;
+
     public int searchType;
     public int totalCount;
     public int currentPage;

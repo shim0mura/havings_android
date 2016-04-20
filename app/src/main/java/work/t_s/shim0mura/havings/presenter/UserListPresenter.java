@@ -33,11 +33,13 @@ public class UserListPresenter {
 
     public static final String USER_LIST_TYPE = "UserListType";
     public static final String RELATED_ID = "RelatedId";
+    public static final String SEARCH_RESULT = "SearchResult";
 
     public static final int ITEM_FAVORITE_USER_LIST = 10;
     public static final int ITEM_IMAGE_FAVORITE_USER_LIST = 20;
     public static final int FOLLOWING_USER_LIST = 30;
     public static final int FOLLOWED_USER_LIST = 40;
+    public static final int SEARCH_USER_LIST = 50;
 
     private Activity activity;
     static ApiService service;

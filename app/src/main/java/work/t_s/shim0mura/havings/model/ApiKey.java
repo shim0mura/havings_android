@@ -24,12 +24,14 @@ public class ApiKey {
     private static final String API_KEY = "ApiKey";
     private static final String API_TOKEN = "access-token";
     private static final String UID = "uid";
+    private static final String USER_ID = "userId";
     private static final String ACCESS_KEY = "secret";
 
     private static ApiKey apiKey;
     private Context context;
     private String token;
     private String uid;
+    private int userId;
 
     private ApiKey(Context c){
         context = c;
@@ -38,6 +40,7 @@ public class ApiKey {
         String accessKey = preferences.getString(ACCESS_KEY, null);
         token = preferences.getString(API_TOKEN, null);
         uid = preferences.getString(UID, null);
+        userId = preferences.getInt(USER_ID, 0);
     }
 
     public String getToken(){
@@ -46,6 +49,7 @@ public class ApiKey {
     public String getUid(){
         return uid;
     }
+    public int getUserId() { return userId; }
 
     public static synchronized ApiKey getSingleton(Context context){
         if(apiKey == null){
@@ -58,6 +62,7 @@ public class ApiKey {
     public void clearApiKey(){
         token = null;
         uid = null;
+        userId = 0;
 
         SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
         //preferences.edit().remove(API_TOKEN);
@@ -79,9 +84,11 @@ public class ApiKey {
         editor = preferences.edit();
         editor.putString(API_TOKEN, rawToken);
         editor.putString(UID, rawUid);
+        //editor.putInt(USER_ID, rawUserId);
 
         token = rawToken;
         uid = rawUid;
+        //userId = rawUserId;
 
         /*
         Crypto crypto = new Crypto(

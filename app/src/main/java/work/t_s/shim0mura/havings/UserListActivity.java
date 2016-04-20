@@ -23,6 +23,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.model.entity.SearchResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
@@ -36,6 +37,8 @@ public class UserListActivity extends AppCompatActivity {
 
     private int userListType;
     private int relatedId;
+    private SearchResultEntity searchResultEntity;
+
     private UserListPresenter userListPresenter;
     private UserListAdapter userListAdapter;
 
@@ -51,6 +54,14 @@ public class UserListActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    public static void startActivity(Context context, int listType, SearchResultEntity searchResult){
+        Intent intent = new Intent(context, new Object() {}.getClass().getEnclosingClass());
+        intent.putExtra(UserListPresenter.USER_LIST_TYPE, listType);
+        intent.putExtra(UserListPresenter.SEARCH_RESULT, searchResult);
+
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,12 +69,17 @@ public class UserListActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         userListType = (int)extras.getSerializable(UserListPresenter.USER_LIST_TYPE);
-        relatedId = (int)extras.getSerializable(UserListPresenter.RELATED_ID);
+        relatedId = extras.getInt(UserListPresenter.RELATED_ID, 0);
+        searchResultEntity = (SearchResultEntity)extras.getSerializable(UserListPresenter.SEARCH_RESULT);
         userListPresenter = new UserListPresenter(this);
 
         ButterKnife.bind(this);
 
-        userListPresenter.getUsers(userListType, relatedId);
+        if(relatedId != 0 && searchResultEntity == null){
+            userListPresenter.getUsers(userListType, relatedId);
+        }else if(searchResultEntity != null){
+            setUserList(new ArrayList<UserEntity>(searchResultEntity.users));
+        }
     }
 
     @Override
@@ -95,7 +111,7 @@ public class UserListActivity extends AppCompatActivity {
         Boolean userExist;
         if(users.size() > 0){
             userExist = true;
-        }else{
+        }else {
             userExist = false;
         }
         renderList(userExist);
@@ -129,6 +145,8 @@ public class UserListActivity extends AppCompatActivity {
                 case UserListPresenter.FOLLOWED_USER_LIST:
                     noUser.setText(getText(R.string.prompt_no_followed_user));
                     break;
+                case UserListPresenter.SEARCH_USER_LIST:
+                    noUser.setText(getText(R.string.prompt_no_searched_user));
             }
             event = new ToggleLoadingEvent(noUser, loadingProgress);
         }

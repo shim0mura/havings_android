@@ -68,13 +68,11 @@ public class UserActivity extends AppCompatActivity {
     @Bind(R.id.action_follow) LinearLayout actionFollow;
     @Bind(R.id.action_follow_icon) ImageView actionFollowIcon;
     @Bind(R.id.action_follow_text) TextView actionFollowText;
+    @Bind(R.id.action_setting_user) LinearLayout actionSettingUser;
     @Bind(R.id.description) TextView description;
 
     @Bind(R.id.tabs) TabLayout tabLayout;
     @Bind(R.id.pager) ViewPager viewPager;
-
-    //private TabLayout tabLayout;
-    //private ViewPager viewPager;
 
     private UserPresenter.UserPagerAdapter pagerAdapter;
 
@@ -132,6 +130,11 @@ public class UserActivity extends AppCompatActivity {
     @OnClick(R.id.user_followed)
     public void redirectToFollowedUserList(){
         UserListActivity.startActivity(this, UserListPresenter.FOLLOWED_USER_LIST, user.id);
+    }
+
+    @OnClick(R.id.action_setting_user)
+    public void redirectToEditProfile(){
+        ProfileEditActivity.startActivity(this, user);
     }
 
     @OnClick(R.id.user_like)
@@ -302,6 +305,7 @@ public class UserActivity extends AppCompatActivity {
                 break;
             case User.RELATION_HIMSELF:
                 actionFollow.setVisibility(View.GONE);
+                actionSettingUser.setVisibility(View.VISIBLE);
                 break;
         }
     }

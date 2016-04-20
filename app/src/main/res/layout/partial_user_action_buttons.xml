@@ -26,6 +26,25 @@
                 android:textSize="18dp"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/action_setting_user"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/user_setting_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_settings_black_18dp"/>
+            <TextView
+                android:id="@+id/user_setting_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_user_setting"
+                android:textSize="18dp"/>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

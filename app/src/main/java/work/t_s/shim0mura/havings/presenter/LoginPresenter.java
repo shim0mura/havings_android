@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import butterknife.ButterKnife;
+import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;

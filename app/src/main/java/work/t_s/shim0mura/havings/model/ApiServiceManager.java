@@ -55,13 +55,21 @@ public class ApiServiceManager {
         retrofit = builder.client(okhttpClient.getClient()).build();
         context = c;
 
+        Timber.d("access manager1");
+
         apiKey = ApiKey.getSingleton(context);
-        if(canAccessToApi()){
-            addJsonHeader();
+        Timber.d("access manager2");
+
+        addJsonHeader();
+        addRawJsonLogInterceptor();
+        setGlideHttpClient(c);
+
+        if(canAccessToApi()) {
             addAuthHeader(apiKey.getToken(), apiKey.getUid());
-            addRawJsonLogInterceptor();
-            setGlideHttpClient(c);
+            Timber.d("access manager3");
         }
+        Timber.d("access manager4");
+
     }
 
     public static synchronized ApiServiceManager getSingleton(Context context){

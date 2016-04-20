@@ -48,6 +48,7 @@ import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.DashboardTabFragment;
 import work.t_s.shim0mura.havings.view.SearchTabFragment;
 import work.t_s.shim0mura.havings.view.SocialTabFragment;
+import work.t_s.shim0mura.havings.view.UserFragment;
 
 /**
  * Created by shim0mura on 2016/03/29.
@@ -260,7 +261,7 @@ public class HomePresenter {
 
     public static class HomeTabPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] tabTitle = {"ホーム", "ソーシャル", "検索", "設定"};
+        private final String[] tabTitle = {"ホーム", "ソーシャル", "検索", "アカウント"};
         private Context context;
         private LayoutInflater layoutInflater;
 
@@ -318,17 +319,18 @@ public class HomePresenter {
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
-            String s = "sssss" + "sss";
-            double n = Math.random()*30;
-            s += String.valueOf(n);
 
             if(position == 0) {
                 return DashboardTabFragment.newInstance();
-            }else if(position == 1){
+            }else if(position == 1) {
                 return SocialTabFragment.newInstance();
                 //v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
-            }else {
+            }else if(position == 2){
                 return SearchTabFragment.newInstance();
+            }else if(position == 3){
+                return UserFragment.newInstance();
+            }else{
+                return UserFragment.newInstance();
             }
         }
 
