@@ -1,5 +1,6 @@
 package work.t_s.shim0mura.havings;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +45,7 @@ import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
+import work.t_s.shim0mura.havings.util.Share;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -70,6 +72,7 @@ public class UserActivity extends AppCompatActivity {
     @Bind(R.id.action_follow_text) TextView actionFollowText;
     @Bind(R.id.action_setting_user) LinearLayout actionSettingUser;
     @Bind(R.id.description) TextView description;
+    @Bind(R.id.share) View share;
 
     @Bind(R.id.tabs) TabLayout tabLayout;
     @Bind(R.id.pager) ViewPager viewPager;
@@ -229,6 +232,14 @@ public class UserActivity extends AppCompatActivity {
 
                 stickyScrollPresenter.initializeUser();
 
+            }
+        });
+
+        final Activity self = this;
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Share.startIntent(self, user.name, User.getPath(user), backgroundImage);
             }
         });
     }

@@ -76,7 +76,8 @@
 
 
                             <include layout="@layout/item_metadata" />
-                            <include layout="@layout/item_action_buttons" />
+                            <include layout="@layout/item_action_buttons"
+                                android:id="@+id/action_buttons"/>
                             <include layout="@layout/item_timer" />
 
 

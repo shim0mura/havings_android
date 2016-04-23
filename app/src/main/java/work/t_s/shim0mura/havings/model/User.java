@@ -20,6 +20,7 @@ import work.t_s.shim0mura.havings.model.di.Api;
 import work.t_s.shim0mura.havings.model.di.ApiComponent;
 import work.t_s.shim0mura.havings.model.di.ApiModule;
 import work.t_s.shim0mura.havings.model.di.DaggerApiComponent;
+import work.t_s.shim0mura.havings.model.entity.UserEntity;
 
 /**
  * Created by shim0mura on 2015/11/05.
@@ -57,6 +58,14 @@ public class User {
         }
 
         return user;
+    }
+
+    public static String getPath(UserEntity userEntity){
+        if(userEntity.path.isEmpty()) {
+            return ApiService.BASE_URL_BY_WEB + "/user/" + String.valueOf(userEntity.id);
+        }else{
+            return ApiService.BASE_URL_BY_WEB + userEntity.path;
+        }
     }
 
     public void test(){

@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 
 /**
  * Created by shim0mura on 2016/01/02.
@@ -36,6 +38,15 @@ public class Item {
             Timber.d("create type %s", type.getKey());
         }
         return p;
+    }
+
+    public static String getPath(ItemEntity itemEntity){
+        return ApiService.BASE_URL_BY_WEB + "/items/" + String.valueOf(itemEntity.id);
+    }
+
+    public static String getImagePath(ItemImageEntity itemImageEntity){
+        // itemImageEntity.pathを使いたい
+        return ApiService.BASE_URL_BY_WEB + "/items/" + String.valueOf(itemImageEntity.itemId) + "/image/" + itemImageEntity.id;
     }
 
     public boolean isValidName(String name){

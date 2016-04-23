@@ -47,6 +47,7 @@ public interface ApiService {
     MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     String BASE_URL = "https://192.168.1.25:9292";
+    String BASE_URL_BY_WEB = "http://192.168.1.25:9292";
 
     String REGISTER = BASE_URL + "/users";
     String SIGNIN = BASE_URL + "/users/sign_in";

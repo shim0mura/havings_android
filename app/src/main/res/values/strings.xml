@@ -251,6 +251,10 @@
     <string name="prompt_change_profile_image">プロフィール画像を変更</string>
     <string name="prompt_changed_profile_image">変更後のプロフィール画像</string>
 
+    <string name="prompt_copy_url_link">URLをコピー</string>
+    <string name="prompt_link_copied">URLをコピーしました</string>
+
+    <string name="prompt_share">シェアするアプリを選択</string>
 
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>
@@ -293,4 +297,5 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="title_activity_pickup">PickupActivity</string>
     <string name="title_activity_profile_edit">ProfileEditActivity</string>
     <string name="title_activity_user_search">UserSearchActivity</string>
+    <string name="title_activity_share_to_clipboard">ShareToClipboardActivity</string>
 </resources>

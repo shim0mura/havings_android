@@ -29,6 +29,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
+import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.entity.EventEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
@@ -36,6 +37,7 @@ import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.UserListPresenter;
+import work.t_s.shim0mura.havings.util.Share;
 import work.t_s.shim0mura.havings.util.TouchImageView;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 
@@ -57,7 +59,7 @@ public class ImageDetailActivity extends AppCompatActivity {
     @Bind(R.id.image_memo) TextView imageMemo;
     @Bind(R.id.image_favorite_count) TextView imageFavoriteCount;
     @Bind(R.id.image_favorite_button) ImageView imageFavoriteButton;
-
+    @Bind(R.id.image_share_button) ImageView imageShareButton;
 
     public static void startActivity(Context context, ItemEntity item, ItemImageEntity itemImage){
         Intent intent = new Intent(context, new Object() {}.getClass().getEnclosingClass());
@@ -184,6 +186,19 @@ public class ImageDetailActivity extends AppCompatActivity {
         }else{
             itemPresenter.favoriteItemImage(itemImageEntity.id);
         }
+    }
+
+    @OnClick(R.id.image_share_button)
+    public void shareThisImage(){
+        String itemImageName;
+        if(item != null) {
+            itemImageName = item.name + getString(R.string.postfix_prompt_of_item_image);
+        }else if(itemImageEntity.itemName != null){
+            itemImageName = itemImageEntity.itemName + getString(R.string.postfix_prompt_of_item_image);
+        }else {
+            itemImageName = null;
+        }
+        Share.startIntent(this, Item.getImagePath(itemImageEntity), itemImageName, detailImage);
     }
 
     @OnClick(R.id.favorite_count_wrapper)

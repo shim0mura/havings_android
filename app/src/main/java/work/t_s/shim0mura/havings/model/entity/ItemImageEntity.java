@@ -21,6 +21,10 @@ public class ItemImageEntity implements Serializable {
     public String itemName;
     public String url;
     public String imageData;
+    // 画像URLはシェア用にアイテムに紐付いたちゃんとしたURLを用意したい
+    // それ用のpath
+    // 後々urlと統合する予定
+    public String path;
 
     @JsonFormat(shape=JsonFormat.Shape.STRING)
     public Date date;

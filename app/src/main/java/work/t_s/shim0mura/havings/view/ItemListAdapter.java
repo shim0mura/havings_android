@@ -113,10 +113,16 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
         if(item.thumbnail != null){
             String thumbnailUrl = ApiService.BASE_URL + item.thumbnail;
             Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
+        }else{
+            holder.thumbnail.setImageResource(R.drawable.bg);
         }
+
         if(item.isList){
             holder.itemType.setImageResource(R.drawable.list_icon_for_tab);
+        }else {
+            holder.itemType.setImageResource(R.drawable.item_icon_for_tab);
         }
+
         holder.name.setText(item.name);
         holder.count.setText(String.valueOf(item.count));
         holder.favoriteCount.setText(String.valueOf(item.favoriteCount));

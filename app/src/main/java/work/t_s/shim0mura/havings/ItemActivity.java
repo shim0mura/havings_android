@@ -3,8 +3,17 @@ package work.t_s.shim0mura.havings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.LabeledIntent;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -23,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
@@ -30,6 +40,12 @@ import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.squareup.otto.Subscribe;
 import com.wefika.flowlayout.FlowLayout;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -41,6 +57,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
+import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.Timer;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
@@ -51,6 +68,7 @@ import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 import work.t_s.shim0mura.havings.presenter.TimerPresenter;
 import work.t_s.shim0mura.havings.presenter.UserListPresenter;
+import work.t_s.shim0mura.havings.util.Share;
 
 public class ItemActivity extends AppCompatActivity {
 
@@ -106,6 +124,7 @@ public class ItemActivity extends AppCompatActivity {
     @Bind(R.id.description) TextView description;
     @Bind(R.id.timer_wrapper) LinearLayout timerWrapper;
     @Bind(R.id.add_timer_button) Button addTimerButton;
+    @Bind(R.id.share) View share;
 
     public static void startActivity(Context context, int itemId){
         Intent intent = new Intent(context, ItemActivity.class);
@@ -294,9 +313,9 @@ public class ItemActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void setItemData(ItemEntity item){
+    public void setItemData(ItemEntity itemEntity){
         Log.d("item set", "start");
-        this.item = item;
+        item = itemEntity;
 
         title.setText(item.name);
 
@@ -398,6 +417,13 @@ public class ItemActivity extends AppCompatActivity {
             }
         });
 
+        final Context self = this;
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Share.startIntent(self, item.name, Item.getPath(item), thumbnail);
+            }
+        });
     }
 
     private void updateItemData(){

@@ -614,9 +614,6 @@ public class UserPresenter {
             }
             nestedItemListAdapter = new NestedItemListAdapter(activity, R.layout.list_nested_item, items);
 
-            itemListView.setAdapter(itemListAdapter);
-            nestedItemListView.setAdapter(nestedItemListAdapter);
-
             itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                     @Override
                                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -644,8 +641,12 @@ public class UserPresenter {
                     toggleItemListView();
                 }
             });
+
             itemListView.addHeaderView(headerView);
             nestedItemListView.addHeaderView(headerView);
+
+            itemListView.setAdapter(itemListAdapter);
+            nestedItemListView.setAdapter(nestedItemListAdapter);
 
             itemListView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
