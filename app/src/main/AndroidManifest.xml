@@ -151,6 +151,11 @@
             android:label="@string/title_activity_share_to_clipboard"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".DoneTaskActivity"
+            android:label="@string/title_activity_done_task"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

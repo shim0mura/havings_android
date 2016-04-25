@@ -56,6 +56,13 @@
                     android:id="@+id/user_search"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="30dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="done task"
+                    android:id="@+id/done_task"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="30dp"/>
             </LinearLayout>
 
             <LinearLayout

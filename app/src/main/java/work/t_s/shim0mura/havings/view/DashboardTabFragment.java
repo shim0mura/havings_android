@@ -25,6 +25,7 @@ import butterknife.OnClick;
 import lecho.lib.hellocharts.view.PieChartView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.AllTimerActivity;
+import work.t_s.shim0mura.havings.DoneTaskActivity;
 import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.ProfileEditActivity;
 import work.t_s.shim0mura.havings.R;
@@ -231,5 +232,10 @@ public class DashboardTabFragment extends Fragment {
     @OnClick(R.id.user_search)
     public void navigateToUserSearch(View v){
         UserSearchActivity.startActivity(getActivity());
+    }
+
+    @OnClick(R.id.done_task)
+    public void navigateToDoneTask(View v){
+        DoneTaskActivity.startActivity(getActivity(), 2);
     }
 }

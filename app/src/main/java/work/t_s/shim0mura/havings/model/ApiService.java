@@ -34,6 +34,7 @@ import work.t_s.shim0mura.havings.model.entity.PickupEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.SearchResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TagMigrationEntity;
+import work.t_s.shim0mura.havings.model.entity.TaskWrapperEntity;
 import work.t_s.shim0mura.havings.model.entity.TimelineEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
@@ -238,6 +239,11 @@ public interface ApiService {
     @DELETE("/timers/{timer_id}")
     Call<TimerEntity> deleteTimer(
             @Path("timer_id") int timer_id
+    );
+
+    @GET("/items/{item_id}/done_task")
+    Call<TaskWrapperEntity> getDoneTasksByList(
+            @Path("item_id") int item_id
     );
 
     @GET("/items/{item_id}/comment")

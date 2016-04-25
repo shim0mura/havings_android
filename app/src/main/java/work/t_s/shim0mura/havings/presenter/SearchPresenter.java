@@ -20,6 +20,7 @@ import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.PickupEntity;
 import work.t_s.shim0mura.havings.model.entity.SearchResultEntity;
+import work.t_s.shim0mura.havings.model.entity.TaskWrapperEntity;
 import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 
 /**
