@@ -252,7 +252,7 @@ public class ItemActivity extends AppCompatActivity {
         programFab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemFormActivity.startActivity(act, item, false);
+                ItemFormActivity.startActivity(act, item, true);
             }
         });
         fab.addMenuButton(programFab1);

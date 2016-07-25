@@ -35,6 +35,12 @@ public class TagEntity implements Serializable {
     }
     */
 
+    public TagEntity(){}
+
+    public TagEntity(String name){
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }

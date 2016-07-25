@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -108,6 +109,48 @@ public class DoneTaskPresenter {
                     }
                 } else {
 
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("timer get failed");
+            }
+        });
+    }
+
+    public void getAllTask(){
+        Call<List<TaskWrapperEntity>> call = service.getAllDoneTasks();
+
+        call.enqueue(new Callback<List<TaskWrapperEntity>>() {
+            @Override
+            public void onResponse(Response<List<TaskWrapperEntity>> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    List<TaskWrapperEntity> doneTasks = response.body();
+                    BusHolder.get().post(doneTasks);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    if (error.errors != null) {
+                        for (Map.Entry<String, List<String>> e : error.errors.entrySet()) {
+                            switch (e.getKey()) {
+                                default:
+                                    //sendErrorToGetUser();
+                                    break;
+                            }
+                        }
+                    }
+                } else {
+                    new AlertDialog.Builder(activity)
+                            .setTitle(R.string.prompt_connection_error)
+                            .setMessage(R.string.prompt_connection_error_detail)
+                            .setPositiveButton("OK", null)
+                            .show();
                 }
             }
 
@@ -380,6 +423,7 @@ public class DoneTaskPresenter {
 
                 holder.wrapper = (LinearLayout)convertView.findViewById(R.id.wrapper);
                 holder.taskName = (TextView)convertView.findViewById(R.id.task_name);
+                holder.listName = (TextView)convertView.findViewById(R.id.list_name);
                 holder.notificationInterval = (TextView)convertView.findViewById(R.id.notification_interval);
                 holder.doneDate = (TextView)convertView.findViewById(R.id.done_date);
                 holder.notification = (LinearLayout)convertView.findViewById(R.id.notification);
@@ -395,6 +439,7 @@ public class DoneTaskPresenter {
             final TimerEntity timer = timerEntityMap.get(Integer.valueOf(item.get("timerId")));
 
             holder.taskName.setText(timer.name);
+            holder.listName.setText(timer.listName);
             holder.notificationInterval.setText(Timer.getIntervalString((Activity)context, timer));
             holder.doneDate.setText(item.get("doneDate"));
 
@@ -412,6 +457,7 @@ public class DoneTaskPresenter {
 
             LinearLayout wrapper;
             TextView taskName;
+            TextView listName;
             TextView notificationInterval;
             TextView doneDate;
             LinearLayout notification;

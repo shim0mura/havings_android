@@ -271,6 +271,9 @@ public interface ApiService {
             @Query("from") int from
     );
 
+    @GET("/home/all_done_task")
+    Call<List<TaskWrapperEntity>> getAllDoneTasks();
+
     @GET("/pickup")
     Call<PickupEntity> getPickup();
 

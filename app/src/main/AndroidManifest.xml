@@ -156,6 +156,11 @@
             android:label="@string/title_activity_done_task"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".TokenAutoCompActivity"
+            android:label="@string/title_activity_token_auto_comp"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

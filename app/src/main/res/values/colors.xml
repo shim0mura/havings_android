@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="lightPrimaryColor">#f8bbd0</color>
+    -->
+
+    <color name="colorPrimary">#A48174</color>
+    <color name="colorPrimaryDark">#874E37</color>
+    <color name="colorAccent">#F6CA06</color>
+    <color name="lightPrimaryColor">#f8bbd0</color>
+
+    <color name="mainColor">#A48174</color>
+    <color name="mainAccentColor">#F6CA06</color>
+    <color name="darkMainColor">#874E37</color>
+
 
     <color name="primaryText">#212121</color>
     <color name="secondaryText">#727272</color>
@@ -41,4 +53,6 @@
     <color name="categoryEtc">#b6b6b6</color>
 
     <color name="link">#81D4FA</color>
+
+    <color name="dateSelect">#6EB7DB</color>
 </resources>

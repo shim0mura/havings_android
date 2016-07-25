@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -490,6 +491,7 @@ public class TimerPresenter {
         noticeAt.setText(noticeString);
 
         RoundCornerProgressBar dueProgress = (RoundCornerProgressBar)v.findViewById(R.id.due_progress);
+
         int percentage = Timer.getPercentageUntilDueDate(due, timer.latestCalcAt);
         dueProgress.setMax(100);
         dueProgress.setProgress(percentage);

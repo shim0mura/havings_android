@@ -11,7 +11,7 @@ import java.util.Map;
  */
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ItemEntity implements Serializable {
+public class    ItemEntity implements Serializable {
 
     public int id;
     public String name;

@@ -13,15 +13,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.view.PieChartView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.AllTimerActivity;
@@ -30,15 +39,19 @@ import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.ProfileEditActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.RegisterActivity;
+import work.t_s.shim0mura.havings.TokenAutoCompActivity;
 import work.t_s.shim0mura.havings.UserActivity;
 import work.t_s.shim0mura.havings.UserSearchActivity;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
+import work.t_s.shim0mura.havings.model.Timer;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
+import work.t_s.shim0mura.havings.model.entity.TaskWrapperEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.event.GenericEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.TimerListRenderEvent;
+import work.t_s.shim0mura.havings.presenter.DoneTaskPresenter;
 import work.t_s.shim0mura.havings.presenter.HomePresenter;
 import work.t_s.shim0mura.havings.presenter.TimerPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
@@ -55,10 +68,22 @@ public class DashboardTabFragment extends Fragment {
     @Bind(R.id.total_item_percentage_wrapper) LinearLayout graphDetailWrapper;
     @Bind(R.id.pie_chart) PieChartView pieChartView;
     @Bind(R.id.timers) LinearLayout deadlineNearingTimers;
+    @Bind(R.id.view_more_timer) LinearLayout viewMoreTimer;
+    @Bind(R.id.calendar) MaterialCalendarView calendarView;
+    @Bind(R.id.task_done_header) View taskDoneHeader;
+    @Bind(R.id.task_done_date) LinearLayout taskDoneDate;
+
+    @Bind(R.id.chart_wrapper) LinearLayout chartWrapper;
+    @Bind(R.id.calendar_wrapper) LinearLayout calendarWrapper;
 
     private HomePresenter homePresenter;
     private UserPresenter userPresenter;
+    private DoneTaskPresenter doneTaskPresenter;
     private ArrayList<ItemPercentageEntity> itemPercentageEntityArrayList;
+    private ArrayList<TimerEntity> timerEntities;
+    private ArrayList<TaskWrapperEntity> taskWrapperEntities;
+
+    private Calendar calendar;
 
     public DashboardTabFragment(){}
 
@@ -73,13 +98,12 @@ public class DashboardTabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-        }
-        */
+
         userPresenter = new UserPresenter(getActivity());
         homePresenter = new HomePresenter(getActivity());
+        doneTaskPresenter= new DoneTaskPresenter(getActivity());
+
+        calendar = Calendar.getInstance();
     }
 
     @Override
@@ -90,6 +114,7 @@ public class DashboardTabFragment extends Fragment {
         if(itemPercentageEntityArrayList == null){
             userPresenter.getItemPercentage();
             homePresenter.getAllTimers();
+            doneTaskPresenter.getAllTask();
         }
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -125,52 +150,68 @@ public class DashboardTabFragment extends Fragment {
 
     @Subscribe
     public void renderPieChart(ItemPercentageGraphEvent graphEvent){
-        Timber.d("render chart");
         itemPercentageEntityArrayList = graphEvent.itemPercentageEntities;
 
-        GraphRenderer.renderPieChart(getActivity(), pieChartView, graphDetailWrapper, itemPercentageEntityArrayList);
+        if(itemPercentageEntityArrayList.isEmpty()){
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            View v = layoutInflater.inflate(R.layout.partial_nothing_text, null);
+            TextView nothing = (TextView)v.findViewById(R.id.nothing);
+            nothing.setText(R.string.prompt_no_chart);
+            graphDetailWrapper.addView(v);
+        }else{
+            GraphRenderer.renderPieChart(getActivity(), pieChartView, graphDetailWrapper, itemPercentageEntityArrayList);
+        }
     }
 
     @Subscribe
     public void renderTimers(TimerListRenderEvent timersEvent){
-        Timber.d("deadlineNearingTimers");
-        for(TimerEntity timer : timersEvent.timerListEntities){
-            Timber.d("timer %s : %s %s", timer.id, timer.nextDueAt.toString(), timer.noticeHour);
-        }
 
-        final ArrayList<TimerEntity> timerEntities = timersEvent.timerListEntities;
+        timerEntities = timersEvent.timerListEntities;
         final Activity activity = getActivity();
-        LayoutInflater layoutInflater = LayoutInflater.from(activity);
 
-        for(int i = 0; i < MAX_TIMER_SHOWING; i++){
-            TimerEntity timer = timerEntities.get(i);
-
-            View v = layoutInflater.inflate(R.layout.partial_timer_content, null);
-            TimerPresenter.assignTimerText(v, timer, activity);
-
-            if(timer.listName != null) {
-                LinearLayout listNameWrapper = (LinearLayout)v.findViewById(R.id.list_name_wrapper);
-                listNameWrapper.setVisibility(View.VISIBLE);
-                TextView listName = (TextView)v.findViewById(R.id.list_name);
-                listName.setText(timer.listName);
-            }
-            ImageView timerMenu = (ImageView)v.findViewById(R.id.timer_menu);
-            timerMenu.setVisibility(View.GONE);
-
-            v.setTag(R.id.TAG_ITEM_ID, timer.listId);
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int itemId = (int)v.getTag(R.id.TAG_ITEM_ID);
-                    ItemActivity.startActivity(activity, itemId);
-                }
-            });
-
+        if(timerEntities.isEmpty()){
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            View v = layoutInflater.inflate(R.layout.partial_nothing_text, null);
+            TextView nothing = (TextView)v.findViewById(R.id.nothing);
+            nothing.setText(R.string.prompt_no_timers);
             deadlineNearingTimers.addView(v);
+            return;
+        }else{
+            LayoutInflater layoutInflater = LayoutInflater.from(activity);
+
+            for(int i = 0; i < MAX_TIMER_SHOWING; i++){
+                TimerEntity timer = timerEntities.get(i);
+
+                View v = layoutInflater.inflate(R.layout.partial_timer_content, null);
+                TimerPresenter.assignTimerText(v, timer, activity);
+
+                if(timer.listName != null) {
+                    LinearLayout listNameWrapper = (LinearLayout)v.findViewById(R.id.list_name_wrapper);
+                    listNameWrapper.setVisibility(View.VISIBLE);
+                    TextView listName = (TextView)v.findViewById(R.id.list_name);
+                    listName.setText(timer.listName);
+                }
+                ImageView timerMenu = (ImageView)v.findViewById(R.id.timer_menu);
+                timerMenu.setVisibility(View.GONE);
+
+                v.setTag(R.id.TAG_ITEM_ID, timer.listId);
+
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int itemId = (int)v.getTag(R.id.TAG_ITEM_ID);
+                        ItemActivity.startActivity(activity, itemId);
+                    }
+                });
+
+                deadlineNearingTimers.addView(v);
+            }
         }
 
-        if(timerEntities.size() > MAX_TIMER_SHOWING){
+
+        if(timerEntities.size() <= MAX_TIMER_SHOWING){
+            viewMoreTimer.setVisibility(View.GONE);
+            /*
             View v = layoutInflater.inflate(R.layout.partial_view_more, null);
             deadlineNearingTimers.addView(v);
             v.setOnClickListener(new View.OnClickListener() {
@@ -179,6 +220,77 @@ public class DashboardTabFragment extends Fragment {
                     AllTimerActivity.startActivity(activity, timerEntities);
                 }
             });
+            */
+        }
+    }
+
+    @Subscribe
+    public void renderCalendar(ArrayList<TaskWrapperEntity> taskWrappers) {
+        taskWrapperEntities = taskWrappers;
+
+        doneTaskPresenter.setDefaultDecorator(calendarView, calendar);
+        doneTaskPresenter.sortTaskByEventDate(taskWrappers);
+
+        doneTaskPresenter.changeMonthAndTaskDoneDate(calendarView, calendar);
+
+        TextView prompt = (TextView)taskDoneHeader.findViewById(R.id.prompt);
+        prompt.setText(getString(R.string.prompt_done_task_result, DoneTaskPresenter.getDate(calendar.getTime()), 0));
+
+        calendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
+            @Override
+            public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+                calendar.set(Calendar.YEAR, date.getYear());
+                calendar.set(Calendar.MONTH, date.getMonth());
+                doneTaskPresenter.changeMonthAndTaskDoneDate(calendarView, calendar);
+            }
+        });
+
+        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(MaterialCalendarView widget, CalendarDay date, boolean selected) {
+                showDoneDate(date);
+            }
+        });
+    }
+
+    private void showDoneDate(CalendarDay date){
+
+        Calendar cc = date.getCalendar();
+        Map<Date, Integer> map = doneTaskPresenter.getDoneDate(cc);
+        int taskCount = (map == null ? 0 : map.size());
+
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+
+        final TextView prompt = (TextView)taskDoneHeader.findViewById(R.id.prompt);
+        prompt.setText(getString(R.string.prompt_done_task_result, DoneTaskPresenter.getDate(cc.getTime()), taskCount));
+
+        if(map == null){
+            return;
+        }
+
+        taskDoneDate.removeAllViews();
+
+        Map<Integer, TimerEntity> timerMap = doneTaskPresenter.timerEntityMap;
+        for(Map.Entry<Date, Integer> m : map.entrySet()){
+            final TimerEntity timer = timerMap.get(m.getValue());
+            View v = layoutInflater.inflate(R.layout.partial_task_done_date, null);
+
+            TextView timerName = (TextView)v.findViewById(R.id.task_name);
+            timerName.setText(timer.name);
+            TextView listName = (TextView)v.findViewById(R.id.list_name);
+            listName.setText(timer.name);
+            TextView notification = (TextView)v.findViewById(R.id.notification_interval);
+            notification.setText(Timer.getIntervalString(getActivity(), timer));
+            TextView doneDate = (TextView)v.findViewById(R.id.done_date);
+            doneDate.setText(Timer.getFormatDueString(m.getKey()));
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ItemActivity.startActivity(getActivity(), timer.listId);
+                }
+            });
+            taskDoneDate.addView(v);
         }
     }
 
@@ -191,6 +303,11 @@ public class DashboardTabFragment extends Fragment {
         }
 
         GraphRenderer.renderPieChartDetail(getActivity(), graphDetailWrapper, categoryParent);
+    }
+
+    @OnClick(R.id.view_more_timer)
+    public void toAllTimer(View v){
+        AllTimerActivity.startActivity(getActivity(), timerEntities);
     }
 
     @OnClick(R.id.logout)
@@ -238,4 +355,11 @@ public class DashboardTabFragment extends Fragment {
     public void navigateToDoneTask(View v){
         DoneTaskActivity.startActivity(getActivity(), 2);
     }
+
+    @OnClick(R.id.tag_comp_test)
+    public void navigateToTagTest(View v){
+        Intent intent = new Intent(getActivity(), TokenAutoCompActivity.class);
+        startActivity(intent);
+    }
+
 }

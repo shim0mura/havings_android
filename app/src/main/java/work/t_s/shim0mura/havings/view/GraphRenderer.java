@@ -49,7 +49,7 @@ public class GraphRenderer {
 
     private static int pieChartPartialView = R.layout.partial_item_percentage_detail;
 
-    private static int PIECHART_LABEL_FONT_SIZE = 20;
+    private static int PIECHART_LABEL_FONT_SIZE = 15;
     private static int PIECHART_SUBTEXT_FONT_SIZE = 16;
     private static int PIECHART_MAINTEXT_FONT_SIZE = 25;
     private static int PIECHART_DETAIL_STANDARD_FONT_SIZE = 14;
@@ -131,13 +131,11 @@ public class GraphRenderer {
 
             SliceValue s = new SliceValue((float)ipe.count, ContextCompat.getColor(context, ItemPercentageEntity.categoryColor.get(ipe.type)));
 
-            Timber.d("item type %s", ipe.type);
-
             StringBuilder sb = new StringBuilder();
             sb.append(ItemPercentageEntity.categoryName.get(ipe.type));
             sb.append(" - ");
-            sb.append(String.valueOf(ipe.count));
-            sb.append("個 (");
+            //sb.append(String.valueOf(ipe.count));
+            sb.append("(");
             sb.append(String.valueOf(ipe.percentage));
             sb.append("%)");
 

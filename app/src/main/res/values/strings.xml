@@ -221,6 +221,9 @@
     <string name="honorific">さん</string>
 
     <string name="item_total_count">全アイテム数</string>
+    <string name="prompt_self_chart">あなたのアイテムの分類グラフ</string>
+    <string name="prompt_self_timers">稼働中のタイマー</string>>
+
 
     <string name="view_more">もっと見る</string>
 
@@ -256,13 +259,18 @@
 
     <string name="prompt_share">シェアするアプリを選択</string>
 
+    <string name="prompt_no_chart">グラフはありません。\n \nアイテムやリストを追加すると、グラフが自動的に作成されます</string>
     <string name="prompt_done_task_result">%1$sにこなしたタスク %2$d件</string>
     <string name="prompt_done_task_list">こなしたタスク一覧</string>
+    <string name="prompt_no_timers">設定中のタイマーはありません。\n \n整理したいリストから、定期的に行いたいタスク(整理、ホコリ取り、掃除機がけ等)を作成してみましょう!</string>
 
     <string name="prompt_active_timer">稼働中のタイマー</string>
     <string name="prompt_finished_timer">終了したタイマー</string>
     <string name="prompt_done_task_done_at">%1$sに実行</string>
     <string name="no_done_task">こなしたタスクはまだありません</string>
+
+    <string name="prompt_connection_error">接続エラー</string>
+    <string name="prompt_connection_error_detail">通信に失敗しました。時間をおいてから再度お試しください</string>
 
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>
@@ -307,4 +315,5 @@ Quam libero nulla netus eu porta curae, ut nulla bibendum facilisis et urna sed,
     <string name="title_activity_user_search">UserSearchActivity</string>
     <string name="title_activity_share_to_clipboard">ShareToClipboardActivity</string>
     <string name="title_activity_done_task">DoneTaskActivity</string>
+    <string name="title_activity_token_auto_comp">TokenAutoCompActivity</string>
 </resources>
