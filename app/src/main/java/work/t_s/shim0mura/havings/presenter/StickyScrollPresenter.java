@@ -84,7 +84,7 @@ public class StickyScrollPresenter {
 
         flexibleSpaceHeight = activity.getResources().getDimensionPixelSize(R.dimen.flexible_space_height);
 
-        /*
+
         switch (scrollType) {
             case SCROLL_TYPE_ITEM:
                 scrollView.setScrollViewCallbacks(new ItemObservableScrollCallback());
@@ -93,7 +93,8 @@ public class StickyScrollPresenter {
                 Timber.d("user scroll");
                 scrollView.setScrollViewCallbacks(new UserObservableScrollCallback());
         }
-        */
+
+        /*
         scrollView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
             @Override
             public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
@@ -118,6 +119,7 @@ public class StickyScrollPresenter {
 
             }
         });
+        */
 
     }
 
@@ -316,7 +318,7 @@ public class StickyScrollPresenter {
             lastScroll = scrollY;
         }
 
-        Log.d("scrollY", String.valueOf(scrollY));
+        Log.d("scrollYy", String.valueOf(scrollY));
         //mOverlayView.setAlpha(ScrollUtils.getFloat((float) scrollY / flexibleRange, 0, 1));
         float scaleOrig = (float)scrollY / (float)(flexibleSpaceHeight - toolbarHeight);
         float scaleBase = Math.max(scaleFrom, scaleOrig);
@@ -380,6 +382,7 @@ public class StickyScrollPresenter {
         //mOverlayView.setTranslationY(ScrollUtils.getFloat(-scrollY, minOverlayTransitionY, 0));
         //mImageView.setTranslationY(ScrollUtils.getFloat(-scrollY / 2, minOverlayTransitionY, 0));
 
+
         //descView.setTranslationY(-scrollY);
         tabWrapper.setTranslationY(-scrollY);
         //mListView.setScrollY(scrollY);
@@ -427,7 +430,7 @@ public class StickyScrollPresenter {
             lastScroll = scrollY;
         }
 
-        Log.d("scrollY", String.valueOf(scrollY));
+        Log.d("scrollYu", String.valueOf(scrollY));
         //mOverlayView.setAlpha(ScrollUtils.getFloat((float) scrollY / flexibleRange, 0, 1));
         float scaleOrig = (float)scrollY / (float)(flexibleSpaceHeight - toolbarHeight);
         float scaleBase = Math.max(scaleFrom, scaleOrig);

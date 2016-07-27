@@ -31,7 +31,7 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
     protected Context context;
     protected List<ItemEntity> itemList = new ArrayList<ItemEntity>();
     protected ItemEntity item;
-    protected int lastItemId = 0;
+    protected int nextPage = 1;
     protected Boolean hasNextItemToLoad;
     protected Boolean isLoadingNextItem = false;
 
@@ -48,9 +48,8 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
         return hasNextItemToLoad;
     }
 
-    public int getLastItemId(){
-        Log.d("last item id", String.valueOf(lastItemId));
-        return lastItemId;
+    public int getNextPage(){
+        return nextPage;
     }
 
     public void startLoadNextItem(){
@@ -68,7 +67,7 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
     public void addItem(ItemEntity item){
         if(item.owningItems != null && !item.owningItems.isEmpty()) {
             itemList.addAll(item.owningItems);
-            lastItemId = item.owningItems.get(item.owningItems.size() - 1).id;
+            nextPage = item.nextPageForItem;
         }
         hasNextItemToLoad = item.hasNextItem;
     }
@@ -95,7 +94,7 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
             convertView = layoutInflater.inflate(layoutResource, null);
             holder = new ViewHolder();
 
-            holder.thumbnail = (CircleImageView)convertView.findViewById(R.id.item_thumbnail);
+            holder.thumbnail = (ImageView)convertView.findViewById(R.id.item_thumbnail);
             holder.itemType = (ImageView)convertView.findViewById(R.id.item_type);
             holder.name = (TextView)convertView.findViewById(R.id.item_name);
             holder.count = (TextView)convertView.findViewById(R.id.item_count);
@@ -141,7 +140,7 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
 
     public static class ViewHolder {
 
-        public CircleImageView thumbnail;
+        public ImageView thumbnail;
         public ImageView itemType;
         public TextView name;
         public TextView count;

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -34,6 +35,7 @@ import work.t_s.shim0mura.havings.DetailGraphActivity;
 import work.t_s.shim0mura.havings.ImageDetailActivity;
 import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.R;
+import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
@@ -44,6 +46,7 @@ import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
 import work.t_s.shim0mura.havings.model.entity.EventEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
@@ -67,12 +70,6 @@ public class ItemPresenter {
         user = User.getSingleton(c);
         activity = (Activity)c;
         service = ApiServiceManager.getService(activity);
-    }
-
-    public void test(){
-        ImageView imageView = ButterKnife.findById(activity, R.id.image);
-        //Glide.get(activity).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(asm.getHttpClient()));
-        Glide.with(activity).load("https://192.168.1.25:9292/uploads/item_image/image/23/e79877ee5f3f1e9ab2b4a9c8a289e3f16dfb25cb.jpg").into(imageView);
     }
 
     public void getItem(int itemId){
@@ -128,16 +125,16 @@ public class ItemPresenter {
     }
 
     public void getNextItemImageList(int itemId, int offset, final ItemImageListAdapter adapter, final ViewGroup gridView, final View footerView){
-        Call<ItemEntity> call = service.getNextItemImage(itemId, offset);
+        Call<ItemImageListEntity> call = service.getNextItemImage(itemId, offset);
 
-        call.enqueue(new Callback<ItemEntity>() {
+        call.enqueue(new Callback<ItemImageListEntity>() {
             @Override
-            public void onResponse(Response<ItemEntity> response, Retrofit retrofit) {
+            public void onResponse(Response<ItemImageListEntity> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
-                    ItemEntity item = response.body();
+                    ItemImageListEntity itemImageList = response.body();
                     adapter.finishLoadNextItem();
                     footerView.setVisibility(View.GONE);
-                    adapter.addItem(item.itemImages);
+                    adapter.addItem(itemImageList);
                     adapter.notifyDataSetChanged();
 
                 } else if (response.code() == StatusCode.Unauthorized) {
@@ -277,28 +274,49 @@ public class ItemPresenter {
         };
     }
 
-    public View getTabView(int position, int count){
+    public View getTabView(int position, boolean isList, int count){
         View tab = activity.getLayoutInflater().inflate(R.layout.partial_item_tab_header, null);
-        switch(position){
-            case 0:
-                TextView itemCount = (TextView)tab.findViewById(R.id.tab_count);
-                itemCount.setText(String.valueOf(count));
-                break;
-            case 1:
-                ImageView iconTypeImage = (ImageView)tab.findViewById(R.id.tab_icon);
-                iconTypeImage.setImageResource(R.drawable.ic_image_black_18dp);
-                TextView imageTab = (TextView)tab.findViewById(R.id.tab_name);
-                imageTab.setText(R.string.item_images);
-                TextView imageCount = (TextView)tab.findViewById(R.id.tab_count);
-                imageCount.setText(String.valueOf(count));
-                break;
-            case 2:
-                ImageView iconTypeGraph = (ImageView)tab.findViewById(R.id.tab_icon);
-                iconTypeGraph.setImageResource(R.drawable.ic_timeline_black_18dp);
-                TextView graphTab = (TextView)tab.findViewById(R.id.tab_name);
-                graphTab.setText(R.string.item_graph);
-                TextView graphCount = (TextView)tab.findViewById(R.id.tab_count);
-                graphCount.setVisibility(View.GONE);
+        if(isList){
+            switch(position) {
+                case 0:
+                    TextView itemCount = (TextView) tab.findViewById(R.id.tab_count);
+                    itemCount.setText(String.valueOf(count));
+                    break;
+                case 1:
+                    ImageView iconTypeImage = (ImageView) tab.findViewById(R.id.tab_icon);
+                    iconTypeImage.setImageResource(R.drawable.ic_image_black_18dp);
+                    TextView imageTab = (TextView) tab.findViewById(R.id.tab_name);
+                    imageTab.setText(R.string.item_images);
+                    TextView imageCount = (TextView) tab.findViewById(R.id.tab_count);
+                    imageCount.setText(String.valueOf(count));
+                    break;
+                case 2:
+                    ImageView iconTypeGraph = (ImageView) tab.findViewById(R.id.tab_icon);
+                    iconTypeGraph.setImageResource(R.drawable.ic_timeline_black_18dp);
+                    TextView graphTab = (TextView) tab.findViewById(R.id.tab_name);
+                    graphTab.setText(R.string.item_graph);
+                    TextView graphCount = (TextView) tab.findViewById(R.id.tab_count);
+                    graphCount.setVisibility(View.GONE);
+            }
+        }else{
+            switch(position) {
+                case 0:
+                    ImageView iconTypeImage = (ImageView) tab.findViewById(R.id.tab_icon);
+                    iconTypeImage.setImageResource(R.drawable.ic_image_black_18dp);
+                    TextView imageTab = (TextView) tab.findViewById(R.id.tab_name);
+                    imageTab.setText(R.string.item_images);
+                    TextView imageCount = (TextView) tab.findViewById(R.id.tab_count);
+                    imageCount.setText(String.valueOf(count));
+                    break;
+                case 1:
+                    ImageView iconTypeGraph = (ImageView) tab.findViewById(R.id.tab_icon);
+                    iconTypeGraph.setImageResource(R.drawable.ic_timeline_black_18dp);
+                    TextView graphTab = (TextView) tab.findViewById(R.id.tab_name);
+                    graphTab.setText(R.string.item_graph);
+                    TextView graphCount = (TextView) tab.findViewById(R.id.tab_count);
+                    graphCount.setVisibility(View.GONE);
+            }
+
         }
 
         return tab;
@@ -312,6 +330,7 @@ public class ItemPresenter {
             marginTop = 15;
         }
         lp.setMargins(0, marginTop, 20, 0);
+
         baseTag.setBackgroundColor(ContextCompat.getColor(context, R.color.tagColor));
         baseTag.setPadding(10, 0, 10, 0);
         baseTag.setLayoutParams(lp);
@@ -326,6 +345,7 @@ public class ItemPresenter {
         private ItemPresenter itemPresenter;
         private ItemEntity item;
         private View loader;
+        private int userId;
 
         private ItemListAdapter itemListAdapter;
         private ListView itemListView;
@@ -336,6 +356,7 @@ public class ItemPresenter {
             itemPresenter = ip;
             item = i;
             loader = View.inflate(a, R.layout.loading, null);
+            userId = ApiKey.getSingleton(a).getUserId();
         }
 
         public void unshiftItem(ItemEntity itemEntity) {
@@ -345,7 +366,11 @@ public class ItemPresenter {
 
         @Override
         public int getCount() {
-            return 3;
+            if(item.isList){
+                return 3;
+            }else{
+                return 2;
+            }
         }
 
         @Override
@@ -358,58 +383,28 @@ public class ItemPresenter {
 
             Timber.d("customview ,position %s", position);
             View v;
-            if(position == 0) {
-                v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
 
-                final ListView listView = (ListView) v.findViewById(R.id.page_text);
+            if(item.isList){
 
-                itemListAdapter = new ItemListAdapter(activity, R.layout.item_list, item);
-                //BusHolder.get().register(adapter);
-                //listView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, items));
-
-                listView.setAdapter(itemListAdapter);
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                    @Override
-                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                        Log.d("click position", String.valueOf(position));
-                                                        ItemActivity.startActivity(activity, (int)view.getTag(R.string.tag_item_id));
-                                                    }
-                                                }
-                );
-
-                listView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
-
-                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-                        Log.d("schroll state", "changed");
-                    }
-
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        Log.d("scroll from listview", String.valueOf(visibleItemCount));
-                        //一番下にいったかどうかと次があるかのフラグのチェック
-                        //trueならapi取得
-                        //callback+eventbusでなんとかする
-                        if ((totalItemCount == firstVisibleItem + visibleItemCount) && itemListAdapter.hasNextItem()) {
-                            Log.d("request", "to api");
-                            if (!itemListAdapter.getIsLoadingNextItem()) {
-                                itemListAdapter.startLoadNextItem();
-                                listView.addFooterView(loader);
-                                itemPresenter.getNextItemList(item.id, itemListAdapter.getLastItemId(), itemListAdapter, listView, loader);
-                            }
-                        }
-                    }
-                });
-            }else if (position == 1){
-                v = attachImageGrid(container);
-            }else if (position == 2){
-                v = attachGraph(container);
-            }else {
-                v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
+                if(position == 0) {
+                    v = attachOwningItem(container);
+                }else if (position == 1){
+                    v = attachImageGrid(container);
+                }else if (position == 2){
+                    v = attachGraph(container);
+                }else {
+                    v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
+                }
+            }else{
+                if (position == 0){
+                    v = attachImageGrid(container);
+                }else if (position == 1){
+                    v = attachGraph(container);
+                }else {
+                    v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
+                }
             }
+
             container.addView(v);
             return v;
         }
@@ -419,11 +414,78 @@ public class ItemPresenter {
             container.removeView((View) object);
         }
 
+        public View attachOwningItem(ViewGroup container){
+            View v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
+
+            final ListView listView = (ListView) v.findViewById(R.id.page_text);
+
+            if(item.owningItems.isEmpty()) {
+
+                TextView nothing = (TextView) v.findViewById(R.id.no_item);
+                nothing.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
+                nothing.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+                if(item.owner.id == userId && item.isList){
+                    nothing.setText(R.string.prompt_no_item_with_self_list);
+                }else{
+                    nothing.setText(R.string.prompt_no_item);
+                }
+            }
+
+            itemListAdapter = new ItemListAdapter(activity, R.layout.item_list, item);
+
+            listView.setAdapter(itemListAdapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    Log.d("click position", String.valueOf(position));
+                                                    ItemActivity.startActivity(activity, (int)view.getTag(R.string.tag_item_id));
+                                                }
+                                            }
+            );
+
+            listView.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+
+            listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    Log.d("schroll state", "changed");
+                }
+
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    Log.d("scroll from listview", String.valueOf(visibleItemCount));
+                    if ((totalItemCount == firstVisibleItem + visibleItemCount) && itemListAdapter.hasNextItem()) {
+                        if (!itemListAdapter.getIsLoadingNextItem()) {
+                            itemListAdapter.startLoadNextItem();
+                            listView.addFooterView(loader);
+                            itemPresenter.getNextItemList(item.id, itemListAdapter.getNextPage(), itemListAdapter, listView, loader);
+                        }
+                    }
+                }
+            });
+
+            return v;
+        }
+
         public View attachImageGrid(ViewGroup container){
             View v = activity.getLayoutInflater().inflate(R.layout.item_image_tab, container, false);
 
             final ProgressBar imageLoader = (ProgressBar)v.findViewById(R.id.image_loader);
             final GridView gridView = (GridView)v.findViewById(R.id.item_image_tab);
+            if(item.itemImages.images.isEmpty()) {
+
+                TextView nothing = (TextView) v.findViewById(R.id.no_image);
+                nothing.setVisibility(View.VISIBLE);
+                gridView.setVisibility(View.GONE);
+                nothing.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
+                if(item.owner.id == userId){
+                    nothing.setText(R.string.prompt_no_image_with_self_list);
+                }
+            }
+
             final ItemImageListAdapter adapter = new ItemImageListAdapter(activity, R.layout.item_image_list, item, itemPresenter);
             gridView.setAdapter(adapter);
 
@@ -456,13 +518,12 @@ public class ItemPresenter {
                         if (!adapter.getIsLoadingNextItem()) {
                             adapter.startLoadNextItem();
                             imageLoader.setVisibility(View.VISIBLE);
-                            itemPresenter.getNextItemImageList(item.id, adapter.getLastItemImageId(), adapter, gridView, imageLoader);
+                            itemPresenter.getNextItemImageList(item.id, adapter.getNextPage(), adapter, gridView, imageLoader);
                         }
                     }
 
                 }
             });
-
 
             return v;
         }

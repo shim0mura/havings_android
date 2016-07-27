@@ -5,11 +5,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:padding="@dimen/app_basic_padding"
+    android:background="@color/colorPrimary"
     >
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/app_basic_padding"
         >
 
         <TextView
@@ -18,6 +19,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/prefix_item_having"
+            android:textColor="@color/primaryTextWhite"
             />
         <TextView
             android:id="@+id/item_count"
@@ -26,7 +28,7 @@
             android:layout_marginTop="-3dp"
             android:textSize="34dp"
             android:textStyle="bold"
-            android:textColor="@color/primaryText"
+            android:textColor="@color/primaryTextWhite"
             android:gravity="center"
             android:layout_below="@id/item_count_anchor"
             android:text="1"
@@ -39,21 +41,21 @@
             android:layout_toRightOf="@id/item_count"
             android:layout_alignBaseline="@id/item_count"
             android:paddingLeft="5dp"
-
+            android:textColor="@color/primaryTextWhite"
             />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/app_basic_padding"
-        android:layout_marginTop="12dp"
         >
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/padding_between_content">
+            >
             <LinearLayout
+                android:id="@+id/user_wrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -75,6 +77,7 @@
                         android:paddingLeft="5dp"
                         android:paddingStart="5dp"
                         android:text="by "
+                        android:textColor="@color/primaryTextWhite"
                         />
                     <TextView
                         android:id="@+id/item_owner"
@@ -82,6 +85,7 @@
                         android:layout_height="fill_parent"
                         android:gravity="center_vertical"
                         android:ellipsize="end"
+                        android:textColor="@color/primaryTextWhite"
                         android:maxLines="1"/>
                 </LinearLayout>
             </LinearLayout>
@@ -96,11 +100,12 @@
                 <LinearLayout
                     android:id="@+id/favorite_count_wrapper"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_favorite_black_18dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_favorite_grey_50_18dp"
                         />
                     <TextView
                         android:id="@+id/favorite_count"
@@ -108,6 +113,7 @@
                         android:layout_height="wrap_content"
                         android:text="111"
                         android:textSize="18dp"
+                        android:textColor="@color/primaryTextWhite"
                         android:layout_marginRight="@dimen/app_basic_padding"
                         android:layout_marginEnd="@dimen/app_basic_padding"
                         />
@@ -115,11 +121,12 @@
                 <LinearLayout
                     android:id="@+id/comment_count_wrapper"
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_chat_bubble_black_18dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_chat_bubble_grey_50_18dp"
                         />
                     <TextView
                         android:id="@+id/comment_count"
@@ -127,11 +134,54 @@
                         android:layout_height="wrap_content"
                         android:text="111"
                         android:textSize="18dp"
+                        android:textColor="@color/primaryTextWhite"
                         android:layout_marginRight="@dimen/app_basic_padding"
                         android:layout_marginEnd="@dimen/app_basic_padding"
 
                         />
                 </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/done_count_wrapper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:visibility="gone">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_done_black_36dp"
+                        />
+                    <TextView
+                        android:id="@+id/done_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="111"
+                        android:textSize="18dp"
+                        android:textColor="@color/primaryTextWhite"
+                        android:layout_marginRight="@dimen/app_basic_padding"
+                        android:layout_marginEnd="@dimen/app_basic_padding"
+
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/prompt_private_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding_to_highlight_text"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_lock_white_18dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primaryTextWhite"
+                    android:text="@string/prompt_item_private"
+                    />
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

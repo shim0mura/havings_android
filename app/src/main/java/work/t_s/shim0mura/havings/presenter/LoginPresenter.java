@@ -61,9 +61,8 @@ public class LoginPresenter extends SessionBasePresenter {
         Bundle params = activity.getIntent().getExtras();
         String token = params.getString("token");
         String uid = params.getString("uid");
+        int userid = Integer.valueOf(params.getString("userid"));
 
-        Log.d(TAG, token);
-        Log.d(TAG, uid);
 
         if(token == null || uid == null){
             BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
@@ -71,7 +70,10 @@ public class LoginPresenter extends SessionBasePresenter {
         }else{
             Log.d(TAG, "get token");
             Log.d(TAG, token);
-            asm.setApiKey(token, uid);
+            Log.d(TAG, params.toString());
+
+
+            asm.setApiKey(token, uid, userid);
 
             BusHolder.get().post(new NavigateEvent());
         }
@@ -109,7 +111,8 @@ public class LoginPresenter extends SessionBasePresenter {
                             Log.d(TAG, token);
                             String uid = jsonResult.getString("uid");
                             Log.d(TAG, uid);
-                            asm.setApiKey(token, uid);
+                            int userId = Integer.valueOf(jsonResult.getString("userid"));
+                            asm.setApiKey(token, uid, userId);
                             BusHolder.get().post(new NavigateEvent());
                         }catch (JSONException e){
                             e.printStackTrace();

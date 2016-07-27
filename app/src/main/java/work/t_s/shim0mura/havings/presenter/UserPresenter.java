@@ -662,7 +662,7 @@ public class UserPresenter {
                         if (!itemListAdapter.getIsLoadingNextItem()) {
                             itemListAdapter.startLoadNextItem();
                             itemListView.addFooterView(loader);
-                            userPresenter.getNextItemList(user.id, itemListAdapter.getLastItemId(), itemListAdapter, itemListView, loader);
+                            userPresenter.getNextItemList(user.id, itemListAdapter.getNextPage(), itemListAdapter, itemListView, loader);
                         }
                     }
                 }
@@ -720,7 +720,7 @@ public class UserPresenter {
                             adapter.startLoadNextItem();
                             imageLoader.setVisibility(View.VISIBLE);
                             //itemPresenter.getNextItemImageList(item.id, adapter.getLastItemImageId(), adapter, gridView, imageLoader);
-                            userPresenter.getNextImageList(user.id, adapter.getLastItemImageId(), adapter, imageLoader);
+                            userPresenter.getNextImageList(user.id, adapter.getNextPage(), adapter, imageLoader);
 
                         }
                     }

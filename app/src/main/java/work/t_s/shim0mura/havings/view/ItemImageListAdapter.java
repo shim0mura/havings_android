@@ -43,7 +43,7 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
     protected List<ItemImageEntity> itemImageList = new ArrayList<ItemImageEntity>();
     protected ItemEntity item;
     protected ItemPresenter itemPresenter;
-    protected int lastItemImageId = 0;
+    protected int nextPage = 0;
     protected Boolean hasNextItemToLoad;
     protected Boolean isLoadingNextItem = false;
     protected ItemImageListAdapter self;
@@ -63,8 +63,8 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
         return hasNextItemToLoad;
     }
 
-    public int getLastItemImageId(){
-        return lastItemImageId;
+    public int getNextPage(){
+        return nextPage;
     }
 
     public void startLoadNextItem(){
@@ -82,10 +82,10 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
     public void addItem(ItemImageListEntity itemImageListEntity){
         if(itemImageListEntity != null && !itemImageListEntity.images.isEmpty()) {
             itemImageList.addAll(itemImageListEntity.images);
-            lastItemImageId = itemImageListEntity.images.get(itemImageListEntity.images.size() - 1).id;
+            nextPage = itemImageListEntity.nextPageForImage;
             hasNextItemToLoad = itemImageListEntity.hasNextImage;
         }else{
-            lastItemImageId = 0;
+            nextPage = 0;
             hasNextItemToLoad = false;
         }
     }

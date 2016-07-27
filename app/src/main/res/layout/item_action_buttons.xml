@@ -4,15 +4,24 @@
         android:id="@+id/item_action_buttons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/app_basic_padding"
+        android:paddingTop="@dimen/padding_between_content"
         android:paddingBottom="@dimen/padding_between_content"
-        android:background="@drawable/border_underline">
+        android:layout_marginLeft="@dimen/padding_between_content"
+        android:layout_marginStart="@dimen/padding_between_content"
+        android:layout_marginRight="@dimen/padding_between_content"
+        android:layout_marginEnd="@dimen/padding_between_content">
         <LinearLayout
             android:id="@+id/action_favorite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center">
+            android:layout_marginStart="@dimen/padding_between_content"
+            android:layout_marginLeft="@dimen/padding_between_content"
+            android:layout_marginRight="@dimen/padding_between_content"
+            android:layout_marginEnd="@dimen/padding_between_content"
+            android:paddingBottom="@dimen/padding_between_content"
+            android:gravity="center"
+            android:background="@drawable/border_underline">
             <ImageView
                 android:id="@+id/action_favorite_icon"
                 android:layout_width="wrap_content"
@@ -30,7 +39,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginStart="@dimen/padding_between_content"
+            android:layout_marginLeft="@dimen/padding_between_content"
+            android:layout_marginRight="@dimen/padding_between_content"
+            android:layout_marginEnd="@dimen/padding_between_content"
+            android:paddingBottom="@dimen/padding_between_content"
+            android:background="@drawable/border_underline">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

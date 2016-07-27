@@ -86,8 +86,9 @@ public class RegisterPresenter extends SessionBasePresenter {
                             String token = jsonResult.getString("token");
                             Log.d(TAG, token);
                             String uid = jsonResult.getString("uid");
+                            int userId = Integer.valueOf(jsonResult.getString("userid"));
                             Log.d(TAG, uid);
-                            asm.setApiKey(token, uid);
+                            asm.setApiKey(token, uid, userId);
                             BusHolder.get().post(new NavigateEvent());
                         }catch (JSONException e){
                             e.printStackTrace();

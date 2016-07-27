@@ -206,13 +206,13 @@ public class UserActivity extends AppCompatActivity {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             switch(i){
                 case 0:
-                    tab.setCustomView(itemPresenter.getTabView(i, user.registeredItemCount));
+                    tab.setCustomView(itemPresenter.getTabView(i, true, user.registeredItemCount));
                     break;
                 case 1:
-                    tab.setCustomView(itemPresenter.getTabView(i, user.registeredItemImageCount));
+                    tab.setCustomView(itemPresenter.getTabView(i, true, user.registeredItemImageCount));
                     break;
                 case 2:
-                    tab.setCustomView(itemPresenter.getTabView(i, 0));
+                    tab.setCustomView(itemPresenter.getTabView(i, true, 0));
                     break;
             }
         }

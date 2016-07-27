@@ -35,14 +35,28 @@
     <string name="action_favorite_item">いいね!する</string>
     <string name="already_favorite_item">いいね!済み</string>
 
+    <string name="prompt_action_add_list">リストを追加</string>
+    <string name="prompt_action_add_item">アイテムを追加</string>
+    <string name="prompt_action_add_image">この%1$sに画像を追加</string>
+    <string name="prompt_action_edit_item">この%1$sを編集</string>
+    <string name="prompt_action_dump_item">この%1$sを手放す</string>
+    <string name="prompt_action_delete_item">この%1$sを削除</string>
+
+
+
+    <string name="prompt_item_private">非公開のアイテム</string>
     <string name="item_list">モノリスト</string>
     <string name="prompt_no_item">アイテムはありません</string>
+    <string name="prompt_no_item_with_self_list">アイテムはありません。\n\nこのリストの写真に写っているモノを追加してみましょう。\n片付けたい場所に今何があるかを記録すれば、片付けが効率的になるかも!?</string>
     <string name="item_images">画像</string>
     <string name="prompt_no_image">画像はありません</string>
+    <string name="prompt_no_image_with_self_list">画像はありません。\n\n画像を追加してみませんか?\n片付けの記録が後で役に立つかも!?</string>
     <string name="item_graph">グラフ</string>
     <string name="item_count_prefix">モノの数: </string>
     <string name="favorite_item_list">いいね!したモノ</string>
     <string name="favorite_image_list">いいね!した画像</string>
+    <string name="prompt_no_timer">設定中のタイマーはありません</string>
+    <string name="prompt_no_timer_detail">このリストの場所をキレイに保つために、定期的に行いたいタスク(整理、ホコリ取り、掃除機がけ等)のタイマーを作成しましょう!</string>
 
     <string name="item_graph_date_range_prefix">記録期間 :</string>
     <string name="item_graph_date_range_from_to">から</string>
@@ -129,6 +143,8 @@
     <string name="prompt_minute">分</string>
     <string name="prompt_hour">時間</string>
     <string name="prompt_day">日</string>
+    <string name="list">リスト</string>
+    <string name="item">アイテム</string>
 
     <string name="button_positive">OK</string>
     <string name="button_negative">キャンセル</string>

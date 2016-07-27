@@ -124,13 +124,13 @@ public interface ApiService {
     @GET("/items/{item_id}/next_items")
     Call<ItemEntity> getNextItem(
             @Path("item_id") int item_id,
-            @Query("from") int offset
+            @Query("page") int offset
     );
 
     @GET("/items/{item_id}/next_images")
-    Call<ItemEntity> getNextItemImage(
+    Call<ItemImageListEntity> getNextItemImage(
             @Path("item_id") int item_id,
-            @Query("from") int offset
+            @Query("page") int offset
     );
 
     @GET("/items/{item_id}/showing_events")

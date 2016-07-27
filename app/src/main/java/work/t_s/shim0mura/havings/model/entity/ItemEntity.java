@@ -58,11 +58,13 @@ public class    ItemEntity implements Serializable {
 
     public List<ItemEntity> owningItems;
     public Boolean hasNextItem;
+    public int nextPageForItem;
 
     public List<CountDataEntity> countProperties;
 
     public List<TimerEntity> timers;
     public Boolean canAddTimer;
+    public int doneCount;
 
     // dumpとdeleteの選択時に使う
     // listAdapter側での制御がうまく出来ないのでしょうがなくここで使用…

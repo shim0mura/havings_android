@@ -76,7 +76,7 @@ public class ApiKey {
     //sharedpreferenceのみでいく
     //使う場合の参考
     // http://qiita.com/Rompei/items/c21c543707510720db2d
-    public void storeApiKey(String rawToken, String rawUid){
+    public void storeApiKey(String rawToken, String rawUid, int rawUserId){
         SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor;
 
@@ -84,10 +84,11 @@ public class ApiKey {
         editor = preferences.edit();
         editor.putString(API_TOKEN, rawToken);
         editor.putString(UID, rawUid);
-        //editor.putInt(USER_ID, rawUserId);
+        editor.putInt(USER_ID, rawUserId);
 
         token = rawToken;
         uid = rawUid;
+        userId = rawUserId;
         //userId = rawUserId;
 
         /*

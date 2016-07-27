@@ -13,5 +13,6 @@ public class ItemImageListEntity implements Serializable {
 
     public List<ItemImageEntity> images;
     public boolean hasNextImage;
+    public int nextPageForImage;
 
 }

@@ -136,7 +136,7 @@ public class DumpListActivity extends AppCompatActivity {
                     if (!adapter.getIsLoadingNextItem()) {
                         adapter.startLoadNextItem();
                         loader.findViewById(R.id.progress).setVisibility(View.VISIBLE);
-                        userPresenter.getDumpItemList(user.id, adapter.getLastItemId());
+                        userPresenter.getDumpItemList(user.id, adapter.getNextPage());
                     }
                 }
             }

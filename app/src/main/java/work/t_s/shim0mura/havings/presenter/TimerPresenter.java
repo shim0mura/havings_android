@@ -76,6 +76,7 @@ public class TimerPresenter {
     private Map<Integer, SwipeLayout> timerLayoutMap = new HashMap<Integer, SwipeLayout>();
     private Calendar currentCalendar = new GregorianCalendar();
     private static final String TIMER_POST_HASH_KEY = "timer";
+    public static final int MAX_TIMER = 3;
 
     private final SundayDecorator sundayDecorator = new SundayDecorator();
     private final SaturdayDecorator saturdayDecorator = new SaturdayDecorator();

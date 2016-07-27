@@ -38,6 +38,6 @@
         android:layout_height="match_parent"
         android:text="@string/prompt_no_image"
         android:gravity="center"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
 </FrameLayout>

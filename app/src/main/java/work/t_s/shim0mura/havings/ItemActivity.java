@@ -22,6 +22,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +56,7 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import lecho.lib.hellocharts.model.Line;
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
@@ -99,6 +102,7 @@ public class ItemActivity extends AppCompatActivity {
     private int mToolbalHeight;
     private TextView mTitleView;
 
+    private int userId;
     private ItemEntity item = null;
 
     private int wrapperViewSize;
@@ -116,7 +120,10 @@ public class ItemActivity extends AppCompatActivity {
     @Bind(R.id.item_count) TextView itemCount;
     @Bind(R.id.favorite_count) TextView favoriteCount;
     @Bind(R.id.comment_count) TextView commentCount;
+    @Bind(R.id.done_count) TextView doneCount;
+    @Bind(R.id.done_count_wrapper) LinearLayout doneCountWrapper;
     @Bind(R.id.item_owner) TextView ownerName;
+    @Bind(R.id.prompt_private_type) LinearLayout promptPrivateType;
     @Bind(R.id.owner_image) CircleImageView ownerImage;
     @Bind(R.id.action_favorite_icon) ImageView actionFavoriteIcon;
     @Bind(R.id.action_favorite_text) TextView actionFavoriteText;
@@ -143,6 +150,7 @@ public class ItemActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int itemId = intent.getIntExtra(ITEM_ID, 0);
+        userId = ApiKey.getSingleton(this).getUserId();
 
         stickyScrollPresenter = new StickyScrollPresenter(this, StickyScrollPresenter.SCROLL_TYPE_ITEM);
         itemPresenter = new ItemPresenter(this);
@@ -155,53 +163,16 @@ public class ItemActivity extends AppCompatActivity {
         mDescView = findViewById(R.id.desc);
 
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll);
-        //mScrollView.setScrollViewCallbacks(this);
 
         mTitleView = (TextView)findViewById(R.id.title);
-        //intentからアイテムのタイトルを読み込ませたほうがいいのでは？
-        //mTitleView.setText("アイテムのタイトルを読込中……");
         setTitle(null);
 
         mFlexibleSpaceHeight = getResources().getDimensionPixelSize(R.dimen.flexible_space_height);
-        int flexibleSpaceAndToolbarHeight = mFlexibleSpaceHeight + toolbar.getHeight();
 
         mToolbalHeight = toolbar.getHeight();
 
-        //mParallaxImageHeight = getResources().getDimensionPixelSize(R.dimen.parallax_image_height);
-
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
-
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         viewPager = (ViewPager) findViewById(R.id.pager);
-
-        /*
-        adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                //return TestFragment.newInstance(position + 1);
-                return TestFragment.newInstance(position + 1, stickyScrollPresenter);
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return "item_list_tab " + (position + 1);
-            }
-
-            @Override
-            public int getCount() {
-                return 3;
-            }
-        };
-        */
 
         tabLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -213,11 +184,9 @@ public class ItemActivity extends AppCompatActivity {
         viewPager.setOnTouchListener(new View.OnTouchListener() {
                                          @Override
                                          public boolean onTouch(View v, MotionEvent event) {
-                                             Log.d("pager touch", String.valueOf(v.getScrollY()));
                                              return v.onTouchEvent(event);
                                          }
                                      }
-
         );
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -241,61 +210,14 @@ public class ItemActivity extends AppCompatActivity {
         //tabLayout.getTabAt(0).setIcon(R.drawable.ic_already_favorite_18dp);
         act = this;
 
-        final FloatingActionMenu fab = (FloatingActionMenu)findViewById(R.id.menu_labels_right);
-        fab.setClosedOnTouchOutside(true);
-
-        final FloatingActionButton programFab1 = new FloatingActionButton(this);
-        programFab1.setButtonSize(FloatingActionButton.SIZE_MINI);
-        programFab1.setLabelText("add item");
-        programFab1.setImageResource(R.drawable.ic_already_favorite_18dp);
-        programFab1.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_ADD_ITEM);
-        programFab1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ItemFormActivity.startActivity(act, item, true);
-            }
-        });
-        fab.addMenuButton(programFab1);
-
-        final FloatingActionButton programFab2 = new FloatingActionButton(this);
-        programFab2.setButtonSize(FloatingActionButton.SIZE_MINI);
-        programFab2.setLabelText("edit image");
-        programFab2.setImageResource(R.drawable.ic_already_favorite_18dp);
-        programFab2.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
-        programFab2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ItemImageEditActivity.startActivity(act, item, item.isList);
-            }
-        });
-        fab.addMenuButton(programFab2);
-
-        final FloatingActionButton programFab3 = new FloatingActionButton(this);
-        programFab3.setButtonSize(FloatingActionButton.SIZE_MINI);
-        programFab3.setLabelText("edit item");
-        programFab3.setImageResource(R.drawable.ic_already_favorite_18dp);
-        programFab3.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
-        programFab3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //ItemEditActivity.startActivity(act, item, item.isList);
-                //ItemDeleteActivity.startActivity(act, item, item.isList);
-                ItemDumpActivity.startActivity(act, item, item.isList);
-
-                Timber.d(description.getText().toString());
-                ViewGroup.LayoutParams l = description.getLayoutParams();
-                Timber.d("descheight: %s", l.height);
-            }
-        });
-        fab.addMenuButton(programFab3);
-
         ButterKnife.bind(this);
         itemPresenter.getItem(itemId);
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override
@@ -321,21 +243,34 @@ public class ItemActivity extends AppCompatActivity {
 
         breadcrumb.setText(item.breadcrumb.replaceAll("\\s>\\s", " >\n"));
 
-        if(item.isList) {
+        if(item.isGarbage) {
+            itemTypeIcon.setImageResource(R.drawable.ic_delete_white_36dp);
+        }else if(item.isList) {
             itemTypeIcon.setImageResource(R.drawable.list_icon);
         }
 
-        if(item.isList){
+        if(item.isList && userId == item.owner.id && !item.isGarbage){
             timerPresenter = new TimerPresenter(this, item, new TimerEntity());
             if(item.timers.size() > 0) {
                 timerPresenter.renderListTimers(timerWrapper);
             }
+
+            doneCountWrapper.setVisibility(View.VISIBLE);
+            doneCount.setText(String.valueOf(item.doneCount));
+
             if(!item.canAddTimer) {
                 addTimerButton.setVisibility(View.GONE);
+            }else if(item.timers.size() == 0){
+                LinearLayout noTimer = (LinearLayout)timerWrapper.findViewById(R.id.no_timer);
+                noTimer.setVisibility(View.VISIBLE);
             }
         }else {
             timerWrapper.setVisibility(View.GONE);
             addTimerButton.setVisibility(View.GONE);
+        }
+
+        if(item.privateType > 0){
+            promptPrivateType.setVisibility(View.VISIBLE);
         }
 
         if(item.thumbnail != null){
@@ -386,13 +321,13 @@ public class ItemActivity extends AppCompatActivity {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             switch(i){
                 case 0:
-                    tab.setCustomView(itemPresenter.getTabView(i, item.owningItemCount));
+                    tab.setCustomView(itemPresenter.getTabView(i, item.isList, (item.isList ? item.owningItemCount : item.imageCount)));
                     break;
                 case 1:
-                    tab.setCustomView(itemPresenter.getTabView(i, item.imageCount));
+                    tab.setCustomView(itemPresenter.getTabView(i, item.isList, (item.isList ? item.imageCount : 0)));
                     break;
                 case 2:
-                    tab.setCustomView(itemPresenter.getTabView(i, 0));
+                    tab.setCustomView(itemPresenter.getTabView(i, item.isList, 0));
                     break;
             }
         }
@@ -424,6 +359,8 @@ public class ItemActivity extends AppCompatActivity {
                 Share.startIntent(self, item.name, Item.getPath(item), thumbnail);
             }
         });
+
+        setFAB();
     }
 
     private void updateItemData(){
@@ -488,6 +425,11 @@ public class ItemActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.user_wrapper)
+    public void redirectoToUser(){
+        UserActivity.startActivity(this, item.owner.id);
+    }
+
     @OnClick(R.id.favorite_count_wrapper)
     public void redirectToFavoritedUserList(){
         UserListActivity.startActivity(this, UserListPresenter.ITEM_FAVORITE_USER_LIST, item.id);
@@ -496,6 +438,11 @@ public class ItemActivity extends AppCompatActivity {
     @OnClick(R.id.comment_count_wrapper)
     public void redirectToCommentList(){
         CommentActivity.startActivity(this, item.id);
+    }
+
+    @OnClick(R.id.done_count_wrapper)
+    public void redirectToDoneList(){
+        DoneTaskActivity.startActivity(this, item.id);
     }
 
     @Subscribe
@@ -574,6 +521,100 @@ public class ItemActivity extends AppCompatActivity {
             TextView tag = ItemPresenter.createTag(this, tagString, true);
             itemTag.addView(tag);
         }
+    }
+
+    private void setFAB(){
+        final FloatingActionMenu fab = (FloatingActionMenu)findViewById(R.id.menu_labels_right);
+        fab.setClosedOnTouchOutside(true);
+        fab.setMenuButtonColorNormal(ContextCompat.getColor(this, R.color.colorAccent));
+
+        String itemTypeStr = (item.isList) ? getString(R.string.list) : getString(R.string.item);
+
+        final FloatingActionButton deleteItem = new FloatingActionButton(this);
+        deleteItem.setButtonSize(FloatingActionButton.SIZE_MINI);
+        deleteItem.setLabelText(getString(R.string.prompt_action_delete_item, itemTypeStr));
+        deleteItem.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        deleteItem.setImageResource(R.drawable.ic_clear_black_24dp);
+        deleteItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemDeleteActivity.startActivity(act, item, item.isList);
+            }
+        });
+        fab.addMenuButton(deleteItem);
+
+        final FloatingActionButton dumpItem = new FloatingActionButton(this);
+        dumpItem.setButtonSize(FloatingActionButton.SIZE_MINI);
+        dumpItem.setLabelText(getString(R.string.prompt_action_dump_item, itemTypeStr));
+        dumpItem.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        dumpItem.setImageResource(R.drawable.ic_delete_black_24dp);
+        dumpItem.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+        dumpItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemDumpActivity.startActivity(act, item, item.isList);
+            }
+        });
+        fab.addMenuButton(dumpItem);
+
+        final FloatingActionButton editItem = new FloatingActionButton(this);
+        editItem.setButtonSize(FloatingActionButton.SIZE_MINI);
+        editItem.setLabelText(getString(R.string.prompt_action_edit_item, itemTypeStr));
+        editItem.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        editItem.setImageResource(R.drawable.ic_mode_edit_black_24dp);
+        editItem.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+        editItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemEditActivity.startActivity(act, item, item.isList);
+            }
+        });
+        fab.addMenuButton(editItem);
+
+        if(item.isList) {
+            final FloatingActionButton addImageFAB = new FloatingActionButton(this);
+            addImageFAB.setButtonSize(FloatingActionButton.SIZE_MINI);
+            addImageFAB.setLabelText(getString(R.string.prompt_action_add_image, itemTypeStr));
+            addImageFAB.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+            addImageFAB.setImageResource(R.drawable.ic_photo_black_24dp);
+            addImageFAB.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+            addImageFAB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ItemImageEditActivity.startActivity(act, item, item.isList);
+                }
+            });
+            fab.addMenuButton(addImageFAB);
+
+            final FloatingActionButton addItemFAB = new FloatingActionButton(this);
+            addItemFAB.setButtonSize(FloatingActionButton.SIZE_MINI);
+            addItemFAB.setLabelText(getString(R.string.prompt_action_add_item));
+            addItemFAB.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+            addItemFAB.setImageResource(R.drawable.item_icon_for_tab);
+            addItemFAB.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_ADD_ITEM);
+            addItemFAB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ItemFormActivity.startActivity(act, item, false);
+                }
+            });
+            fab.addMenuButton(addItemFAB);
+
+            final FloatingActionButton addListFAB = new FloatingActionButton(this);
+            addListFAB.setButtonSize(FloatingActionButton.SIZE_MINI);
+            addListFAB.setLabelText(getString(R.string.prompt_action_add_list));
+            addListFAB.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+            addListFAB.setImageResource(R.drawable.list_icon_for_tab);
+            addListFAB.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_ADD_ITEM);
+            addListFAB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ItemFormActivity.startActivity(act, item, true);
+                }
+            });
+            fab.addMenuButton(addListFAB);
+        }
+
     }
 
     @Override

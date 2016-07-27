@@ -95,8 +95,8 @@ public class ApiServiceManager {
         return (apiKey.getToken() != null && apiKey.getUid() != null);
     }
 
-    public void setApiKey(String token, String uid){
-        apiKey.storeApiKey(token, uid);
+    public void setApiKey(String token, String uid, int userId){
+        apiKey.storeApiKey(token, uid, userId);
         addAuthHeader(token, uid);
     }
 

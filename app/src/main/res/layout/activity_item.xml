@@ -8,11 +8,19 @@
     android:id="@+id/wrapper">
 
 
-    <ProgressBar android:id="@+id/loading_progress"
-        style="?android:attr/progressBarStyleSmall"
+    <LinearLayout
+        android:id="@+id/loading_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:gravity="center_horizontal">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
+
 
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
-        android:visibility="gone"
+        android:visibility="visible"
         >
 
         <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
@@ -70,8 +78,7 @@
                         android:orientation="vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/app_basic_padding"
-                        android:paddingRight="@dimen/app_basic_padding"
+
                         android:layout_below="@id/image_wrapper">
 
 
@@ -85,7 +92,9 @@
                                 android:id="@+id/item_tag_wrapper"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="@dimen/padding_between_content">
+                                android:paddingTop="@dimen/padding_between_content"
+                                android:layout_marginLeft="@dimen/app_basic_padding"
+                                android:layout_marginRight="@dimen/app_basic_padding">
                                 <ImageView
                                     android:id="@+id/item_tag_icon"
                                     android:layout_width="wrap_content"
@@ -106,6 +115,8 @@
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="@dimen/padding_between_content"
+                                android:layout_marginLeft="@dimen/app_basic_padding"
+                                android:layout_marginRight="@dimen/app_basic_padding"
                                 />
 
 
@@ -183,7 +194,7 @@
                 android:id="@+id/breadcrumb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/lightPrimaryColor"
+                android:textColor="@color/colorAccent"
                 android:paddingBottom="@dimen/padding_between_content"/>
 
 
@@ -217,11 +228,15 @@
         android:paddingLeft="10dp"
         fab:menu_labels_ellipsize="end"
         fab:menu_labels_singleLine="true"
-        fab:menu_backgroundColor="#ccffffff"
+        fab:menu_backgroundColor="#ffffff"
         fab:menu_labels_position="left"
+        fab:menu_colorNormal="@color/colorAccent"
+        fab:menu_colorPressed="@color/colorAccent"
+
         app:layout_behavior="work.t_s.shim0mura.havings.util.FloatingActionMenuBehavior"
         >
 
+        <!--
         <com.github.clans.fab.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -242,6 +257,7 @@
             android:src="@drawable/ic_add_black_18dp"
             fab:fab_size="mini"
             fab:fab_label="aaa" />
+        -->
 
     </com.github.clans.fab.FloatingActionMenu>
 
