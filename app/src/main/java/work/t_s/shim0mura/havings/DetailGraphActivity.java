@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -62,6 +63,8 @@ public class DetailGraphActivity extends AppCompatActivity {
     private Boolean valueSelected = false;
     private int selectedPointIndex = 0;
 
+    private View vvv;
+
     @Bind(R.id.event_history) ListView eventHistory;
 
     public static void startActivity(Context context, ItemEntity item){
@@ -77,8 +80,10 @@ public class DetailGraphActivity extends AppCompatActivity {
         item = (ItemEntity)extras.getSerializable(SERIALIZED_ITEM);
 
         setContentView(R.layout.activity_detail_graph);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         popupHeight = ViewUtil.dpToPix(this, 150);
         popupWidth = ViewUtil.dpToPix(this, 150);
@@ -93,158 +98,46 @@ public class DetailGraphActivity extends AppCompatActivity {
 
         //popupWrapper = (FrameLayout)findViewById(R.id.popup);
         chart = (LineChartView)findViewById(R.id.chart);
-        //previewChart = (PreviewLineChartView)findViewById(R.id.chart_preview);
+        chart.setValueSelectionEnabled(true);
 
-        /*
-        popup = getLayoutInflater().inflate(R.layout.test_popup, popupWrapper, false);
-
-        eventListView = (ListView)popup.findViewById(R.id.event_list);
-        adapter = new EventListInPopupAdapter(act, R.layout.event_list_in_popup);
-        eventListView.setAdapter(adapter);
-        eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                EventEntity tag = (EventEntity)view.getTag(R.string.tag_event);
-
-                switch(tag.eventType){
-                    case EventEntity.EVENT_TYPE_ADD_IMAGE:
-                        //ImageDetailActivity.startActivity(act, item, tag.item.thumbnail, tag.date);
-                        Timber.d(tag.toString());
-                        Timber.d("item image id %s", tag.item.itemImageId);
-                        ImageDetailActivity.startActivity(act, item, tag.item.itemImageId);
-                        break;
-                    case EventEntity.EVENT_TYPE_ADD_ITEM:
-                        ItemActivity.startActivity(act, item.id);
-                        break;
-                    case EventEntity.EVENT_TYPE_ADD_LIST:
-                        ItemActivity.startActivity(act, item.id);
-                        break;
-                    case EventEntity.EVENT_TYPE_DUMP_ITEM:
-                        ItemActivity.startActivity(act, item.id);
-                        break;
-                    default:
-                        //ItemActivity.startActivity(act, tag);
-                        break;
-                }
-            }
-        });
-        */
-
-        /*
-        chart.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Boolean r = v.onTouchEvent(event);
-
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    touchX = event.getX();
-                    touchY = event.getY();
-                }
-
-                return r;
-            }
-        });
-        */
         GraphRenderer.renderSimpleLineGraph(chart, item.countProperties);
 
         adapter = new EventListByDayAdapter(this, R.layout.partial_recent_activity_wrapper, item.countProperties);
         eventHistory.setAdapter(adapter);
         Timber.d("size %s", item.countProperties.size());
 
+
         chart.setOnValueTouchListener(new LineChartOnValueSelectListener() {
             @Override
             public void onValueSelected(int lineIndex, final int pointIndex, PointValue pointValue) {
                 Timber.d("point %s, position %s, size %s", pointIndex, item.countProperties.size() - pointIndex, item.countProperties.size());
-                //eventHistory.setSelection(item.countProperties.size() - pointIndex - 1);
-                eventHistory.smoothScrollToPosition(item.countProperties.size() - pointIndex - 1);
+                //eventHistory.smoothScrollToPosition(item.countProperties.size() - pointIndex - 1);
+
+                if(vvv != null){
+                    vvv.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.primaryTextWhite));
+                }
+                int firstListItemPosition = eventHistory.getFirstVisiblePosition();
+                int lastListItemPosition = firstListItemPosition + eventHistory.getChildCount() - 1;
+                int pos = item.countProperties.size() - pointIndex - 1;
+                if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+                    vvv = eventHistory.getAdapter().getView(pos, null, eventHistory);
+                    vvv.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                } else {
+                    int childIndex = pos - firstListItemPosition;
+                    vvv = eventHistory.getChildAt(childIndex);
+                    vvv.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                }
+                Timber.d((String)vvv.getTag(R.id.TEST_TAG));
+                //eventHistory.smoothScrollToPositionFromTop(item.countProperties.size() - pointIndex - 1, (eventHistory.getHeight()/2 - vvv.getHeight()/2));
+                eventHistory.setSelection(pos);
+
+                //v.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
             }
 
             @Override
             public void onValueDeselected() {
             }
         });
-
-        /*
-        chart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //onTouch, onValueTouch, onClickの順で呼ばれる
-                //onTouchでしかpositionは取得できないのでACTION_UPのタイミングでx,y取得
-                //upがあって且つonValueSelectのばあいに
-                Log.d("test click", "click");
-
-                if(valueSelected){
-                    Log.d("value selected", "true");
-                    if(countData.size() > selectedPointIndex){
-                        CountDataEntity data = countData.get(selectedPointIndex);
-                        setPopupContent(data);
-                        adapter.changeEvents(data.events);
-                        adapter.setDate(data.date);
-                        if(data.events.size() > 0){
-                            eventListView.setVisibility(View.VISIBLE);
-                        }else{
-                            eventListView.setVisibility(View.GONE);
-                        }
-                    }else{
-                        adapter.resetEvents();
-                        eventListView.setVisibility(View.GONE);
-                    }
-                    adapter.notifyDataSetChanged();
-
-                    int x = 0;
-                    int y = 0;
-                    if(touchX > popupWidth){
-                        x = (int)touchX - popupWidth - 10;
-                    }else{
-                        x = (int)touchX + 10;
-                    }
-                    if(touchY + popupHeight > chartHeight){
-                        Timber.d("touchY: %s, popupHeight: %s, chartHeight: %s", touchY, popupHeight, chartHeight);
-                        y = (int)touchY - ((int)touchY + popupHeight - chartHeight);
-                    }else{
-                        Timber.d("touchY: %s, popupHeight: %s, chartHeight: %s", touchY, popupHeight, chartHeight);
-
-                        y = (int)touchY - 50;
-                    }
-                    popup.setX(x);
-                    popup.setY(y);
-
-                    showPopup();
-                    valueSelected = false;
-                }else{
-                    hidePopup();
-                }
-
-            }
-        });
-        */
-
-        /*
-        chart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-
-                if (Build.VERSION.SDK_INT >= 16) {
-                    chart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    chart.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
-
-                chartHeight = chart.getHeight();
-                chartWidth = chart.getWidth();
-
-                ViewGroup.LayoutParams lp = popup.getLayoutParams();
-
-                popupWrapper.addView(popup);
-
-                hidePopup();
-            }
-        });
-        */
-
-        // prepare preview data, is better to use separate deep copy for preview chart.
-        // Set color to grey to make preview area more visible.
-        //GraphRenderer.renderSimpleLineGraph(previewChart, item.countProperties);
 
         chart.setZoomEnabled(true);
         chart.setScrollEnabled(true);
@@ -257,6 +150,13 @@ public class DetailGraphActivity extends AppCompatActivity {
         //previewChart.setCurrentViewport(tempViewport);
 
     }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
+
 
     @Override
     protected void onResume() {

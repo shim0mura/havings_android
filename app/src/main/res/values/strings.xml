@@ -43,7 +43,6 @@
     <string name="prompt_action_delete_item">この%1$sを削除</string>
 
 
-
     <string name="prompt_item_private">非公開のアイテム</string>
     <string name="item_list">モノリスト</string>
     <string name="prompt_no_item">アイテムはありません</string>

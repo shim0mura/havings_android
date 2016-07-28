@@ -180,6 +180,7 @@ public class EventListByDayAdapter extends ArrayAdapter<CountDataEntity> {
             holder.tags.removeAllViews();
         }
         */
+        convertView.setTag(R.id.TEST_TAG, ViewUtil.dateToString(countDataEntity.date, true));
 
         return convertView;
     }

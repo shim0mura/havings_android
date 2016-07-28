@@ -94,6 +94,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ButterKnife.bind(this);
 
@@ -113,6 +114,12 @@ public class ImageDetailActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override
@@ -153,7 +160,7 @@ public class ImageDetailActivity extends AppCompatActivity {
 
         imageDate.setText(ViewUtil.dateToString(itemImageEntity.addedDate, true));
         imageFavoriteCount.setText(String.valueOf(itemImageEntity.imageFavoriteCount));
-        if(itemImageEntity.memo.isEmpty()){
+        if(itemImageEntity.memo == null || itemImageEntity.memo.isEmpty()){
             imageMemo.setVisibility(View.GONE);
         }else {
             imageMemo.setText(itemImageEntity.memo);

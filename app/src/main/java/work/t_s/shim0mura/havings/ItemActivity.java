@@ -139,6 +139,14 @@ public class ItemActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    public static void startClearActivity(Context context, int itemId){
+        Intent intent = new Intent(context, ItemActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(ITEM_ID, itemId);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -609,7 +617,9 @@ public class ItemActivity extends AppCompatActivity {
             addListFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ItemFormActivity.startActivity(act, item, true);
+                    //ItemFormActivity.startActivity(act, item, true);
+                    ImageChooseActivity.startActivity(act, "testsets");
+
                 }
             });
             fab.addMenuButton(addListFAB);

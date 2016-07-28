@@ -24,4 +24,6 @@
     <item name="NOTIFICATION_RELATED_ID" type="id" />
     <item name="NOTIFICATION_EXIST" type="id" />
 
+    <item name="TEST_TAG" type="id" />
+
 </resources>

@@ -9,7 +9,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import work.t_s.shim0mura.havings.presenter.FormPresenter;
 
 public class ListNameSelectActivity extends AppCompatActivity {
@@ -35,7 +36,12 @@ public class ListNameSelectActivity extends AppCompatActivity {
 
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        ButterKnife.bind(this);
+    }
 
+    @OnClick(R.id.testtest)
+    public void redirectToItem(){
+        ItemActivity.startClearActivity(this, 2);
     }
 
 }
