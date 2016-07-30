@@ -28,6 +28,11 @@ public class DefaultTag {
     private Activity activity;
     static ApiService service;
 
+    public static final int TAG_TYPE_PLACE = 1;
+    public static final int TAG_TYPE_CATEGORY = 3;
+    public static final int TAG_TYPE_ITEM = 2;
+    public static final int TAG_TYPE_CLOSET = 4;
+
     private DefaultTag(Activity act){
         activity = act;
         service = ApiServiceManager.getService(activity);

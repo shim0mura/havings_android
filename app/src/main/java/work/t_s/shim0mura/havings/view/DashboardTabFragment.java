@@ -48,6 +48,7 @@ import work.t_s.shim0mura.havings.model.Timer;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.TaskWrapperEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
+import work.t_s.shim0mura.havings.model.event.CalendarTaskListEvent;
 import work.t_s.shim0mura.havings.model.event.GenericEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.TimerListRenderEvent;
@@ -225,11 +226,11 @@ public class DashboardTabFragment extends Fragment {
     }
 
     @Subscribe
-    public void renderCalendar(ArrayList<TaskWrapperEntity> taskWrappers) {
-        taskWrapperEntities = taskWrappers;
+    public void renderCalendar(CalendarTaskListEvent taskListEvent) {
+        taskWrapperEntities = taskListEvent.taskWrapperEntities;
 
         doneTaskPresenter.setDefaultDecorator(calendarView, calendar);
-        doneTaskPresenter.sortTaskByEventDate(taskWrappers);
+        doneTaskPresenter.sortTaskByEventDate(taskWrapperEntities);
 
         doneTaskPresenter.changeMonthAndTaskDoneDate(calendarView, calendar);
 

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -35,6 +36,7 @@ import com.tokenautocomplete.FilteredArrayAdapter;
 import com.wefika.flowlayout.FlowLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -48,6 +50,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.entity.TagEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.model.realm.Tag;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
@@ -61,11 +64,31 @@ import work.t_s.shim0mura.havings.util.ViewUtil;
 public class ItemFormActivity extends ItemFormBaseActivity {
 
     private ItemEntity relatedItem;
+    private static final String SERIALIZED_IMAGE = "SerializedImage";
 
-    public static void startActivity(Context context, ItemEntity i, boolean asList){
+    public static void startActivityToCreateItem(Context context, ItemEntity i){
         Intent intent = new Intent(context, new Object(){ }.getClass().getEnclosingClass());
+        ItemEntity item = new ItemEntity();
+        item.listId = i.id;
+        item.isList = false;
+        item.count = 1;
+        intent.putExtra(SERIALIZED_ITEM, item);
+        intent.putExtra(AS_LIST, false);
+
+        Activity a = (Activity)context;
+        a.startActivityForResult(intent, ItemActivity.ITEM_CREATED_RESULTCODE);
+    }
+
+    public static void startActivityToCreateList(Context context, int id, String name, String[] tags, Uri image){
+        Intent intent = new Intent(context, new Object(){ }.getClass().getEnclosingClass());
+        ItemEntity i = new ItemEntity();
+        i.listId = id;
+        i.isList = true;
+        i.name = name;
+        i.tags = Arrays.asList(tags);
         intent.putExtra(SERIALIZED_ITEM, i);
-        intent.putExtra(AS_LIST, asList);
+        intent.putExtra(SERIALIZED_IMAGE, image);
+        intent.putExtra(AS_LIST, true);
         Activity a = (Activity)context;
         a.startActivityForResult(intent, ItemActivity.ITEM_CREATED_RESULTCODE);
     }
@@ -74,21 +97,37 @@ public class ItemFormActivity extends ItemFormBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_form);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        relatedItem = item;
-        item = new ItemEntity();
-        item.isList = asList;
-        item.privateType = relatedItem.privateType;
-        item.listId = relatedItem.isList ? relatedItem.id : relatedItem.listId;
-        if(!asList){
-            item.count = 1;
-        }
+        Uri imageUri = getIntent().getParcelableExtra(SERIALIZED_IMAGE);
 
         ButterKnife.bind(this);
 
+        //relatedItem = item;
+        //item = new ItemEntity();
+
+        //Timber.d(item.tags.toString());
+        //item.isList = asList;
+        //item.privateType = relatedItem.privateType;
+        //item.listId = relatedItem.isList ? relatedItem.id : relatedItem.listId;
+
+
         constructForm();
+
+        setTitle(getString(R.string.prompt_create_form, itemTypeString));
+        Button b = (Button)findViewById(R.id.post_item);
+        b.setText(getString(R.string.prompt_post_item_button, itemTypeString));
+
+        if(item.isList){
+            setDefaultValue();
+        }
+
+        if(imageUri != null){
+            addNewPicture(imageUri);
+        }
 
         formPresenter.getUserListTree();
     }
@@ -109,13 +148,18 @@ public class ItemFormActivity extends ItemFormBaseActivity {
     @Subscribe
     @Override
     public void successToPost(ItemEntity itemEntity){
-        Intent data = getIntent();
-        Bundle extras = new Bundle();
-        extras.putSerializable(ItemActivity.CREATED_ITEM, itemEntity);
-        data.putExtras(extras);
-        setResult(Activity.RESULT_OK, data);
 
-        finish();
+        if(item.isList){
+            ItemActivity.startClearActivity(this, item.listId);
+        }else{
+            Intent data = getIntent();
+            Bundle extras = new Bundle();
+            extras.putSerializable(ItemActivity.CREATED_ITEM, itemEntity);
+            data.putExtras(extras);
+            setResult(Activity.RESULT_OK, data);
+
+            finish();
+        }
     }
 
 
@@ -130,5 +174,11 @@ public class ItemFormActivity extends ItemFormBaseActivity {
     @Override
     public void subscribeSetValidateError(SetErrorEvent event) {
         setValidateError(event);
+    }
+
+    @Subscribe
+    @Override
+    public void subscribeAlert(AlertEvent event) {
+        showAlert(event);
     }
 }

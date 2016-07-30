@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Havings</string>
 
+    <string name="prompt_ok">OK</string>
     <!-- general strings -->
     <string name="name">ユーザー名</string>
     <string name="email">メールアドレス</string>
@@ -77,6 +78,22 @@
     <string name="event_type_drop_item">アイテムを手放しました</string>
     <string name="event_type_drop_something_to">を手放しました</string>
 
+    <string name="prompt_list_name_select">片付けたいところを選択</string>
+    <string name="prompt_list_name_select_text1">片付けたいところを選んで、リストとして登録しましょう。</string>
+    <string name="prompt_list_name_select_text2">片付けたいものをアイテムとしてリストの中に追加することができます。\nまた、リスト自体も別のリストの中に追加することが出来ます。</string>
+
+    <string name="prompt_list_type_place">場所から</string>
+    <string name="prompt_list_type_closet">収納から</string>
+    <string name="prompt_list_type_category">カテゴリから</string>
+    <string name="prompt_list_type_input">自分で入力</string>
+    <string name="prompt_input_list_name">リスト名を入力...</string>
+
+    <string name="prompt_choose_image_for_list">画像を選択</string>
+    <string name="prompt_add_image_for_list">片付けたいところの「今」を記録しよう</string>
+    <string name="prompt_add_image_for_list_detail1">片付けを始める前に、その場所が今どうなっているかを写真で記録しておきましょう。</string>
+    <string name="prompt_add_image_for_list_detail2">片付けを始めた時の状態が分かれば、後でどれだけ片付けが進んだかがわかりやすくなるはずです！</string>
+
+    <string name="prompt_create_form">%1$sの追加</string>
     <string name="prompt_list_name">リスト名（必須）</string>
     <string name="prompt_item_name">アイテム名（必須）</string>
     <string name="prompt_list_image">画像の追加（必須）</string>
@@ -91,9 +108,16 @@
     <string name="prompt_item_count">アイテムの数</string>
     <string name="prompt_add_to_list">属するリストの指定</string>
     <string name="prompt_private_type">公開範囲</string>
+    <string name="prompt_private_type_main">この%1$sを公開する</string>
+    <string name="prompt_private_type_detail_public">この%1$sは他の人も見れます</string>
+    <string name="prompt_private_type_detail_private">この%1$sはあなた以外見ることは出来ません</string>
+    <string name="prompt_private_type_detail_private_by_parent">親リストが非公開の場合は公開できません</string>
+    <string name="prompt_post_item_button">%1$sを追加する</string>
+
     <string name="prompt_description">メモ</string>
     <string name="prompt_garbage_reason">手放す理由</string>
 
+    <string name="prompt_item_added">%1$sを追加しました</string>
 
     <string name="unit_item_count">個</string>
     <string name="unit_item_count_en">items</string>

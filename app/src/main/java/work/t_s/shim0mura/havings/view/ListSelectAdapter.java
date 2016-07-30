@@ -44,7 +44,7 @@ public class ListSelectAdapter extends BaseAdapter implements StickyListHeadersA
 
         Realm realm = Realm.getInstance(c);
 
-        RealmResults<Tag> tags = realm.where(Tag.class).equalTo("tagType", 3).equalTo("parentId", 0).findAll();
+        RealmResults<Tag> tags = realm.where(Tag.class).equalTo("tagType", 3).equalTo("parentId", 0).equalTo("isDeleted", false).findAll();
         long startTime = System.currentTimeMillis();
 
         for(Tag t: tags){
@@ -130,6 +130,7 @@ public class ListSelectAdapter extends BaseAdapter implements StickyListHeadersA
         holder.itemText.setText(tag.get(TAG_NAME));
         holder.itemSubText.setText(tag.get(TAG_SUBTEXT_KEY));
         convertView.setTag(R.id.TAG_ITEM_ID, Integer.valueOf(tag.get(TAG_ID_KEY)));
+        convertView.setTag(R.id.TAG_ITEM_NAME, tag.get(TAG_NAME));
 
         return convertView;
     }

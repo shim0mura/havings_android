@@ -1,26 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:fitsSystemWindows="true"
     tools:context="work.t_s.shim0mura.havings.ImageChooseActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/description"
+            android:orientation="vertical"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/app_basic_padding"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/housekeeping"/>
+            <TextView
+                android:layout_marginTop="@dimen/app_basic_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prompt_add_image_for_list"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_marginTop="@dimen/app_basic_padding"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prompt_add_image_for_list_detail1"/>
+            <TextView
+                android:layout_marginTop="@dimen/padding_between_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prompt_add_image_for_list_detail2"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="あああああ"/>
-        <TextView
-            android:id="@+id/test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="いいいいいいい"/>
-    </LinearLayout>
+            android:layout_below="@id/description"
+            android:layout_margin="@dimen/app_basic_padding"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/add_image_from_camera"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/border_underline"
+                android:layout_margin="@dimen/padding_between_content"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_photo_camera_black_48dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_list_image_from_camera"
+                    android:textSize="16dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/add_image_from_gallery"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:background="@drawable/border_underline"
+                android:layout_margin="@dimen/padding_between_content"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_photo_library_black_48dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_list_image_from_gallery"
+                    android:textSize="16dp"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

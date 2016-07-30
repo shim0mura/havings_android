@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:id="@+id/list_name_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="@dimen/app_basic_padding"
+        android:paddingTop="50dp"
+        >
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/list_icon_for_tab" />
+        <MultiAutoCompleteTextView
+            android:id="@+id/comp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_input_list_name"
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textSize="16dp"
+            />
+    </LinearLayout>
+    <Button
+        android:id="@+id/list_name_select_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/app_basic_padding"
+        android:layout_below="@id/list_name_wrapper"
+        android:text="@string/prompt_ok"
+        />
+
+</RelativeLayout>

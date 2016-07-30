@@ -21,6 +21,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 
 public class ItemDeleteActivity extends ItemFormBaseActivity {
@@ -85,4 +86,9 @@ public class ItemDeleteActivity extends ItemFormBaseActivity {
         //setValidateError(event);
     }
 
+    @Subscribe
+    @Override
+    public void subscribeAlert(AlertEvent event) {
+        showAlert(event);
+    }
 }

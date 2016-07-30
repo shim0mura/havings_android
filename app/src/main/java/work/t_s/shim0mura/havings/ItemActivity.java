@@ -77,6 +77,7 @@ public class ItemActivity extends AppCompatActivity {
 
     private static final String TAG = "ItemActivity";
     private static final String ITEM_ID = "ItemId";
+    private static final String CREATE_LIST = "CreateList";
     public static final int ITEM_CREATED_RESULTCODE = 400;
     public static final int ITEM_UPDATED_RESULTCODE = 500;
     public static final int TIMER_CREATED_RESULTCODE = 600;
@@ -141,9 +142,10 @@ public class ItemActivity extends AppCompatActivity {
 
     public static void startClearActivity(Context context, int itemId){
         Intent intent = new Intent(context, ItemActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(ITEM_ID, itemId);
+        intent.putExtra(CREATE_LIST, true);
         context.startActivity(intent);
     }
 
@@ -158,6 +160,12 @@ public class ItemActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int itemId = intent.getIntExtra(ITEM_ID, 0);
+        boolean createList = intent.getBooleanExtra(CREATE_LIST, false);
+        if(createList){
+            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+            Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.list)), Snackbar.LENGTH_LONG).show();
+
+        }
         userId = ApiKey.getSingleton(this).getUserId();
 
         stickyScrollPresenter = new StickyScrollPresenter(this, StickyScrollPresenter.SCROLL_TYPE_ITEM);
@@ -231,8 +239,26 @@ public class ItemActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+
         BusHolder.get().register(this);
         Timber.d("regist action");
+
+        Bundle extras = getIntent().getExtras();
+        Timber.d(extras.toString());
+        int i = getIntent().getIntExtra(ITEM_ID, 0);
+        Timber.d("id %s", i);
+        ItemEntity addedItem = (ItemEntity)extras.getSerializable(CREATED_ITEM);
+        if(addedItem != null){
+            Timber.d("list created");
+
+            Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, addedItem.name), Snackbar.LENGTH_LONG).show();
+
+            if(item.isList && addedItem.listId == item.id) {
+                pagerAdapter.unshiftItem(addedItem);
+                pagerAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override
@@ -603,7 +629,7 @@ public class ItemActivity extends AppCompatActivity {
             addItemFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ItemFormActivity.startActivity(act, item, false);
+                    ItemFormActivity.startActivityToCreateItem(act, item);
                 }
             });
             fab.addMenuButton(addItemFAB);
@@ -618,7 +644,8 @@ public class ItemActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     //ItemFormActivity.startActivity(act, item, true);
-                    ImageChooseActivity.startActivity(act, "testsets");
+                    //ImageChooseActivity.startActivity(act, "testsets", item.id);
+                    ListNameSelectActivity.startActivity(act, item.id);
 
                 }
             });

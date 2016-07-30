@@ -16,6 +16,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 
 public class ItemEditActivity extends ItemFormBaseActivity {
@@ -40,8 +41,6 @@ public class ItemEditActivity extends ItemFormBaseActivity {
         constructForm();
 
         setDefaultValue();
-
-        showListNameInputView();
 
         formPresenter.getUserListTree();
     }
@@ -79,5 +78,11 @@ public class ItemEditActivity extends ItemFormBaseActivity {
     @Override
     public void subscribeSetValidateError(SetErrorEvent event) {
         setValidateError(event);
+    }
+
+    @Subscribe
+    @Override
+    public void subscribeAlert(AlertEvent event) {
+        showAlert(event);
     }
 }

@@ -15,13 +15,19 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
+
+import com.tokenautocomplete.FilteredArrayAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,11 +50,14 @@ import retrofit.Retrofit;
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.ImageChooseActivity;
+import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.ItemFormActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
+import work.t_s.shim0mura.havings.model.DefaultTag;
 import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
@@ -56,9 +65,11 @@ import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.TagEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.model.realm.Tag;
 import work.t_s.shim0mura.havings.util.ApiErrorUtil;
+import work.t_s.shim0mura.havings.util.SpaceTokenizer;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.ListSelectAdapter;
 
@@ -82,29 +93,6 @@ public class FormPresenter {
         service = ApiServiceManager.getService(activity);
         item = new Item();
     }
-
-    /*
-    public List<TagEntity> getTagEntities(){
-        Realm realm = Realm.getInstance(activity);
-        RealmResults<Tag> result = realm.where(Tag.class).equalTo("isDeleted", false).findAll();
-
-        List<TagEntity> tags = new ArrayList<TagEntity>();
-
-        for(Tag t: result){
-            TagEntity tagEntity = new TagEntity();
-
-            tagEntity.id = t.getId();
-            tagEntity.name = t.getName();
-            tagEntity.yomiJp = t.getYomiJp();
-            tagEntity.yomiRoma = t.getYomiRoma();
-            tagEntity.priority = t.getPriority();
-            tagEntity.tagType = t.getTagType();
-            tags.add(tagEntity);
-        }
-
-        return tags;
-    }
-    */
 
     public void setItemImageDateListener(final ImageView image, final TextView imageDate, final Calendar currentCalendar){
         final Date currentDate = new Date(currentCalendar.getTimeInMillis());
@@ -281,6 +269,12 @@ public class FormPresenter {
         if(isValidItemToCreate(itemEntity)){
             hashItem.put(ITEM_POST_HASH_KEY, itemEntity);
         }else{
+            if(!isValidName(itemEntity)){
+                sendErrorToListName();
+            }
+            if(itemEntity.isList && !isImageExist(itemEntity)){
+                sendErrorToImage();
+            }
             return;
         }
 
@@ -294,6 +288,7 @@ public class FormPresenter {
         if(isValidItemToEdit(itemEntity)){
             hashItem.put(ITEM_POST_HASH_KEY, itemEntity);
         }else{
+            sendErrorToListName();
             return;
         }
 
@@ -352,7 +347,7 @@ public class FormPresenter {
                         }
                     }
                 } else {
-
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
                 }
             }
 
@@ -445,74 +440,94 @@ public class FormPresenter {
         return res.getIdentifier(id, "id", activity.getPackageName());
     }
 
+    public static View getCustomTabForListNameSelect(Activity activity, int position){
+        View tab = activity.getLayoutInflater().inflate(R.layout.partial_list_select_tab_header, null);
+        ImageView iconTypeImage = (ImageView) tab.findViewById(R.id.tab_icon);
+        TextView imageTab = (TextView) tab.findViewById(R.id.tab_name);
+        switch(position) {
+            case 0:
+                iconTypeImage.setImageResource(R.drawable.place_white);
+                imageTab.setText(R.string.prompt_list_type_place);
+                break;
+            case 1:
+                iconTypeImage.setImageResource(R.drawable.closet_white);
+                imageTab.setText(R.string.prompt_list_type_closet);
+                break;
+            case 2:
+                iconTypeImage.setImageResource(R.drawable.category_white);
+                imageTab.setText(R.string.prompt_list_type_category);
+                break;
+            case 3:
+                iconTypeImage.setImageResource(R.drawable.ic_mode_edit_white_24dp);
+                imageTab.setText(R.string.prompt_list_type_input);
+                break;
+        }
+
+        return tab;
+    }
+
     public static class ListSelectPagerAdapter extends PagerAdapter {
 
         private Activity activity;
-        private View loader;
+        private int listId = 0;
 
-        public ListSelectPagerAdapter(Activity a){
+        private ArrayList<String> tagStringByPlace = new ArrayList<>();
+        private ArrayList<String> tagStringByCloset = new ArrayList<>();
+        private ArrayList<TagEntity> tagEntities = new ArrayList<>();
+
+        private ArrayList<String> inputTags = new ArrayList<>();
+        private MultiAutoCompleteTextView textView;
+
+        public ListSelectPagerAdapter(Activity a, int id) {
             activity = a;
-            loader = View.inflate(a, R.layout.loading, null);
-        }
+            listId = id;
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            //return super.getPageTitle(position);
-            return position + "";
+            Realm realm = Realm.getInstance(activity);
+
+            RealmResults<Tag> tagsByPlace = realm.where(Tag.class).equalTo("tagType", DefaultTag.TAG_TYPE_PLACE).equalTo("isDeleted", false).findAll();
+            for(Tag t: tagsByPlace){
+                tagStringByPlace.add(t.getName());
+            }
+            RealmResults<Tag> tagsByCloset = realm.where(Tag.class).equalTo("tagType", DefaultTag.TAG_TYPE_CLOSET).equalTo("isDeleted", false).findAll();
+            for(Tag t: tagsByCloset){
+                tagStringByCloset.add(t.getName());
+            }
+            tagEntities = new ArrayList<>(DefaultTag.getSingleton(activity).getTagEntities());
+
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            return view==((View)object);
+            return view == ((View) object);
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
 
             View view;
-            if(position == 0) {
-                view = activity.getLayoutInflater().inflate(R.layout.category_list_tab, container, false);
+            switch(position){
+                case 0:
+                    view = instantiateTab(container, position);
+                    break;
+                case 1:
+                    view = instantiateTab(container, position);
+                    break;
+                case 2:
+                    view = instantiateCategoryTab(container);
+                    break;
+                case 3:
+                    view = instantiateInputTab(container);
+                    break;
+                default:
+                    view = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
 
-                final ExpandableStickyListHeadersListView listView = (se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView)view.findViewById(R.id.list);
-
-                ListSelectAdapter adapter = new ListSelectAdapter(activity);
-                listView.setAdapter(adapter);
-                listView.setOnHeaderClickListener(new StickyListHeadersListView.OnHeaderClickListener() {
-                    @Override
-                    public void onHeaderClick(StickyListHeadersListView l, View header, int itemPosition, long headerId, boolean currentlySticky) {
-                        if (listView.isHeaderCollapsed(headerId)) {
-                            listView.expand(headerId);
-                        } else {
-                            listView.collapse(headerId);
-                        }
-                    }
-                });
-
-                for(int i: adapter.getKindIds()){
-                    listView.collapse(i);
-                }
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Timber.d("selected item %s", view.getTag(R.id.TAG_ITEM_ID));
-                        Intent data = new Intent();
-                        Bundle bundle = new Bundle();
-                        bundle.putInt(ItemFormActivity.LIST_NAME_TAG_ID_KEY, (int)view.getTag(R.id.TAG_ITEM_ID));
-                        data.putExtras(bundle);
-
-                        activity.setResult(Activity.RESULT_OK, data);
-                        activity.finish();
-                    }
-                });
-            }else {
-                view = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
             }
+
             container.addView(view);
             return view;
         }
@@ -521,5 +536,129 @@ public class FormPresenter {
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
+
+        private View instantiateCategoryTab(ViewGroup container) {
+            View view = activity.getLayoutInflater().inflate(R.layout.category_list_tab, container, false);
+
+            final ExpandableStickyListHeadersListView listView = (se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView) view.findViewById(R.id.list);
+
+            ListSelectAdapter adapter = new ListSelectAdapter(activity);
+            listView.setAdapter(adapter);
+            listView.setOnHeaderClickListener(new StickyListHeadersListView.OnHeaderClickListener() {
+                @Override
+                public void onHeaderClick(StickyListHeadersListView l, View header, int itemPosition, long headerId, boolean currentlySticky) {
+                    if (listView.isHeaderCollapsed(headerId)) {
+                        listView.expand(headerId);
+                    } else {
+                        listView.collapse(headerId);
+                    }
+                }
+            });
+
+            for (int i : adapter.getKindIds()) {
+                listView.collapse(i);
+            }
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Timber.d("selected item %s", view.getTag(R.id.TAG_ITEM_ID));
+                    /*
+                    Intent data = new Intent();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(ItemFormActivity.LIST_NAME_TAG_ID_KEY, (int) view.getTag(R.id.TAG_ITEM_ID));
+                    data.putExtras(bundle);
+                    */
+                    String selected = (String) view.getTag(R.id.TAG_ITEM_NAME);
+                    inputTags.add(selected);
+
+                    ImageChooseActivity.startActivity(activity, selected, inputTags, listId);
+
+                    //convertView.setTag(R.id.TAG_ITEM_NAME, tag.get(TAG_NAME));
+                    //activity.setResult(Activity.RESULT_OK, data);
+                    //activity.finish();
+                }
+            });
+
+            return view;
+        }
+
+        private View instantiateTab(ViewGroup container, final int tabPosition) {
+            View view = activity.getLayoutInflater().inflate(R.layout.partial_list_name_by_place_tab, container, false);
+
+            final ListView listView = (ListView)view.findViewById(R.id.list_name);
+
+            listView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, (tabPosition == 1 ? tagStringByPlace : tagStringByCloset)));
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Timber.d("selected item %s", view.getTag(R.id.TAG_ITEM_ID));
+                    /*
+                    Intent data = new Intent();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(ItemFormActivity.LIST_NAME_TAG_ID_KEY, (int) view.getTag(R.id.TAG_ITEM_ID));
+                    data.putExtras(bundle);
+
+                    activity.setResult(Activity.RESULT_OK, data);
+                    activity.finish();
+                    */
+                    String selected = (tabPosition == 1 ? tagStringByPlace.get(position) : tagStringByCloset.get(position));
+                    inputTags.add(selected);
+
+                    ImageChooseActivity.startActivity(activity, selected, inputTags, listId);
+
+                }
+            });
+
+            return view;
+        }
+
+        private View instantiateInputTab(ViewGroup container){
+            View view = activity.getLayoutInflater().inflate(R.layout.partial_list_name_input_tab, container, false);
+
+            textView = (MultiAutoCompleteTextView) view.findViewById(R.id.comp);
+
+            ArrayAdapter<TagEntity> adapter = new FilteredArrayAdapter<TagEntity>(activity, android.R.layout.simple_list_item_1, tagEntities) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    if (convertView == null) {
+                        LayoutInflater l = (LayoutInflater)getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+                        convertView = l.inflate(android.R.layout.simple_list_item_1, parent, false);
+                    }
+
+                    TagEntity p = getItem(position);
+                    ((TextView)convertView).setText(p.getName());
+                    return convertView;
+                }
+
+                @Override
+                protected boolean keepObject(TagEntity tag, String mask) {
+                    mask = mask.toLowerCase();
+                    return tag.getName().toLowerCase().startsWith(mask) || tag.getYomiJp().startsWith(mask) || tag.getYomiRoma().toLowerCase().startsWith(mask);
+                }
+            };
+
+            textView.setAdapter(adapter);
+            textView.setTokenizer(new SpaceTokenizer());
+            textView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Timber.d("item clicked!! id: %s", id);
+                    TextView selected = (TextView) view;
+                    inputTags.add(selected.getText().toString());
+                }
+            });
+
+            view.findViewById(R.id.list_name_select_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Timber.d("click");
+                    ImageChooseActivity.startActivity(activity, textView.getText().toString(), inputTags, listId);
+                }
+            });
+            return view;
+        }
+
     }
 }

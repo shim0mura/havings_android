@@ -17,25 +17,15 @@
         >
         <ImageView
             android:id="@+id/tab_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/item_icon_for_tab_white"/>
         <TextView
             android:id="@+id/tab_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/item_list"
             android:textColor="@color/primaryTextWhite"
+            android:text="@string/item_list"
             />
     </LinearLayout>
-    <TextView
-        android:id="@+id/tab_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="test"
-        android:textColor="@color/primaryTextWhite"
-        android:textSize="18dp"
-        android:layout_marginTop="-3dp"
-        />
 </LinearLayout>

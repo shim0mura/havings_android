@@ -53,6 +53,7 @@ import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.TaskEntity;
 import work.t_s.shim0mura.havings.model.entity.TaskWrapperEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
+import work.t_s.shim0mura.havings.model.event.CalendarTaskListEvent;
 import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 import work.t_s.shim0mura.havings.view.DoneTaskByCalenderFragment;
 import work.t_s.shim0mura.havings.view.DoneTaskByListFragment;
@@ -127,7 +128,8 @@ public class DoneTaskPresenter {
             public void onResponse(Response<List<TaskWrapperEntity>> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     List<TaskWrapperEntity> doneTasks = response.body();
-                    BusHolder.get().post(doneTasks);
+                    CalendarTaskListEvent result = new CalendarTaskListEvent(new ArrayList<TaskWrapperEntity>(doneTasks));
+                    BusHolder.get().post(result);
 
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");

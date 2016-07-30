@@ -284,7 +284,7 @@ public class ItemPresenter {
                     break;
                 case 1:
                     ImageView iconTypeImage = (ImageView) tab.findViewById(R.id.tab_icon);
-                    iconTypeImage.setImageResource(R.drawable.ic_image_black_18dp);
+                    iconTypeImage.setImageResource(R.drawable.ic_image_white_24dp);
                     TextView imageTab = (TextView) tab.findViewById(R.id.tab_name);
                     imageTab.setText(R.string.item_images);
                     TextView imageCount = (TextView) tab.findViewById(R.id.tab_count);
@@ -292,7 +292,7 @@ public class ItemPresenter {
                     break;
                 case 2:
                     ImageView iconTypeGraph = (ImageView) tab.findViewById(R.id.tab_icon);
-                    iconTypeGraph.setImageResource(R.drawable.ic_timeline_black_18dp);
+                    iconTypeGraph.setImageResource(R.drawable.ic_timeline_white_24dp);
                     TextView graphTab = (TextView) tab.findViewById(R.id.tab_name);
                     graphTab.setText(R.string.item_graph);
                     TextView graphCount = (TextView) tab.findViewById(R.id.tab_count);

@@ -3,6 +3,7 @@
     <item name="TAG_HEADER_HOLDER" type="id"/>
     <item name="TAG_ITEM_HOLDER" type="id"/>
     <item name="TAG_ITEM_ID" type="id"/>
+    <item name="TAG_ITEM_NAME" type="id"/>
 
     <item name="TAG_USER_ID" type="id"/>
 

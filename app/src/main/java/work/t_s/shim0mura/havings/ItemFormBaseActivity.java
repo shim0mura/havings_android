@@ -18,7 +18,9 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,6 +63,7 @@ import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.TagEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.model.realm.Tag;
 import work.t_s.shim0mura.havings.presenter.FormPresenter;
@@ -82,17 +86,23 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     protected Uri pictureUri;
     protected List<TagEntity> tags = new ArrayList<>();
     protected Boolean asList;
+    protected String itemTypeString;
 
     // data-bindingで@Nullableを消したい...
     @Nullable @Bind(R.id.new_image_container) FlowLayout newImageContainer;
     @Nullable @Bind(R.id.exist_image_container) FlowLayout existImageContainer;
     @Nullable @Bind(R.id.comp) TextView itemName;
+    @Nullable @Bind(R.id.item_type_icon) ImageView itemTypeIcon;
     @Nullable @Bind(R.id.searchView) TagCompletionView itemTag;
     @Nullable @Bind(R.id.description) TextView description;
     @Nullable @Bind(R.id.list_spinner) Spinner listSpinner;
-    @Nullable @Bind(R.id.private_type) Spinner privateTypeSpinner;
-    @Nullable @Bind(R.id.specify_list_name_from_tags) LinearLayout inputListNameByTag;
-    @Nullable @Bind(R.id.specify_list_name_by_input) LinearLayout inputListNameByInput;
+    //@Nullable @Bind(R.id.private_type) Spinner privateTypeSpinner;
+    //@Nullable @Bind(R.id.specify_list_name_from_tags) LinearLayout inputListNameByTag;
+    //@Nullable @Bind(R.id.specify_list_name_by_input) LinearLayout inputListNameByInput;
+    @Nullable @Bind(R.id.private_type_main_text) TextView privateTypeMainText;
+    @Nullable @Bind(R.id.private_type_detail_text) TextView privateTypeDetailText;
+    @Nullable @Bind(R.id.private_type_switch) CompoundButton privateTypeSwitch;
+
     @Nullable @Bind(R.id.validate_image) LinearLayout imageWarning;
     @Nullable @Bind(R.id.validate_image_below) LinearLayout imageWarningBelow;
     @Nullable @Bind(R.id.item_count_wrapper) LinearLayout itemCountWrapper;
@@ -116,8 +126,14 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
+
     protected void constructForm(){
-        setPrivateTypeSpinner();
+        //setPrivateTypeSpinner();
 
         DefaultTag defaultTag = DefaultTag.getSingleton(this);
         //tags.addAll(formPresenter.getTagEntities());
@@ -126,10 +142,17 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         setNameAdapter();
         setTagAdapter();
 
+        itemTypeString = (item.isList) ? getString(R.string.list) : getString(R.string.item);
+
+        privateTypeMainText.setText(getString(R.string.prompt_private_type_main, itemTypeString));
+        privateTypeDetailText.setText(getString(R.string.prompt_private_type_detail_public, itemTypeString));
+        privateTypeSwitch.setChecked(true);
+
         if(item.isList){
             itemCountWrapper.setVisibility(View.GONE);
         }else{
-            showItemNameInputView();
+            //showItemNameInputView();
+            itemTypeIcon.setImageResource(R.drawable.item_icon_for_tab);
             listNamePrompt.setText(getText(R.string.prompt_item_name));
             itemName.setHint(R.string.hint_to_item_name);
             if(addImagePrompt != null) {
@@ -137,6 +160,15 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
             }
             description.setHint(R.string.hint_to_description_of_item);
         }
+
+        privateTypeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                UserListEntity selectedList = (UserListEntity) listSpinner.getSelectedItem();
+                Boolean parentPrivate = (selectedList != null && selectedList.privateType > 0) ? true : false;
+                changePrivateType(!isChecked, parentPrivate);
+            }
+        });
     }
 
     protected void setDefaultValue(){
@@ -153,6 +185,23 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         if(!item.isList){
             itemCount.setText(String.valueOf(item.count));
         }
+
+        if(item.privateType > 0){
+            privateTypeSwitch.setChecked(false);
+            changePrivateType((item.privateType > 0), false);
+        }
+    }
+
+    protected void changePrivateType(Boolean isPrivate, Boolean isParentPrivate){
+        if(isParentPrivate) {
+            privateTypeDetailText.setText(getString(R.string.prompt_private_type_detail_private_by_parent));
+        }else if(isPrivate) {
+            privateTypeDetailText.setText(getString(R.string.prompt_private_type_detail_private, itemTypeString));
+        }else{
+            privateTypeDetailText.setText(getString(R.string.prompt_private_type_detail_public, itemTypeString));
+
+        }
+
     }
 
     protected void showItemCountChanger(){
@@ -183,6 +232,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         d.show();
     }
 
+    /*
     protected void setPrivateTypeSpinner(){
         ArrayAdapter<Item.PrivateType> privateTypeSpinnerAdapter = new ArrayAdapter<Item.PrivateType>(this, android.R.layout.simple_spinner_item);
         privateTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -195,6 +245,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
             privateTypeSpinner.setSelection(item.privateType);
         }
     }
+    */
 
     protected void setNameAdapter(){
         ArrayAdapter<TagEntity> adapter = new FilteredArrayAdapter<TagEntity>(this, android.R.layout.simple_list_item_1, tags) {
@@ -226,7 +277,6 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         textView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Timber.d("item clicked!! id: %s", id);
                 TagEntity tag = new TagEntity();
                 TextView selected = (TextView) view;
                 tag.name = selected.getText().toString();
@@ -369,14 +419,12 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
 
         for(int i = 0; i < listSize; i++){
             if (list[i].id == compareTo) {
-                Timber.d("list id: %s", list[i].id);
                 defaultPos = i;
             }
             if (item.isList != null && item.isList && item.id == list[i].id){
                 tmpSelfPosition = i;
             }
         }
-        Timber.d("default pos %s", defaultPos);
 
         final int selfPosition = tmpSelfPosition;
         final UserListEntity selfList = list[selfPosition];
@@ -417,6 +465,13 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         listSpinner.setAdapter(spinnerAdapter);
         if (defaultPos != 0) {
             listSpinner.setSelection(defaultPos);
+            UserListEntity selectedList = (UserListEntity) listSpinner.getSelectedItem();
+            Boolean parentPrivate = (selectedList != null && selectedList.privateType > 0) ? true : false;
+            if(parentPrivate){
+                privateTypeSwitch.setChecked(false);
+                privateTypeSwitch.setEnabled(false);
+                changePrivateType(false, true);
+            }
         }
 
         listSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -425,6 +480,18 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
                 TextView t = (TextView) view;
                 String listName = t.getText().toString();
                 t.setText(listName.trim());
+
+                UserListEntity selectedList = (UserListEntity) listSpinner.getSelectedItem();
+                Boolean parentPrivate = (selectedList != null && selectedList.privateType > 0) ? true : false;
+                if(parentPrivate){
+                    privateTypeSwitch.setChecked(false);
+                    privateTypeSwitch.setEnabled(false);
+                    changePrivateType(false, true);
+                }else{
+                    privateTypeSwitch.setEnabled(true);
+                    changePrivateType(!privateTypeSwitch.isChecked(), false);
+
+                }
             }
 
             @Override
@@ -434,12 +501,23 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     }
 
     @Subscribe
+    abstract public void subscribeAlert(AlertEvent event);
+
+    public void showAlert(AlertEvent event){
+        new AlertDialog.Builder(this)
+                .setTitle(event.title)
+                .setMessage(event.message)
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    @Subscribe
     abstract public void subscribeSetValidateError(SetErrorEvent event);
 
     public void setValidateError(SetErrorEvent event){
         switch(event.resourceId){
             case R.id.comp:
-                showListNameInputView();
+                //showListNameInputView();
                 if(item.isList) {
                     itemName.setError(getResources().getString(R.string.error_list_name_required));
                 }else{
@@ -454,17 +532,12 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.test_button)
-    public void testClick(){
-        //successToPost(item);
-    }
-
-
     abstract public void successToPost(ItemEntity itemEntity);
 
+    /*
     @Nullable @OnClick(R.id.specify_list_name_from_tags)
     public void navigateToListNameSelecter(){
-        ListNameSelectActivity.startActivity(this);
+        //ListNameSelectActivity.startActivity(this);
     }
 
     @Nullable @OnClick(R.id.specify_list_name_by_input)
@@ -475,6 +548,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(nameEditor, InputMethodManager.SHOW_IMPLICIT);
     }
+    */
 
     @Nullable @OnClick(R.id.add_image_from_camera)
     public void startImageChooserFromCamera(){
@@ -492,7 +566,6 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         } else {
             launchImageChooserFromGallery();
         }
-        launchImageChooserFromGallery();
     }
 
     @Nullable @OnClick(R.id.item_count_changer)
@@ -522,8 +595,9 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         UserListEntity selectedList = (UserListEntity) listSpinner.getSelectedItem();
         item.listId = selectedList.id;
 
-        Item.PrivateType selectedPrivateType = (Item.PrivateType)privateTypeSpinner.getSelectedItem();
-        item.privateType = selectedPrivateType.getTypeId();
+        //Item.PrivateType selectedPrivateType = (Item.PrivateType)privateTypeSpinner.getSelectedItem();
+        int privateType = privateTypeSwitch.isChecked() ? 0 : 3;
+        item.privateType = privateType;
     }
 
     protected List<ImageView> getAddedImageViews(){
@@ -644,16 +718,21 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         startActivityForResult(intent, IMAGE_CHOOSER_FROM_GALLERY_RESULTCODE);
     }
 
+    /*
     protected void showListNameInputView(){
         inputListNameByInput.setVisibility(View.GONE);
         itemName.setVisibility(View.VISIBLE);
     }
+    */
 
+    /*
     protected void showItemNameInputView(){
         showListNameInputView();
         inputListNameByTag.setVisibility(View.GONE);
     }
+    */
 
+    /*
     protected void addListName(int id){
         Timber.d("selected tag_id %s", id);
         Realm realm = Realm.getInstance(this);
@@ -665,7 +744,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         TagEntity tagEntity = new TagEntity();
         tagEntity.name = result.getName();
         itemTag.addObject(tagEntity);
-    }
+    }*/
 
     protected void addNewPicture(Uri imageUri){
         View pictureView = getLayoutInflater().inflate(R.layout.partial_added_image_in_form, newImageContainer, false);
@@ -756,7 +835,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
 
-                    addListName(bundle.getInt(LIST_NAME_TAG_ID_KEY));
+                    //addListName(bundle.getInt(LIST_NAME_TAG_ID_KEY));
                 }
                 break;
         }

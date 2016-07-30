@@ -11,6 +11,7 @@ public class UserListEntity implements Serializable {
     public String name;
     public int count;
     public int nest;
+    public int privateType;
 
     @Override
     public String toString() {

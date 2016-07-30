@@ -32,6 +32,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.view.FellowSelectExpandableListAdapter;
 
@@ -98,4 +99,9 @@ public class ItemDumpActivity extends ItemFormBaseActivity {
         //setValidateError(event);
     }
 
+    @Subscribe
+    @Override
+    public void subscribeAlert(AlertEvent event) {
+        showAlert(event);
+    }
 }
