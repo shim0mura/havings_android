@@ -2,6 +2,7 @@ package work.t_s.shim0mura.havings;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -105,16 +106,6 @@ public class ItemFormActivity extends ItemFormBaseActivity {
         Uri imageUri = getIntent().getParcelableExtra(SERIALIZED_IMAGE);
 
         ButterKnife.bind(this);
-
-        //relatedItem = item;
-        //item = new ItemEntity();
-
-        //Timber.d(item.tags.toString());
-        //item.isList = asList;
-        //item.privateType = relatedItem.privateType;
-        //item.listId = relatedItem.isList ? relatedItem.id : relatedItem.listId;
-
-
         constructForm();
 
         setTitle(getString(R.string.prompt_create_form, itemTypeString));
@@ -141,6 +132,8 @@ public class ItemFormActivity extends ItemFormBaseActivity {
         item.imageDataForPost = new ArrayList<ItemImageEntity>();
         item.imageDataForPost.addAll(addedImages);
 
+        progressDialog = ProgressDialog.show(this, getTitle(), getString(R.string.prompt_sending), true);
+
         formPresenter.attemptToCreateItem(item);
         item.imageDataForPost = new ArrayList<ItemImageEntity>();
     }
@@ -148,6 +141,10 @@ public class ItemFormActivity extends ItemFormBaseActivity {
     @Subscribe
     @Override
     public void successToPost(ItemEntity itemEntity){
+
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
 
         if(item.isList){
             ItemActivity.startClearActivity(this, item.listId);
@@ -179,6 +176,9 @@ public class ItemFormActivity extends ItemFormBaseActivity {
     @Subscribe
     @Override
     public void subscribeAlert(AlertEvent event) {
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
         showAlert(event);
     }
 }

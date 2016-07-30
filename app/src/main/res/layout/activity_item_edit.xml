@@ -36,9 +36,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_image_black_18dp"
+                    android:id="@+id/item_type_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/item_icon_for_tab"
                     />
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -57,12 +58,14 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/prompt_list_name"
                         android:maxLines="1"
-                        android:imeOptions="actionDone"                    android:singleLine="true"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:textSize="16dp"
-                        android:visibility="gone"/>
+                        android:textSize="16dp" />
 
+
+                    <!--
                     <LinearLayout
                         android:id="@+id/specify_list_name_from_tags"
                         android:layout_width="match_parent"
@@ -107,6 +110,7 @@
                             />
 
                     </LinearLayout>
+                    -->
 
                 </LinearLayout>
             </LinearLayout>
@@ -231,32 +235,6 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_lock"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/prompt_private_type"/>
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/private_type" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/app_basic_padding"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:src="@drawable/ic_playlist_add"/>
 
                 <LinearLayout
@@ -271,6 +249,59 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/list_spinner" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/app_basic_padding"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_lock"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/prompt_private_type"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp">
+
+                            <Switch
+                                android:id="@+id/private_type_switch"
+                                android:layout_alignParentRight="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:id="@+id/private_type_main_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_alignTop="@id/private_type_switch"
+                                android:layout_alignBottom="@id/private_type_switch"
+                                android:textSize="16dp"
+                                android:text="@string/prompt_private_type_main"/>
+                        </RelativeLayout>
+                        <TextView
+                            android:id="@+id/private_type_detail_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/prompt_private_type_detail_public"/>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -295,14 +326,11 @@
                     android:textSize="16sp"/>
             </LinearLayout>
 
-            <Button
-                android:id="@+id/test_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="test"/>
+
 
             <Button
                 android:id="@+id/post_item"
+                android:layout_marginTop="@dimen/app_basic_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/action_post_item"/>

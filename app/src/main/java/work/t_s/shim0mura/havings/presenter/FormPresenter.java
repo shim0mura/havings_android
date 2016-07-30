@@ -117,6 +117,7 @@ public class FormPresenter {
                 Calendar cal = new GregorianCalendar();
                 DatePickerDialog datePicker = new DatePickerDialog(activity, dateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
                 datePicker.getDatePicker().setMaxDate(cal.getTimeInMillis());
+                datePicker.setTitle(activity.getString(R.string.prompt_image_date_select));
                 datePicker.show();
             }
         });

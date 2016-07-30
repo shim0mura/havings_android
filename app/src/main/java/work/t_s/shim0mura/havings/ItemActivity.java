@@ -161,10 +161,11 @@ public class ItemActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int itemId = intent.getIntExtra(ITEM_ID, 0);
         boolean createList = intent.getBooleanExtra(CREATE_LIST, false);
+
+        // リスト追加の場合はactivity resultが使えないので、再度読み込みしてスナックバー表示する
         if(createList){
             CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
             Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.list)), Snackbar.LENGTH_LONG).show();
-
         }
         userId = ApiKey.getSingleton(this).getUserId();
 
@@ -402,9 +403,11 @@ public class ItemActivity extends AppCompatActivity {
         itemCount.setText(String.valueOf(item.count));
 
         if(item.tags != null && item.tags.size() > 0){
+            Timber.d(item.tags.toString());
+
             setTag(item.tags);
         }else{
-
+            Timber.d("tag false");
         }
 
         if(item.description != null) {
@@ -586,7 +589,9 @@ public class ItemActivity extends AppCompatActivity {
         dumpItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemDumpActivity.startActivity(act, item, item.isList);
+                //ItemDumpActivity.startActivity(act, item, item.isList);
+
+                ItemActivity.startActivity(act, 60);
             }
         });
         fab.addMenuButton(dumpItem);
@@ -670,8 +675,7 @@ public class ItemActivity extends AppCompatActivity {
 
             if (requestCode == ITEM_CREATED_RESULTCODE) {
 
-                Timber.d("list created");
-                Snackbar.make(coordinatorLayout, "すなっくばーテスト", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.list)), Snackbar.LENGTH_LONG).show();
                 Bundle extras = data.getExtras();
                 ItemEntity addedItem = (ItemEntity)extras.getSerializable(CREATED_ITEM);
                 if(item.isList && addedItem.listId == item.id) {
@@ -680,14 +684,12 @@ public class ItemActivity extends AppCompatActivity {
                 }
 
             } else if (requestCode == ITEM_UPDATED_RESULTCODE) {
-
-                Timber.d("list updated");
-
                 Bundle extras = data.getExtras();
                 item = (ItemEntity)extras.getSerializable(UPDATED_ITEM);
 
                 updateItemData();
-                Snackbar.make(coordinatorLayout, "すなっくばーUPDATE", Snackbar.LENGTH_LONG).show();
+                String itemType = item.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_updated, itemType), Snackbar.LENGTH_LONG).show();
             } else if (requestCode == TIMER_CREATED_RESULTCODE){
                 Bundle extras = data.getExtras();
                 TimerEntity addedTimer = (TimerEntity)extras.getSerializable(POSTED_TIMER);

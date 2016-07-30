@@ -7,6 +7,7 @@ package work.t_s.shim0mura.havings;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -87,6 +88,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     protected List<TagEntity> tags = new ArrayList<>();
     protected Boolean asList;
     protected String itemTypeString;
+    protected ProgressDialog progressDialog;
 
     // data-bindingで@Nullableを消したい...
     @Nullable @Bind(R.id.new_image_container) FlowLayout newImageContainer;
@@ -123,6 +125,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         asList = extras.getBoolean(AS_LIST);
         item = (ItemEntity)extras.getSerializable(SERIALIZED_ITEM);
         formPresenter = new FormPresenter(this);
+
 
     }
 
@@ -580,14 +583,17 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         item.name = itemName.getText().toString();
         StringBuilder sb = new StringBuilder();
 
+        ArrayList<String> tags = new ArrayList<>();
         //tagの存在チェック
         for (Object token: itemTag.getObjects()) {
             sb.append(token.toString());
             sb.append(",");
+            tags.add(token.toString());
         }
         if(sb.length() > 1){
             sb.deleteCharAt(sb.length() - 1);
         }
+        item.tags = tags;
         item.tagList = sb.toString();
 
         item.description = description.getText().toString();
