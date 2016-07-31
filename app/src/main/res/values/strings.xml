@@ -127,6 +127,10 @@
     <string name="prompt_item_added">%1$sを追加しました</string>
     <string name="prompt_item_updated">%1$sを編集しました</string>
     <string name="prompt_image_added">画像を追加しました</string>
+    <string name="prompt_item_dumped">%1$sを手放しました</string>
+    <string name="prompt_item_deleted">%1$sを削除しました</string>
+    <string name="prompt_item_dump">%1$sを手放す</string>
+    <string name="prompt_item_delete">%1$sの削除</string>
 
     <string name="prompt_image_detail_edit_data">この画像の情報を編集</string>
     <string name="prompt_image_detail_delete_image">この画像を削除</string>
@@ -139,6 +143,9 @@
     <string name="prompt_image_delete">画像の削除</string>
     <string name="prompt_image_delete_detail">この画像を削除します</string>
     <string name="prompt_image_delete_success">画像を削除しました</string>
+
+    <string name="prompt_dump_item_button">手放す</string>
+    <string name="prompt_delete_item_button">削除する</string>
 
 
     <string name="unit_item_count">個</string>
@@ -159,12 +166,14 @@
     <string name="prompt_private_type_secret">誰にも公開しない</string>
     <string name="prompt_image_date_select">画像の追加日を選択</string>
 
+    <string name="prompt_dump_fellow_items">一緒に手放すアイテム/リスト</string>
     <string name="prompt_dump_fellow_items_explanation">一緒に手放すアイテム/リストを選択</string>
     <string name="prompt_dump_fellow_items_sub_explanation">このリストに含まれるアイテム・リストのうち、選択したものも同時に手放します。\n選択したリスト内のアイテムも全て手放されます。\n選択しなかったアイテム・リストは手放されず</string>
 
     <string name="prompt_delete_list">このリストを削除したことは履歴に残りません。他の人に通知もされません。\nまた、このリストは削除すると見ることができなくなります。</string>
     <string name="prompt_delete_item">このアイテムを削除したことは履歴に残りません。他の人に通知もされません。\nまた、このアイテムは削除すると見ることができなくなります。</string>
 
+    <string name="prompt_delete_fellow_items">一緒に削除するアイテム/リスト</string>
     <string name="prompt_delete_fellow_items_explanation">一緒に削除するアイテム/リストを選択</string>
     <string name="prompt_delete_fellow_items_sub_explanation">このリストに含まれるアイテム・リストのうち、選択したものも同時に削除します。\n選択したリスト内のアイテムも全て削除されます。\n選択しなかったアイテム・リストは削除されず</string>
 

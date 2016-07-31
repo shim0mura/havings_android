@@ -317,26 +317,16 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         itemTag.performBestGuess(false);
     }
 
-    protected void setFellowAdapter(String explanation, String subExplanation){
-
-        /*
-        String explanation = "";
-        String subExplanation = "";
-        if(isDump){
-            explanation = getText(R.string.prompt_dump_fellow_items_explanation).toString();
-            subExplanation = getText(R.string.prompt_dump_fellow_items_sub_explanation).toString();
-        }else{
-            explanation = getText(R.string.prompt_delete_fellow_items_explanation).toString();
-            subExplanation = getText(R.string.prompt_delete_fellow_items_sub_explanation).toString();
-        }
-        */
+    protected void setFellowAdapter(String explanation, String subExplanation, String buttonText){
 
         final FellowSelectExpandableListAdapter adapter = new FellowSelectExpandableListAdapter(this, item.owningItems, explanation, subExplanation);
         final Button postItem = (Button)findViewById(R.id.post_item);
 
         if(fellowIds != null && item.isList){
             final View footer = getLayoutInflater().inflate(R.layout.partial_fellow_item_select_footer, null);
-            footer.findViewById(R.id.sub_post_item).setOnClickListener(new View.OnClickListener() {
+            Button b = (Button)footer.findViewById(R.id.sub_post_item);
+            b.setText(buttonText);
+            b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     postItem();

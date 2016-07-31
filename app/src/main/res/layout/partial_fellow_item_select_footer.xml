@@ -27,5 +27,6 @@
         android:id="@+id/sub_post_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/app_basic_padding"
         android:text="@string/action_post_item"/>
 </LinearLayout>

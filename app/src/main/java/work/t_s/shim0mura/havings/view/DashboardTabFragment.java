@@ -323,7 +323,7 @@ public class DashboardTabFragment extends Fragment {
 
     @OnClick(R.id.item)
     public void navigateToItem(View v){
-        ItemActivity.startActivity(getActivity(), 2);
+        ItemActivity.startActivity(getActivity(), 61);
 
         //UserActivity.startActivity(this, 10);
 

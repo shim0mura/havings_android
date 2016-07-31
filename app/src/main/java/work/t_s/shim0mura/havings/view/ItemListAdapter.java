@@ -76,6 +76,10 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
         itemList.add(0, item);
     }
 
+    public void shiftItem(ItemEntity item){
+        itemList.remove(item);
+    }
+
     @Override
     public ItemEntity getItem(int position) {
         return itemList.get(position);

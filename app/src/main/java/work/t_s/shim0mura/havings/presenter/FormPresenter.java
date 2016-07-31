@@ -588,9 +588,13 @@ public class FormPresenter {
             listView.setOnHeaderClickListener(new StickyListHeadersListView.OnHeaderClickListener() {
                 @Override
                 public void onHeaderClick(StickyListHeadersListView l, View header, int itemPosition, long headerId, boolean currentlySticky) {
+                    ImageView arrow = (ImageView) header.findViewById(R.id.arrow);
+
                     if (listView.isHeaderCollapsed(headerId)) {
+                        arrow.setImageResource(R.drawable.ic_keyboard_arrow_down_black_18dp);
                         listView.expand(headerId);
                     } else {
+                        arrow.setImageResource(R.drawable.ic_keyboard_arrow_right_black_18dp);
                         listView.collapse(headerId);
                     }
                 }

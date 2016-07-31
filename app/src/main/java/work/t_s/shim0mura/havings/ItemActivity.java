@@ -84,9 +84,16 @@ public class ItemActivity extends AppCompatActivity {
     public static final int TIMER_CREATED_RESULTCODE = 600;
     public static final int TIMER_UPDATED_RESULTCODE = 700;
     public static final int IMAGE_ADDED_RESULTCODE = 800;
+    public static final int ITEM_DUMP_RESULTCODE = 900;
+    public static final int ITEM_DELETE_RESULTCODE = 1000;
+
+
     public static final String CREATED_ITEM = "ItemCreated";
     public static final String UPDATED_ITEM = "ItemUpdated";
     public static final String ADDED_IMAGES = "AddedImages";
+    public static final String DUMP_ITEM = "ItemDumped";
+    public static final String DELETE_ITEM = "ItemDeleted";
+
     public static final String POSTED_TIMER = "PostedTimer";
 
     public ItemPresenter itemPresenter;
@@ -247,22 +254,6 @@ public class ItemActivity extends AppCompatActivity {
 
         BusHolder.get().register(this);
         Timber.d("regist action");
-
-        Bundle extras = getIntent().getExtras();
-        Timber.d(extras.toString());
-        int i = getIntent().getIntExtra(ITEM_ID, 0);
-        Timber.d("id %s", i);
-        ItemEntity addedItem = (ItemEntity)extras.getSerializable(CREATED_ITEM);
-        if(addedItem != null){
-            Timber.d("list created");
-
-            Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, addedItem.name), Snackbar.LENGTH_LONG).show();
-
-            if(item.isList && addedItem.listId == item.id) {
-                pagerAdapter.unshiftItem(addedItem);
-                pagerAdapter.notifyDataSetChanged();
-            }
-        }
     }
 
     @Override
@@ -398,7 +389,9 @@ public class ItemActivity extends AppCompatActivity {
             }
         });
 
-        setFAB();
+        if(userId == item.owner.id){
+            setFAB();
+        }
     }
 
     private void updateItemData(){
@@ -583,21 +576,22 @@ public class ItemActivity extends AppCompatActivity {
         });
         fab.addMenuButton(deleteItem);
 
-        final FloatingActionButton dumpItem = new FloatingActionButton(this);
-        dumpItem.setButtonSize(FloatingActionButton.SIZE_MINI);
-        dumpItem.setLabelText(getString(R.string.prompt_action_dump_item, itemTypeStr));
-        dumpItem.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
-        dumpItem.setImageResource(R.drawable.ic_delete_black_24dp);
-        dumpItem.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
-        dumpItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //ItemDumpActivity.startActivity(act, item, item.isList);
+        if(!item.isGarbage){
+            final FloatingActionButton dumpItem = new FloatingActionButton(this);
+            dumpItem.setButtonSize(FloatingActionButton.SIZE_MINI);
+            dumpItem.setLabelText(getString(R.string.prompt_action_dump_item, itemTypeStr));
+            dumpItem.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+            dumpItem.setImageResource(R.drawable.ic_delete_black_24dp);
+            dumpItem.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+            dumpItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ItemDumpActivity.startActivity(act, item, item.isList);
 
-                ItemActivity.startActivity(act, 60);
-            }
-        });
-        fab.addMenuButton(dumpItem);
+                }
+            });
+            fab.addMenuButton(dumpItem);
+        }
 
         final FloatingActionButton editItem = new FloatingActionButton(this);
         editItem.setButtonSize(FloatingActionButton.SIZE_MINI);
@@ -613,7 +607,7 @@ public class ItemActivity extends AppCompatActivity {
         });
         fab.addMenuButton(editItem);
 
-        if(item.isList) {
+        if(item.isList && !item.isGarbage) {
             final FloatingActionButton addImageFAB = new FloatingActionButton(this);
             addImageFAB.setButtonSize(FloatingActionButton.SIZE_MINI);
             addImageFAB.setLabelText(getString(R.string.prompt_action_add_image, itemTypeStr));
@@ -678,7 +672,7 @@ public class ItemActivity extends AppCompatActivity {
 
             if (requestCode == ITEM_CREATED_RESULTCODE) {
 
-                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.list)), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.item)), Snackbar.LENGTH_LONG).show();
                 Bundle extras = data.getExtras();
                 ItemEntity addedItem = (ItemEntity)extras.getSerializable(CREATED_ITEM);
                 if(item.isList && addedItem.listId == item.id) {
@@ -700,6 +694,26 @@ public class ItemActivity extends AppCompatActivity {
                 pagerAdapter.addImage(imageListEntity);
 
                 Snackbar.make(coordinatorLayout, getString(R.string.prompt_image_added), Snackbar.LENGTH_LONG).show();
+            } else if (requestCode == ITEM_DUMP_RESULTCODE){
+                Bundle extras = data.getExtras();
+                ItemEntity deletedItem = (ItemEntity)extras.getSerializable(DUMP_ITEM);
+                String itemType = deletedItem.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_dumped, itemType), Snackbar.LENGTH_LONG).show();
+
+                if(item.isList && deletedItem.listId == item.id) {
+                    pagerAdapter.shiftItem(deletedItem);
+                    pagerAdapter.notifyDataSetChanged();
+                }
+            } else if (requestCode == ITEM_DELETE_RESULTCODE){
+                Bundle extras = data.getExtras();
+                ItemEntity deletedItem = (ItemEntity)extras.getSerializable(DELETE_ITEM);
+                String itemType = deletedItem.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_deleted, itemType), Snackbar.LENGTH_LONG).show();
+
+                if(item.isList && deletedItem.listId == item.id) {
+                    pagerAdapter.shiftItem(deletedItem);
+                    pagerAdapter.notifyDataSetChanged();
+                }
             } else if (requestCode == TIMER_CREATED_RESULTCODE){
                 Bundle extras = data.getExtras();
                 TimerEntity addedTimer = (TimerEntity)extras.getSerializable(POSTED_TIMER);

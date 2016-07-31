@@ -45,19 +45,12 @@ public class ListSelectAdapter extends BaseAdapter implements StickyListHeadersA
         Realm realm = Realm.getInstance(c);
 
         RealmResults<Tag> tags = realm.where(Tag.class).equalTo("tagType", 3).equalTo("parentId", 0).equalTo("isDeleted", false).findAll();
-        long startTime = System.currentTimeMillis();
 
         for(Tag t: tags){
             kindIds.add(t.getId());
             getTagRecursive(realm, t, t.getId());
         }
 
-        long stopTime = System.currentTimeMillis();
-
-        long time = stopTime - startTime;
-        int second = (int) (time/1000);
-        int comma = (int) (time % 1000);
-        Timber.d(second + "秒" + comma);
     }
 
     private void getTagRecursive(Realm realm, Tag parentTag, int kindId){

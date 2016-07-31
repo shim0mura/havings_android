@@ -1,6 +1,7 @@
 package work.t_s.shim0mura.havings;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ public class ItemDeleteActivity extends ItemFormBaseActivity {
         intent.putExtra(SERIALIZED_ITEM, i);
         intent.putExtra(AS_LIST, asList);
         Activity a = (Activity)context;
-        a.startActivity(intent);
+        a.startActivityForResult(intent, ItemActivity.ITEM_DELETE_RESULTCODE);
     }
 
     @Override
@@ -40,9 +41,11 @@ public class ItemDeleteActivity extends ItemFormBaseActivity {
         setContentView(R.layout.activity_item_delete);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        setTitle(getString(R.string.prompt_item_delete, (item.isList ? getString(R.string.list) : getString(R.string.item))));
         ButterKnife.bind(this);
-        setFellowAdapter(getText(R.string.prompt_delete_fellow_items_explanation).toString(), getText(R.string.prompt_delete_fellow_items_sub_explanation).toString());
+        setFellowAdapter(getText(R.string.prompt_delete_fellow_items_explanation).toString(), getText(R.string.prompt_delete_fellow_items_sub_explanation).toString(), getText(R.string.prompt_delete_item_button).toString());
     }
 
     @OnClick(R.id.post_item)
@@ -58,6 +61,7 @@ public class ItemDeleteActivity extends ItemFormBaseActivity {
 
         item.fellowIds = fellowIdList;
 
+        progressDialog = ProgressDialog.show(this, getTitle(), getString(R.string.prompt_sending), true);
         formPresenter.attemptToDeleteItem(item);
         item.imageDataForPost = new ArrayList<ItemImageEntity>();
         item.fellowIds = new ArrayList<Integer>();
@@ -66,8 +70,11 @@ public class ItemDeleteActivity extends ItemFormBaseActivity {
     @Subscribe
     @Override
     public void successToPost(ItemEntity itemEntity){
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
         Intent data = new Intent();
-        data.putExtra(ItemActivity.UPDATED_ITEM, item);
+        data.putExtra(ItemActivity.DELETE_ITEM, item);
         setResult(Activity.RESULT_OK, data);
 
         finish();
@@ -89,6 +96,9 @@ public class ItemDeleteActivity extends ItemFormBaseActivity {
     @Subscribe
     @Override
     public void subscribeAlert(AlertEvent event) {
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
         showAlert(event);
     }
 }

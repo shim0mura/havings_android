@@ -17,7 +17,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingBottom="@dimen/activity_vertical_margin"
@@ -62,7 +63,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_lock"/>
+                    android:src="@drawable/ic_delete_black_18dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -71,7 +72,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/prompt_private_type"/>
+                        android:text="@string/prompt_dump_fellow_items_explanation"/>
 
                     <ExpandableListView
                         android:id="@+id/fellow_ids"
@@ -83,17 +84,12 @@
                 </LinearLayout>
             </LinearLayout>
 
-
-            <Button
-                android:id="@+id/test_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="test"/>
             <Button
                 android:id="@+id/post_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/action_post_item"/>
+                android:layout_marginTop="@dimen/app_basic_padding"
+                android:text="@string/prompt_dump_item_button"/>
 
 
         </LinearLayout>

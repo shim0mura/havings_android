@@ -436,6 +436,11 @@ public class ItemPresenter {
             itemListAdapter.notifyDataSetChanged();
         }
 
+        public void shiftItem(ItemEntity itemEntity) {
+            itemListAdapter.shiftItem(itemEntity);
+            itemListAdapter.notifyDataSetChanged();
+        }
+
         @Override
         public int getCount() {
             if(item.isList){
