@@ -156,6 +156,26 @@ public interface ApiService {
             @Body HashMap<String, ItemEntity> item
     );
 
+    @POST("/items/{item_id}/image")
+    Call<ItemEntity> addImage(
+            @Path("item_id") int item_id,
+            @Body HashMap<String, ItemEntity> item
+    );
+
+    @PUT("/items/{item_id}/image/{item_image_id}")
+    Call<ResultEntity> updateImageData(
+            @Path("item_id") int item_id,
+            @Path("item_image_id") int item_image_id,
+            @Body HashMap<String, ItemEntity> item
+    );
+
+    @DELETE("/items/{item_id}/image/{item_image_id}")
+    Call<ResultEntity> deleteImage(
+            @Path("item_id") int item_id,
+            @Path("item_image_id") int item_image_id
+    );
+
+
     @PUT("/items/{item_id}/dump")
     Call<ItemEntity> dumpItem(
             @Path("item_id") int item_id,

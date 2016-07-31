@@ -150,7 +150,7 @@
             android:name=".TokenAutoCompActivity"
             android:label="@string/title_activity_token_auto_comp"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ImageChooseActivity"></activity>
+        <activity android:name=".ImageChooseActivity" />
     </application>
 
 </manifest>

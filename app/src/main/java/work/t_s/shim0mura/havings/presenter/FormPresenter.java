@@ -62,6 +62,7 @@ import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.TagEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
@@ -84,7 +85,7 @@ public class FormPresenter {
     public static final String FAB_TYPE_ADD_ITEM = "addItem";
     public static final String FAB_TYPE_EDIT_ITEM = "editItem";
 
-    private static final String ITEM_POST_HASH_KEY = "item";
+    public static final String ITEM_POST_HASH_KEY = "item";
 
     protected String TAG = "FormPresenter: ";
 
@@ -301,8 +302,47 @@ public class FormPresenter {
         HashMap<String, ItemEntity> hashItem = new HashMap<String, ItemEntity>();
         hashItem.put(ITEM_POST_HASH_KEY, itemEntity);
 
-        Call<ItemEntity> call = service.updateItem(itemEntity.id, hashItem);
-        call.enqueue(getCallbackOfPostItem());
+        if(!isImageExist(itemEntity)){
+            sendErrorToImage();
+        }
+
+        Call<ItemEntity> call = service.addImage(itemEntity.id, hashItem);
+        call.enqueue(new Callback<ItemEntity>() {
+            @Override
+            public void onResponse(Response<ItemEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ItemEntity item = response.body();
+                    BusHolder.get().post(item);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    for(Map.Entry<String, List<String>> e: error.errors.entrySet()){
+                        switch(e.getKey()){
+                            case "image":
+                                sendErrorToImage();
+                                break;
+                            case "name":
+                                sendErrorToListName();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                } else {
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("failed to post item");
+                t.printStackTrace();
+            }
+        });
     }
 
     public void attemptToDumpItem(ItemEntity itemEntity){

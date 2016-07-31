@@ -23,6 +23,9 @@ import com.bumptech.glide.Glide;
 import com.wefika.flowlayout.FlowLayout;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import lecho.lib.hellocharts.view.LineChartView;
@@ -168,6 +171,74 @@ public class ItemPresenter {
                     ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
 
                     BusHolder.get().post(new SetErrorEvent(GeneralResult.RESULT_GET_ITEM_IMAGE, error));
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("user", "get failed");
+            }
+        });
+    }
+
+    public void updateImageData(int itemId, int itemImageId, Date date, String memo){
+
+        ItemEntity item = new ItemEntity();
+        ItemImageEntity image = new ItemImageEntity();
+        image.date = date;
+        image.memo = memo;
+        item.imageDataForPost = new ArrayList<ItemImageEntity>();
+        item.imageDataForPost.add(image);
+        item.id = itemId;
+        HashMap<String, ItemEntity> hashItem = new HashMap<String, ItemEntity>();
+        hashItem.put(FormPresenter.ITEM_POST_HASH_KEY, item);
+
+        Call<ResultEntity> call = service.updateImageData(itemId, itemImageId, hashItem);
+
+        call.enqueue(new Callback<ResultEntity>() {
+            @Override
+            public void onResponse(Response<ResultEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ResultEntity result = response.body();
+                    result.resultType = GeneralResult.RESULT_UPDATE_ITEM_IMAGE;
+                    BusHolder.get().post(result);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    BusHolder.get().post(new SetErrorEvent(GeneralResult.RESULT_UPDATE_ITEM_IMAGE, error));
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("user", "get failed");
+            }
+        });
+    }
+
+    public void deleteImage(int itemId, int itemImageId){
+
+        Call<ResultEntity> call = service.deleteImage(itemId, itemImageId);
+
+        call.enqueue(new Callback<ResultEntity>() {
+            @Override
+            public void onResponse(Response<ResultEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ResultEntity result = response.body();
+                    result.resultType = GeneralResult.RESULT_DELETE_ITEM_IMAGE;
+                    BusHolder.get().post(result);
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    BusHolder.get().post(new SetErrorEvent(GeneralResult.RESULT_DELETE_ITEM_IMAGE, error));
                 }
             }
 
@@ -348,6 +419,7 @@ public class ItemPresenter {
         private int userId;
 
         private ItemListAdapter itemListAdapter;
+        private ItemImageListAdapter imageListAdapter;
         private ListView itemListView;
 
         public ItemPagerAdapter(Activity a, StickyScrollPresenter s, ItemPresenter ip, ItemEntity i){
@@ -412,6 +484,11 @@ public class ItemPresenter {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
+        }
+
+        public void addImage(ItemImageListEntity itemImageList){
+            imageListAdapter.unshiftItem(itemImageList);
+            imageListAdapter.notifyDataSetChanged();
         }
 
         public View attachOwningItem(ViewGroup container){
@@ -486,15 +563,15 @@ public class ItemPresenter {
                 }
             }
 
-            final ItemImageListAdapter adapter = new ItemImageListAdapter(activity, R.layout.item_image_list, item, itemPresenter);
-            gridView.setAdapter(adapter);
+            imageListAdapter = new ItemImageListAdapter(activity, R.layout.item_image_list, item, itemPresenter);
+            gridView.setAdapter(imageListAdapter);
 
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                 @Override
                                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                    Timber.d("image id %s ", adapter.getItem(position).id);
+                                                    Timber.d("image id %s ", imageListAdapter.getItem(position).id);
                                                     //ImageDetailActivity.startActivity(activity, item, (String) view.getTag(R.string.tag_image_url), (Date) view.getTag(R.string.tag_image_date));
-                                                    ImageDetailActivity.startActivity(activity, item, adapter.getItem(position));
+                                                    ImageDetailActivity.startActivity(activity, item, imageListAdapter.getItem(position));
 
                                                 }
                                             }
@@ -513,12 +590,12 @@ public class ItemPresenter {
                 public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                     Log.d("scroll from gridview", String.valueOf(visibleItemCount));
 
-                    if ((totalItemCount == firstVisibleItem + visibleItemCount) && adapter.hasNextItem()) {
+                    if ((totalItemCount == firstVisibleItem + visibleItemCount) && imageListAdapter.hasNextItem()) {
                         Log.d("request", "to image api");
-                        if (!adapter.getIsLoadingNextItem()) {
-                            adapter.startLoadNextItem();
+                        if (!imageListAdapter.getIsLoadingNextItem()) {
+                            imageListAdapter.startLoadNextItem();
                             imageLoader.setVisibility(View.VISIBLE);
-                            itemPresenter.getNextItemImageList(item.id, adapter.getNextPage(), adapter, gridView, imageLoader);
+                            itemPresenter.getNextItemImageList(item.id, imageListAdapter.getNextPage(), imageListAdapter, gridView, imageLoader);
                         }
                     }
 

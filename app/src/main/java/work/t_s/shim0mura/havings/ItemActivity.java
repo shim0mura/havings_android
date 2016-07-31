@@ -63,6 +63,7 @@ import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.Timer;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
@@ -82,8 +83,10 @@ public class ItemActivity extends AppCompatActivity {
     public static final int ITEM_UPDATED_RESULTCODE = 500;
     public static final int TIMER_CREATED_RESULTCODE = 600;
     public static final int TIMER_UPDATED_RESULTCODE = 700;
+    public static final int IMAGE_ADDED_RESULTCODE = 800;
     public static final String CREATED_ITEM = "ItemCreated";
     public static final String UPDATED_ITEM = "ItemUpdated";
+    public static final String ADDED_IMAGES = "AddedImages";
     public static final String POSTED_TIMER = "PostedTimer";
 
     public ItemPresenter itemPresenter;
@@ -690,6 +693,13 @@ public class ItemActivity extends AppCompatActivity {
                 updateItemData();
                 String itemType = item.isList ? getString(R.string.list) : getString(R.string.item);
                 Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_updated, itemType), Snackbar.LENGTH_LONG).show();
+            } else if (requestCode == IMAGE_ADDED_RESULTCODE) {
+                Bundle extras = data.getExtras();
+                ItemImageListEntity imageListEntity = (ItemImageListEntity) extras.getSerializable(ADDED_IMAGES);
+
+                pagerAdapter.addImage(imageListEntity);
+
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_image_added), Snackbar.LENGTH_LONG).show();
             } else if (requestCode == TIMER_CREATED_RESULTCODE){
                 Bundle extras = data.getExtras();
                 TimerEntity addedTimer = (TimerEntity)extras.getSerializable(POSTED_TIMER);

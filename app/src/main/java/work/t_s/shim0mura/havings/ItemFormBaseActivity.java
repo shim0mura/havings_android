@@ -92,7 +92,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
 
     // data-bindingで@Nullableを消したい...
     @Nullable @Bind(R.id.new_image_container) FlowLayout newImageContainer;
-    @Nullable @Bind(R.id.exist_image_container) FlowLayout existImageContainer;
+    //@Nullable @Bind(R.id.exist_image_container) FlowLayout existImageContainer;
     @Nullable @Bind(R.id.comp) TextView itemName;
     @Nullable @Bind(R.id.item_type_icon) ImageView itemTypeIcon;
     @Nullable @Bind(R.id.searchView) TagCompletionView itemTag;
@@ -626,6 +626,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         return addedImageViews;
     }
 
+    /*
     protected Map<Integer, Map<String, String>> getChangedImageMetadata(){
         Map<Integer, Map<String, String>> changedImageMetadata = new HashMap<>();
 
@@ -688,6 +689,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
 
         return imageIds;
     }
+    */
 
     protected void clearWarning(){
         if(imageWarning != null) {
@@ -773,6 +775,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         newImageContainer.addView(pictureView, index);
     }
 
+    /*
     protected void addExistPicture(){
         if(item.itemImages.images.size() < 1){
             return;
@@ -806,6 +809,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
             existImageContainer.addView(pictureView);
         }
     }
+    */
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

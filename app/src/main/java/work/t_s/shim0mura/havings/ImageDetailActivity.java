@@ -1,16 +1,23 @@
 package work.t_s.shim0mura.havings;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,25 +27,27 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.squareup.otto.Subscribe;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.Item;
-import work.t_s.shim0mura.havings.model.entity.EventEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 import work.t_s.shim0mura.havings.util.Share;
-import work.t_s.shim0mura.havings.util.TouchImageView;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 
 public class ImageDetailActivity extends AppCompatActivity {
@@ -48,10 +57,19 @@ public class ImageDetailActivity extends AppCompatActivity {
     private static final String SERIALIZED_ITEM_IMAGE = "SerializedItemImage";
     private static final String SERIALIZED_ITEM_IMAGE_ID = "SerializedItemImageId";
 
+    private static final int MENU_EDIT = 100;
+    private static final int MENU_DELETE = 200;
+
     private int itemId;
     private ItemEntity item;
     private ItemImageEntity itemImageEntity;
     private ItemPresenter itemPresenter;
+    private ProgressDialog progressDialog;
+
+    private Date updateDate;
+    private String updateMemo;
+
+    private int userId;
 
     @Bind(R.id.item_name) TextView itemName;
     @Bind(R.id.image_date) TextView imageDate;
@@ -112,14 +130,43 @@ public class ImageDetailActivity extends AppCompatActivity {
             if(itemId != 0) {
                 itemPresenter.getItemImage(itemId, itemImageId);
             }
-
         }
+
+        userId = ApiKey.getSingleton(this).getUserId();
     }
 
     @Override
     public boolean onSupportNavigateUp(){
         finish();
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(item != null && item.owner.id == userId){
+            menu.add(Menu.NONE, MENU_EDIT, Menu.NONE, R.string.prompt_image_detail_edit_data);
+            menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, R.string.prompt_image_detail_delete_image);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean ret = true;
+        switch (item.getItemId()) {
+            default:
+                ret = super.onOptionsItemSelected(item);
+                break;
+            case MENU_EDIT:
+                showEditDialog();
+                ret = true;
+                break;
+            case MENU_DELETE:
+                showDeleteDialog();
+                ret = true;
+                break;
+        }
+        return ret;
     }
 
     @Override
@@ -158,13 +205,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             itemName.setText(itemImageEntity.itemName);
         }
 
-        imageDate.setText(ViewUtil.dateToString(itemImageEntity.addedDate, true));
-        imageFavoriteCount.setText(String.valueOf(itemImageEntity.imageFavoriteCount));
-        if(itemImageEntity.memo == null || itemImageEntity.memo.isEmpty()){
-            imageMemo.setVisibility(View.GONE);
-        }else {
-            imageMemo.setText(itemImageEntity.memo);
-        }
+        updateImageData();
         toggleFavoriteState();
 
         String thumbnail = ApiService.BASE_URL + itemImageEntity.url;
@@ -184,6 +225,92 @@ public class ImageDetailActivity extends AppCompatActivity {
                     }
                 })
                 .into(detailImage);
+    }
+
+    private void showEditDialog(){
+        final Activity act = this;
+        final Dialog d = new Dialog(this);
+        d.setTitle(getText(R.string.prompt_image_detail_edit_data));
+        d.setContentView(R.layout.partial_image_edit_dialog);
+
+        final TextView dateText = (TextView) d.findViewById(R.id.date_text);
+        Button cancel = (Button)d.findViewById(R.id.cancel);
+        Button post = (Button)d.findViewById(R.id.post);
+        final TextView memo = (TextView)d.findViewById(R.id.memo);
+        if(itemImageEntity.memo != null){
+            memo.setText(itemImageEntity.memo);
+        }
+
+        final Calendar currentCalendar = new GregorianCalendar();
+        updateDate = new Date(currentCalendar.getTimeInMillis());
+        dateText.setText(ViewUtil.dateToString(itemImageEntity.addedDate, true));
+
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener(){
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                GregorianCalendar d = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+                Date date = new Date(d.getTimeInMillis());
+                updateDate = date;
+                dateText.setText(ViewUtil.dateToString(date, true));
+            }
+        };
+
+        dateText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar cal = new GregorianCalendar();
+                if(itemImageEntity.addedDate != null){
+                    cal.setTime(itemImageEntity.addedDate);
+                }
+                DatePickerDialog datePicker = new DatePickerDialog(act, dateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                datePicker.getDatePicker().setMaxDate(currentCalendar.getTimeInMillis());
+                datePicker.setTitle(act.getString(R.string.prompt_image_date_select));
+                datePicker.show();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                d.dismiss();
+            }
+        });
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog = ProgressDialog.show(act, getTitle(), getString(R.string.prompt_sending), true);
+                updateMemo = memo.getText().toString();
+                itemPresenter.updateImageData(item.id, itemImageEntity.id, updateDate, memo.getText().toString());
+                d.dismiss();
+            }
+        });
+
+        d.show();
+    }
+
+    private void showDeleteDialog(){
+        final Activity act = this;
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.prompt_image_delete))
+                .setMessage(getString(R.string.prompt_image_delete_detail))
+                .setPositiveButton(getString(R.string.prompt_ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progressDialog = ProgressDialog.show(act, getTitle(), getString(R.string.prompt_sending), true);
+                        itemPresenter.deleteImage(item.id, itemImageEntity.id);
+                    }
+                })
+                .setNegativeButton(getString(R.string.prompt_cancel), null)
+                .show();
+    }
+
+    private void updateImageData(){
+        imageDate.setText(ViewUtil.dateToString(itemImageEntity.addedDate, true));
+        imageFavoriteCount.setText(String.valueOf(itemImageEntity.imageFavoriteCount));
+        if(itemImageEntity.memo == null || itemImageEntity.memo.isEmpty()){
+            imageMemo.setVisibility(View.GONE);
+        }else {
+            imageMemo.setText(itemImageEntity.memo);
+        }
     }
 
     @OnClick(R.id.image_favorite_button)
@@ -222,12 +349,26 @@ public class ImageDetailActivity extends AppCompatActivity {
     @Subscribe
     public void applyGereralResult(ResultEntity resultEntity){
         Timber.d("get general result %s", resultEntity.resultType);
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+
         switch(resultEntity.resultType){
             case GeneralResult.RESULT_FAVORITE_ITEM_IMAGE:
                 updateFavoriteProperties(true);
                 break;
             case GeneralResult.RESULT_UNFAVORITE_ITEM_IMAGE:
                 updateFavoriteProperties(false);
+                break;
+            case GeneralResult.RESULT_UPDATE_ITEM_IMAGE:
+                itemImageEntity.addedDate = updateDate;
+                itemImageEntity.memo = updateMemo;
+                updateImageData();
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_image_detail_update_sucess), Snackbar.LENGTH_LONG).show();
+                break;
+            case GeneralResult.RESULT_DELETE_ITEM_IMAGE:
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_image_delete_success), Snackbar.LENGTH_LONG).show();
                 break;
             default:
                 Timber.w("Unexpected ResultCode Returned... code: %s, relatedId: %s", resultEntity.resultType, resultEntity.relatedId);
@@ -237,21 +378,41 @@ public class ImageDetailActivity extends AppCompatActivity {
 
     @Subscribe
     public void applyGereralError(SetErrorEvent errorEvent){
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
         switch(errorEvent.resultType){
             case GeneralResult.RESULT_FAVORITE_ITEM_IMAGE:
                 Timber.d("failed to favorite item image");
+                showAlert(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
                 break;
             case GeneralResult.RESULT_UNFAVORITE_ITEM_IMAGE:
                 Timber.d("failed to unfavorite item image");
+                showAlert(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
                 break;
             case GeneralResult.RESULT_GET_ITEM_IMAGE:
-                Timber.d("failed to get item image");
+                showAlert(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+                break;
+            case GeneralResult.RESULT_UPDATE_ITEM_IMAGE:
+                showAlert(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+                break;
+            case GeneralResult.RESULT_DELETE_ITEM_IMAGE:
+                showAlert(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
                 break;
             default:
                 Timber.w("Unexpected ResultCode in Error Returned... code: %s, relatedId: %s", errorEvent.resultType);
                 break;
         }
     }
+
+    public void showAlert(AlertEvent event){
+        new AlertDialog.Builder(this)
+                .setTitle(event.title)
+                .setMessage(event.message)
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
 
     private void updateFavoriteProperties(Boolean isFavorited){
         itemImageEntity.isFavorited = isFavorited;

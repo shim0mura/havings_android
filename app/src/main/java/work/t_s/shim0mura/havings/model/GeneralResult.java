@@ -21,6 +21,8 @@ public class GeneralResult {
     public static final int RESULT_READ_NOTIFICATIONS = 6500;
 
     public static final int RESULT_GET_ITEM_IMAGE = 8000;
+    public static final int RESULT_UPDATE_ITEM_IMAGE = 8100;
+    public static final int RESULT_DELETE_ITEM_IMAGE = 8200;
 
 
 }

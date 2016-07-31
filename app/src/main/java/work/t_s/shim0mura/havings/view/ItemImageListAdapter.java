@@ -90,6 +90,17 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
         }
     }
 
+    public void unshiftItem(ItemImageListEntity itemImageListEntity){
+        if(itemImageListEntity != null && !itemImageListEntity.images.isEmpty()) {
+            itemImageList.addAll(0, itemImageListEntity.images);
+            nextPage = itemImageListEntity.nextPageForImage;
+            hasNextItemToLoad = itemImageListEntity.hasNextImage;
+        }else{
+            nextPage = 0;
+            hasNextItemToLoad = false;
+        }
+    }
+
     public void changeImageFavoriteState(int imageId, Boolean isFavorited){
         for(ItemImageEntity itemImageEntity : itemImageList){
             if(itemImageEntity.id == imageId){

@@ -95,6 +95,7 @@
 
     <string name="prompt_create_form">%1$sの追加</string>
     <string name="prompt_edit_form">%1$sの編集</string>
+    <string name="prompt_add_image_form">画像の追加</string>
     <string name="prompt_list_name">リスト名（必須）</string>
     <string name="prompt_item_name">アイテム名（必須）</string>
     <string name="prompt_list_image">画像の追加（必須）</string>
@@ -115,7 +116,9 @@
     <string name="prompt_private_type_detail_private_by_parent">親リストが非公開の場合は公開できません</string>
     <string name="prompt_post_item_button">%1$sを追加する</string>
     <string name="prompt_edit_item_button">%1$sを編集する</string>
+    <string name="prompt_add_image_button">画像を追加する</string>
 
+    <string name="prompt_cancel">キャンセル</string>
     <string name="prompt_sending">送信中...</string>
 
     <string name="prompt_description">メモ</string>
@@ -123,6 +126,19 @@
 
     <string name="prompt_item_added">%1$sを追加しました</string>
     <string name="prompt_item_updated">%1$sを編集しました</string>
+    <string name="prompt_image_added">画像を追加しました</string>
+
+    <string name="prompt_image_detail_edit_data">この画像の情報を編集</string>
+    <string name="prompt_image_detail_delete_image">この画像を削除</string>
+
+    <string name="prompt_image_detail_added_date">画像の追加日</string>
+    <string name="prompt_image_detail_memo">画像のメモ</string>
+    <string name="prompt_image_detail_update">更新</string>
+    <string name="prompt_image_detail_update_sucess">更新しました</string>
+    <string name="prompt_image_not_found">画像がありません</string>
+    <string name="prompt_image_delete">画像の削除</string>
+    <string name="prompt_image_delete_detail">この画像を削除します</string>
+    <string name="prompt_image_delete_success">画像を削除しました</string>
 
 
     <string name="unit_item_count">個</string>
