@@ -41,6 +41,7 @@ import work.t_s.shim0mura.havings.presenter.SearchPresenter;
 public class DoneTaskActivity extends AppCompatActivity {
 
     private static final String SERIALIZED_LIST_ID = "listId";
+    private static final String SERIALIZED_LIST_NAME = "listName";
 
     private TaskWrapperEntity taskWrapperEntity;
     private DoneTaskPresenter doneTaskPresenter;
@@ -49,9 +50,10 @@ public class DoneTaskActivity extends AppCompatActivity {
     @Bind(R.id.tabs) TabLayout tabLayout;
     @Bind(R.id.viewpager) ViewPager viewPager;
 
-    public static void startActivity(Context context, int listId){
+    public static void startActivity(Context context, int listId, String listName){
         Intent intent = new Intent(context, new Object() {}.getClass().getEnclosingClass());
         intent.putExtra(SERIALIZED_LIST_ID, listId);
+        intent.putExtra(SERIALIZED_LIST_NAME, listName);
         context.startActivity(intent);
     }
 
@@ -61,9 +63,11 @@ public class DoneTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_done_task);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle extras = getIntent().getExtras();
         listId = extras.getInt(SERIALIZED_LIST_ID, 0);
+        String listName = (String) extras.getSerializable(SERIALIZED_LIST_NAME);
 
         ButterKnife.bind(this);
 
@@ -74,7 +78,17 @@ public class DoneTaskActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
+        setTitle(getString(R.string.prompt_done_task, listName));
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override

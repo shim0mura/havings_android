@@ -55,6 +55,8 @@ public class UserFavoritesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_favorites);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle(getString(R.string.prompt_favorite_list));
 
         ButterKnife.bind(this);
         stickyScrollPresenter = new StickyScrollPresenter(this, StickyScrollPresenter.SCROLL_TYPE_USER);
@@ -98,6 +100,12 @@ public class UserFavoritesActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override

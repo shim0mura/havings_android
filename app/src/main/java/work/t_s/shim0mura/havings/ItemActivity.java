@@ -481,12 +481,12 @@ public class ItemActivity extends AppCompatActivity {
 
     @OnClick(R.id.comment_count_wrapper)
     public void redirectToCommentList(){
-        CommentActivity.startActivity(this, item.id);
+        CommentActivity.startActivity(this, item.id, item.name);
     }
 
     @OnClick(R.id.done_count_wrapper)
     public void redirectToDoneList(){
-        DoneTaskActivity.startActivity(this, item.id);
+        DoneTaskActivity.startActivity(this, item.id, item.name);
     }
 
     @Subscribe

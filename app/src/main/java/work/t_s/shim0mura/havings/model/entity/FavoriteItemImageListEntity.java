@@ -12,7 +12,7 @@ import java.util.List;
 public class FavoriteItemImageListEntity implements Serializable {
 
     public List<ItemImageEntity> images;
-    public int lastFavoriteId;
+    public int nextPageForImage;
     public boolean hasNextImage;
 
 }

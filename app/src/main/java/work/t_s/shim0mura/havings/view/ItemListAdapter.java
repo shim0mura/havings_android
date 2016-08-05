@@ -69,7 +69,8 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
             itemList.addAll(item.owningItems);
             nextPage = item.nextPageForItem;
         }
-        hasNextItemToLoad = item.hasNextItem;
+
+        hasNextItemToLoad = (item.hasNextItem == null) ? false : item.hasNextItem;
     }
 
     public void unshiftItem(ItemEntity item){

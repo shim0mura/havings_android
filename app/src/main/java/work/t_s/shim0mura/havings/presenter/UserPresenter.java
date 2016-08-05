@@ -605,14 +605,13 @@ public class UserPresenter {
             itemListView = (ListView)v.findViewById(R.id.page_text);
             nestedItemListView = (ListView)v.findViewById(R.id.nested_list_view);
 
-            itemListAdapter = new ItemListAdapter(activity, R.layout.item_list, user.homeList);
-            List<ItemEntity> items;
-            if(user.nestedItems.size() > 0){
-                items = user.nestedItems.get(0).owningItems;
-            }else{
-                items = user.nestedItems;
-            }
+
+            List<ItemEntity> items = user.nestedItemFromHome.owningItems;
             nestedItemListAdapter = new NestedItemListAdapter(activity, R.layout.list_nested_item, items);
+
+            ItemEntity placeholderItem = new ItemEntity();
+            placeholderItem.owningItems = nestedItemListAdapter.itemEntityList;
+            itemListAdapter = new ItemListAdapter(activity, R.layout.item_list, placeholderItem);
 
             itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                     @Override
@@ -648,31 +647,14 @@ public class UserPresenter {
             itemListView.setAdapter(itemListAdapter);
             nestedItemListView.setAdapter(nestedItemListAdapter);
 
-            itemListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-
-                @Override
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
-                    Log.d("schroll state", "changed");
-                }
-
-                @Override
-                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    Log.d("scroll from listview", String.valueOf(visibleItemCount));
-                    if ((totalItemCount == firstVisibleItem + visibleItemCount) && itemListAdapter.hasNextItem()) {
-                        if (!itemListAdapter.getIsLoadingNextItem()) {
-                            itemListAdapter.startLoadNextItem();
-                            itemListView.addFooterView(loader);
-                            userPresenter.getNextItemList(user.id, itemListAdapter.getNextPage(), itemListAdapter, itemListView, loader);
-                        }
-                    }
-                }
-            });
             toggleItemListView();
 
             if(itemListAdapter.getCount() == 0 && !itemListAdapter.hasNextItem()){
                 itemListView.setVisibility(View.GONE);
                 nestedItemListView.setVisibility(View.GONE);
-                v.findViewById(R.id.no_item).setVisibility(View.VISIBLE);
+                View noItem = v.findViewById(R.id.no_item);
+                noItem.setVisibility(View.VISIBLE);
+                noItem.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
             }
 
             return v;
@@ -730,7 +712,9 @@ public class UserPresenter {
 
             if(adapter.getCount() == 0 && !adapter.hasNextItem()){
                 gridView.setVisibility(View.GONE);
-                v.findViewById(R.id.no_image).setVisibility(View.VISIBLE);
+                View noImage = v.findViewById(R.id.no_image);
+                noImage.setVisibility(View.VISIBLE);
+                noImage.setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
             }
 
             return v;
@@ -791,6 +775,7 @@ public class UserPresenter {
                 isNestedItemShown = true;
             }
         }
+
     }
 
 }

@@ -30,6 +30,7 @@ import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 public class CommentPresenter {
 
     public static final String ITEM_ID_COMMENT_BELONGS = "ItemIdCommentBelongs";
+    public static final String ITEM_NAME_COMMENT_BELONGS = "ItemNameCommentBelongs";
     public static final String COMMENT_POST_HASH_KEY = "comment";
     public static final int ERROR_TO_GET_COMMENTS = 100;
     public static final int ERROR_TO_POST_COMMENT = 200;

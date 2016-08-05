@@ -276,10 +276,16 @@
     <string name="prompt_repeat_by_week_friday">金曜日</string>
     <string name="prompt_repeat_by_week_saturday">土曜日</string>
 
+    <string name="prompt_favorited_user_list">いいね!をしているユーザー</string>
+    <string name="prompt_following_user_list">フォローしているユーザー</string>
+    <string name="prompt_followed_user_list">フォロワー</string>
+    <string name="prompt_searched_user_list">ユーザー</string>
+
     <string name="prompt_no_favorited_user">いいね!をしているユーザーはいません。</string>
     <string name="prompt_no_following_user">フォローしているユーザーはいません。</string>
     <string name="prompt_no_followed_user">このユーザーをフォローしている人はいません。</string>
 
+    <string name="prompt_comment">%1$sのコメント</string>
     <string name="prompt_no_comment">コメントはありません。\nこのアイテムへの最初のコメントをしてみませんか?</string>
     <string name="prompt_to_delete_comment">コメントの削除</string>
     <string name="text_delete_comment">次のコメントを削除します。\n</string>
@@ -305,6 +311,7 @@
 
     <string name="prefix_item_having">having</string>
 
+    <string name="prompt_done_task">%1$sの行ったタスク</string>
     <string name="prompt_show_nested_item_list">階層を表示</string>
     <string name="prompt_show_item_list">一覧を表示</string>
 

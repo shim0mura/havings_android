@@ -67,11 +67,27 @@ public class UserListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Bundle extras = getIntent().getExtras();
         userListType = (int)extras.getSerializable(UserListPresenter.USER_LIST_TYPE);
         relatedId = extras.getInt(UserListPresenter.RELATED_ID, 0);
         searchResultEntity = (SearchResultEntity)extras.getSerializable(UserListPresenter.SEARCH_RESULT);
         userListPresenter = new UserListPresenter(this);
+
+        switch(userListType){
+            case UserListPresenter.ITEM_FAVORITE_USER_LIST:
+                setTitle(getText(R.string.prompt_favorited_user_list));
+                break;
+            case UserListPresenter.FOLLOWING_USER_LIST:
+                setTitle(getText(R.string.prompt_following_user_list));
+                break;
+            case UserListPresenter.FOLLOWED_USER_LIST:
+                setTitle(getText(R.string.prompt_followed_user_list));
+                break;
+            case UserListPresenter.SEARCH_USER_LIST:
+                setTitle(getText(R.string.prompt_searched_user_list));
+        }
 
         ButterKnife.bind(this);
 
@@ -80,6 +96,12 @@ public class UserListActivity extends AppCompatActivity {
         }else if(searchResultEntity != null){
             setUserList(new ArrayList<UserEntity>(searchResultEntity.users));
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override

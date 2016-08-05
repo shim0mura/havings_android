@@ -35,7 +35,9 @@ public class UserEntity implements Serializable {
 
     public ItemEntity homeList;
     public List<ItemEntity> owningItems;
-    public List<ItemEntity> nestedItems;
+    //public List<ItemEntity> nestedItems;
+
+    public ItemEntity nestedItemFromHome;
 
     public String email;
     public String password;

@@ -49,6 +49,7 @@ import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.Timer;
+import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.TaskEntity;
 import work.t_s.shim0mura.havings.model.entity.TaskWrapperEntity;
@@ -71,6 +72,7 @@ public class DoneTaskPresenter {
     public List<TaskWrapperEntity> taskWrapperEntities;
     public Map<String, Map<Integer, Map<Date, Integer>>> taskDoneMap = new HashMap<>();
     public Map<Integer, TimerEntity> timerEntityMap = new HashMap<>();
+    public Map<Integer, ItemEntity> listEntityMap = new HashMap<>();
     private TaskDoneDateDecorator taskDoneDateDecorator1;
     private TaskDoneDateDecorator taskDoneDateDecorator2;
     private TaskDoneDateDecorator taskDoneDateDecorator3;
@@ -175,6 +177,7 @@ public class DoneTaskPresenter {
 
         for(TaskWrapperEntity taskWrapperEntity : taskWrappers){
             Timber.d("taskssize %s", taskWrapperEntity.tasks.size());
+            listEntityMap.put(taskWrapperEntity.list.id, taskWrapperEntity.list);
             for(TaskEntity taskEntity : taskWrapperEntity.tasks){
                 Timber.d("events size %s", taskEntity.events.size());
 
@@ -380,13 +383,15 @@ public class DoneTaskPresenter {
         private int layoutResource;
         private ArrayList<Map<String, String>> timerMap = new ArrayList<>();
         private Map<Integer, TimerEntity> timerEntityMap;
+        private Map<Integer, ItemEntity> listEntityMap;
 
-        public TaskDoneByDayAdapter(Context c, int resource, Map<Integer, TimerEntity> timers){
+        public TaskDoneByDayAdapter(Context c, int resource, Map<Integer, TimerEntity> timers, Map<Integer, ItemEntity> lists){
             super(c, resource);
             context = c;
             this.layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             layoutResource = resource;
             timerEntityMap = timers;
+            listEntityMap = lists;
         }
 
         public void convertDateMap(Map<Date, Integer> map){
@@ -441,7 +446,7 @@ public class DoneTaskPresenter {
             final TimerEntity timer = timerEntityMap.get(Integer.valueOf(item.get("timerId")));
 
             holder.taskName.setText(timer.name);
-            holder.listName.setText(timer.listName);
+            holder.listName.setText(listEntityMap.get(timer.listId).name);
             holder.notificationInterval.setText(Timer.getIntervalString((Activity)context, timer));
             holder.doneDate.setText(item.get("doneDate"));
 

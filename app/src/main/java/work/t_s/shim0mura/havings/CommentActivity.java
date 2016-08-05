@@ -51,9 +51,10 @@ public class CommentActivity extends AppCompatActivity {
     @Bind(R.id.loading_progress) LinearLayout loadingProgress;
 
 
-    public static void startActivity(Context context, int itemId){
+    public static void startActivity(Context context, int itemId, String itemName){
         Intent intent = new Intent(context, new Object() {}.getClass().getEnclosingClass());
         intent.putExtra(CommentPresenter.ITEM_ID_COMMENT_BELONGS, itemId);
+        intent.putExtra(CommentPresenter.ITEM_NAME_COMMENT_BELONGS, itemName);
 
         context.startActivity(intent);
     }
@@ -64,14 +65,24 @@ public class CommentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comment);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle extras = getIntent().getExtras();
         itemId = extras.getInt(CommentPresenter.ITEM_ID_COMMENT_BELONGS, 0);
+        String itemName = (String)extras.getSerializable(CommentPresenter.ITEM_NAME_COMMENT_BELONGS);
+        setTitle(getString(R.string.prompt_comment, itemName));
+
         commentPresenter = new CommentPresenter(this);
 
         ButterKnife.bind(this);
 
         commentPresenter.getComments(itemId);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override

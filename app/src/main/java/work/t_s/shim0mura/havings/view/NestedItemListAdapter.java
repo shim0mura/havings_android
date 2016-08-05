@@ -30,7 +30,7 @@ public class NestedItemListAdapter extends ArrayAdapter<ItemEntity> {
     Context context;
     private LayoutInflater layoutInflater;
     private int layoutResource;
-    private ArrayList<ItemEntity> itemEntityList = new ArrayList<ItemEntity>();
+    public ArrayList<ItemEntity> itemEntityList = new ArrayList<ItemEntity>();
     private int nestDepthMargin;
 
     public NestedItemListAdapter(Context context, int resource, List<ItemEntity> items) {

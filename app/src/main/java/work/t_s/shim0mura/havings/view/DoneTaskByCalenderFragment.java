@@ -106,7 +106,7 @@ public class DoneTaskByCalenderFragment extends Fragment {
         doneTaskPresenter.setDefaultDecorator(calendarView, calendar);
 
         if(adapter == null){
-            adapter = new DoneTaskPresenter.TaskDoneByDayAdapter(getActivity(), R.layout.partial_task_done_date, doneTaskPresenter.timerEntityMap);
+            adapter = new DoneTaskPresenter.TaskDoneByDayAdapter(getActivity(), R.layout.partial_task_done_date, doneTaskPresenter.timerEntityMap, doneTaskPresenter.listEntityMap);
             adapter.convertDateMap(doneTaskPresenter.getDoneDate(calendar));
             taskListView.setAdapter(adapter);
         }

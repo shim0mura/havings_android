@@ -8,12 +8,19 @@
     tools:context="work.t_s.shim0mura.havings.UserActivity"
     android:id="@+id/wrapper">
 
-    <ProgressBar android:id="@+id/loading_progress"
-        style="?android:attr/progressBarStyleSmall"
+    <LinearLayout
+        android:id="@+id/loading_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        />
+        android:visibility="visible"
+        android:gravity="center">
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            />
+    </LinearLayout>
+
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -21,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
-        android:visibility="visible"
+        android:visibility="gone"
         >
 
         <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
@@ -273,6 +280,8 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                app:tabIndicatorHeight="3dp"
                 app:tabTextAppearance="@style/MyCustomTextAppearance"
                 />
 

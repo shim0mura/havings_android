@@ -11,8 +11,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class FavoriteItemListEntity implements Serializable {
 
-    public List<ItemEntity> items;
-    public int lastFavoriteId;
+    public List<ItemEntity> owningItems;
+    //public int lastFavoriteId;
+    //public boolean hasNextItem;
+
     public boolean hasNextItem;
+    public int nextPageForItem;
 
 }

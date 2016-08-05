@@ -151,7 +151,7 @@ public class TimerFormActivity extends AppCompatActivity {
                 timerPresenter.updateCandidateDate(widget, timer.tmpNextDueAt, getIntervalValues());
             }
         });
-        
+
         calendarView.setSelectionMode(MaterialCalendarView.SELECTION_MODE_NONE);
 
 

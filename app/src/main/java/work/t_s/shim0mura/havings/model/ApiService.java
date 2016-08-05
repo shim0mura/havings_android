@@ -75,19 +75,19 @@ public interface ApiService {
     @GET("/user/{user_id}/item_images")
     Call<ItemImageListEntity> getUserItemImages(
             @Path("user_id") int user_id,
-            @Query("from") int offset
+            @Query("page") int offset
     );
 
     @GET("/user/{user_id}/favorite_items")
     Call<FavoriteItemListEntity> getFavoriteItemList(
             @Path("user_id") int user_id,
-            @Query("from") int offset
+            @Query("page") int offset
     );
 
     @GET("/user/{user_id}/favorite_images")
     Call<FavoriteItemImageListEntity> getFavoriteItemImages(
             @Path("user_id") int user_id,
-            @Query("from") int offset
+            @Query("page") int offset
     );
 
     @GET("/user/{user_id}/following")

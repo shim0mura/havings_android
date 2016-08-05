@@ -52,7 +52,7 @@
                 android:layout_alignBottom="@id/edit_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/send"
+                android:background="@color/colorAccent"
                 >
                 <ImageView
                     android:layout_gravity="center"

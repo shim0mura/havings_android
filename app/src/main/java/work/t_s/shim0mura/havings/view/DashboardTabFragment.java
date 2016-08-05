@@ -279,7 +279,7 @@ public class DashboardTabFragment extends Fragment {
             TextView timerName = (TextView)v.findViewById(R.id.task_name);
             timerName.setText(timer.name);
             TextView listName = (TextView)v.findViewById(R.id.list_name);
-            listName.setText(timer.name);
+            listName.setText(doneTaskPresenter.listEntityMap.get(timer.listId).name);
             TextView notification = (TextView)v.findViewById(R.id.notification_interval);
             notification.setText(Timer.getIntervalString(getActivity(), timer));
             TextView doneDate = (TextView)v.findViewById(R.id.done_date);
@@ -354,7 +354,7 @@ public class DashboardTabFragment extends Fragment {
 
     @OnClick(R.id.done_task)
     public void navigateToDoneTask(View v){
-        DoneTaskActivity.startActivity(getActivity(), 2);
+        DoneTaskActivity.startActivity(getActivity(), 2, "ssss");
     }
 
     @OnClick(R.id.tag_comp_test)

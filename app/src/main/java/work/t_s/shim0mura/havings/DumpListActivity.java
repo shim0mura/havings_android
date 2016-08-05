@@ -55,6 +55,7 @@ public class DumpListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dump_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ButterKnife.bind(this);
 
@@ -64,6 +65,8 @@ public class DumpListActivity extends AppCompatActivity {
         TextView pageBreadcrumb = (TextView)header.findViewById(R.id.page_breadcrumb);
         TextView pageTitle = (TextView)header.findViewById(R.id.page_title);
         ImageView pageIcon = (ImageView)header.findViewById(R.id.page_icon);
+
+        setTitle(this.getString(R.string.prompt_dump_list));
 
         pageBreadcrumb.setText(user.name + "\n> " + this.getString(R.string.prompt_dump_list));
         pageTitle.setText(this.getString(R.string.prompt_dump_list));
@@ -77,6 +80,12 @@ public class DumpListActivity extends AppCompatActivity {
         dumpItemList.setAdapter(null);
 
         userPresenter.getDumpItemList(user.id, 0);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override

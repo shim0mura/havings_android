@@ -67,7 +67,7 @@ public class UserFavoritesPresenter {
     }
 
 
-    public void getNextItemList(int userId, int offset, final FavoriteItemListAdapter adapter, final ListView listView, final View footerView){
+    public void getNextItemList(int userId, int offset, final FavoriteItemListAdapter adapter, final ListView listView, final View footerView, final View noItem){
         Call<FavoriteItemListEntity> call = service.getFavoriteItemList(userId, offset);
 
         call.enqueue(new Callback<FavoriteItemListEntity>() {
@@ -79,8 +79,10 @@ public class UserFavoritesPresenter {
                     listView.removeFooterView(footerView);
                     adapter.addItem(favorites);
                     adapter.notifyDataSetChanged();
-                    if(adapter.getLastFavoriteId() != 0){
+                    Timber.d("get_page %s",adapter.getNextPage());
+                    if(adapter.getTotalCount() != 0){
                         listView.findViewById(R.id.page_text).setVisibility(View.VISIBLE);
+                        noItem.setVisibility(View.GONE);
                     }
 
                 } else if (response.code() == StatusCode.Unauthorized) {
@@ -121,7 +123,7 @@ public class UserFavoritesPresenter {
                     footerView.setVisibility(View.GONE);
                     adapter.addItem(favorites);
                     adapter.notifyDataSetChanged();
-                    if(adapter.getLastFavoriteId() != 0){
+                    if(adapter.getTotalCount() != 0){
                         gridView.findViewById(R.id.item_image_tab).setVisibility(View.VISIBLE);
                         noImage.setVisibility(View.GONE);
                     }
@@ -189,6 +191,7 @@ public class UserFavoritesPresenter {
         private ListView itemListView;
         private FavoriteItemImageListAdapter imageListAdapter;
         private GridView gridView;
+        private TextView noItem;
         private TextView noImage;
 
         public UserFavoritesPagerAdapter(Activity a, StickyScrollPresenter s, UserFavoritesPresenter up, UserEntity u, ItemEntity i){
@@ -202,7 +205,7 @@ public class UserFavoritesPresenter {
 
         public void initialize(){
             if(itemListAdapter != null && imageListAdapter != null) {
-                userFavoritesPresenter.getNextItemList(user.id, 0, itemListAdapter, itemListView, loader);
+                userFavoritesPresenter.getNextItemList(user.id, 0, itemListAdapter, itemListView, loader, noItem);
                 userFavoritesPresenter.getNextImageList(user.id, 0, imageListAdapter, gridView, imageLoader, noImage);
             }
         }
@@ -245,6 +248,8 @@ public class UserFavoritesPresenter {
         public View attachItemList(ViewGroup container){
             View v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
 
+            noItem = (TextView)v.findViewById(R.id.no_item);
+
             itemListView = (ListView)v.findViewById(R.id.page_text);
 
             itemListAdapter = new FavoriteItemListAdapter(activity, R.layout.item_list, item);
@@ -277,7 +282,7 @@ public class UserFavoritesPresenter {
                         if (!itemListAdapter.getIsLoadingNextItem()) {
                             itemListAdapter.startLoadNextItem();
                             itemListView.addFooterView(loader);
-                            userFavoritesPresenter.getNextItemList(user.id, itemListAdapter.getLastFavoriteId(), itemListAdapter, itemListView, loader);
+                            userFavoritesPresenter.getNextItemList(user.id, itemListAdapter.getNextPage(), itemListAdapter, itemListView, loader, noItem);
                         }
                     }
                 }
@@ -285,6 +290,7 @@ public class UserFavoritesPresenter {
 
             itemListView.setVisibility(View.GONE);
             v.findViewById(R.id.no_item).setVisibility(View.VISIBLE);
+            v.findViewById(R.id.no_item).setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
 
             return v;
         }
@@ -325,7 +331,7 @@ public class UserFavoritesPresenter {
                         if (!imageListAdapter.getIsLoadingNextItem()) {
                             imageListAdapter.startLoadNextItem();
                             imageLoader.setVisibility(View.VISIBLE);
-                            userFavoritesPresenter.getNextImageList(user.id, imageListAdapter.getLastFavoriteId(), imageListAdapter, gridView, imageLoader, noImage);
+                            userFavoritesPresenter.getNextImageList(user.id, imageListAdapter.getNextPage(), imageListAdapter, gridView, imageLoader, noImage);
                         }
                     }
 
@@ -334,6 +340,7 @@ public class UserFavoritesPresenter {
 
             gridView.setVisibility(View.GONE);
             v.findViewById(R.id.no_image).setVisibility(View.VISIBLE);
+            v.findViewById(R.id.no_image).setOnTouchListener(new StickyScrollPresenter.CustomTouchListener(stickyScrollPresenter));
 
             return v;
         }
@@ -342,7 +349,8 @@ public class UserFavoritesPresenter {
 
     public static class FavoriteItemListAdapter extends ItemListAdapter {
 
-        private int lastFavoriteId;
+        private int nextPageForItem;
+
 
         public FavoriteItemListAdapter(Context c, int resource, ItemEntity i) {
             super(c, resource, i);
@@ -352,15 +360,19 @@ public class UserFavoritesPresenter {
         public void addItem(FavoriteItemListEntity favorites){
             Timber.d("add favorite items");
 
-            itemList.addAll(favorites.items);
-            lastFavoriteId = favorites.lastFavoriteId;
+            itemList.addAll(favorites.owningItems);
+            nextPageForItem = favorites.nextPageForItem;
             hasNextItemToLoad = favorites.hasNextItem;
 
         }
 
-        public int getLastFavoriteId(){
-            return lastFavoriteId;
+        public int getNextPage(){
+            return nextPageForItem;
         }
+        public int getTotalCount(){
+            return itemList.size();
+        }
+
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -373,7 +385,7 @@ public class UserFavoritesPresenter {
                 holder.ownerInfo = (LinearLayout)convertView.findViewById(R.id.owner_info);
                 holder.ownerName = (TextView)convertView.findViewById(R.id.owner_name);
 
-                holder.thumbnail = (CircleImageView)convertView.findViewById(R.id.item_thumbnail);
+                holder.thumbnail = (ImageView)convertView.findViewById(R.id.item_thumbnail);
                 holder.itemType = (ImageView)convertView.findViewById(R.id.item_type);
                 holder.name = (TextView)convertView.findViewById(R.id.item_name);
                 holder.count = (TextView)convertView.findViewById(R.id.item_count);
@@ -419,7 +431,7 @@ public class UserFavoritesPresenter {
 
     public static class FavoriteItemImageListAdapter extends ItemImageListAdapter {
 
-        private int lastFavoriteId;
+        private int nextPageForImage;
 
         public FavoriteItemImageListAdapter(Context c, int resource, ItemEntity i) {
             super(c, resource, i, new ItemPresenter(c));
@@ -428,13 +440,17 @@ public class UserFavoritesPresenter {
 
         public void addItem(FavoriteItemImageListEntity favorites){
             itemImageList.addAll(favorites.images);
-            lastFavoriteId = favorites.lastFavoriteId;
+            nextPageForImage = favorites.nextPageForImage;
             hasNextItemToLoad = favorites.hasNextImage;
         }
 
-        public int getLastFavoriteId(){
-            return lastFavoriteId;
+        public int getNextPage(){
+            return nextPageForImage;
         }
+        public int getTotalCount(){
+            return itemImageList.size();
+        }
+
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
