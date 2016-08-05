@@ -191,6 +191,8 @@
     <string name="prompt_timer_later_do_date">やる予定日時を選択…</string>
     <string name="prompt_close">閉じる</string>
 
+    <string name="prompt_timer_next_due_at">次回通知予定: %1$s</string>
+
     <string name="prompt_timer_done_desc">タスクを完了した日時を選択</string>
     <string name="prompt_timer_do_later_desc">タスクを行う予定の日時を選択</string>
 
@@ -222,18 +224,36 @@
     <string name="prompt_timer_select_date">通知日時の設定</string>
     <string name="prompt_timer_select_time">通知時刻</string>
 
-    <string name="prompt_timer_done_at">タスクの完了日時</string>
+    <string name="prompt_timer_done_at_detail">タスクの完了日時</string>
+    <string name="prompt_timer_done_date_detail">完了日</string>
+    <string name="prompt_timer_done_time_detail">完了時刻</string>
+    <string name="prompt_timer_later_at_detail">あとでやる日時の設定</string>
+    <string name="prompt_timer_later_date_detail">あとでやる日</string>
+    <string name="prompt_timer_later_time_detail">あとでやる時刻</string>
+    <string name="prompt_timer_done_at">完了日時</string>
     <string name="prompt_next_due_at">次回の通知日時</string>
     <string name="postfix_prompt_next_due_at_again">に再通知</string>
     <string name="postfix_prompt_next_due_at">に通知</string>
     <string name="postfix_prompt_timer_done_at">に完了</string>
     <string name="prompt_is_repeating_or_not">タスクの繰り返し</string>
     <string name="prompt_is_repeating">このタスクを繰り返す</string>
+    <string name="prompt_repeat_by_type">繰り返しのタイプ</string>
     <string name="prompt_repeat_by_day">日にちで指定</string>
     <string name="prompt_repeat_by_week">曜日で指定</string>
+    <string name="prompt_repeat_times">繰り返しの頻度</string>
+    <string name="prompt_repeat_schedule">次回以降の通知予定日</string>
     <string name="prompt_clear">クリア</string>
     <string name="prompt_add_timer">タイマーを追加</string>
     <string name="prompt_update_timer">タイマーを編集</string>
+    <string name="prompt_notice_date">通知日</string>
+    <string name="prompt_notice_time">通知時刻</string>
+    <string name="prompt_next_due_at_by_calendar">次の通知</string>
+    <string name="prompt_next_of_next_due_at_by_calendar">その次</string>
+    <string name="prompt_next_due_at_schedule_by_day">%1$s日に通知</string>
+    <string name="prompt_next_due_at_schedule_by_week">%1$sに通知</string>
+    <string name="prompt_added_timer">タイマーを追加しました</string>
+    <string name="prompt_updated_timer">タイマーを更新しました</string>
+    <string name="prompt_edit_timer">タイマーを更新</string>
 
     <string name="prompt_repeat_by_day_every_month">毎月</string>
     <string name="prompt_repeat_by_day_every_two_month">2ヶ月に1回</string>

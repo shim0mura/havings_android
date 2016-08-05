@@ -71,6 +71,8 @@ public class TimerEntity implements Serializable {
         }
         nextCalendar.set(Calendar.MINUTE, minute);
         nextCalendar.set(Calendar.HOUR_OF_DAY, nextCalendar.get(Calendar.HOUR_OF_DAY) + 1);
+        nextCalendar.set(Calendar.SECOND, 0);
+        nextCalendar.set(Calendar.MILLISECOND, 0);
 
         Calendar currentCalendar = Calendar.getInstance();
 

@@ -1,6 +1,7 @@
 package work.t_s.shim0mura.havings;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
@@ -19,6 +20,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -66,6 +68,8 @@ import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
+import work.t_s.shim0mura.havings.model.event.ProgressAlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.presenter.FormPresenter;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
@@ -95,6 +99,8 @@ public class ItemActivity extends AppCompatActivity {
     public static final String DELETE_ITEM = "ItemDeleted";
 
     public static final String POSTED_TIMER = "PostedTimer";
+    public static final String UPDATED_TIMER = "UpdatedTimer";
+
 
     public ItemPresenter itemPresenter;
     private StickyScrollPresenter stickyScrollPresenter;
@@ -115,6 +121,7 @@ public class ItemActivity extends AppCompatActivity {
 
     private int userId;
     private ItemEntity item = null;
+    private ProgressDialog progressDialog;
 
     private int wrapperViewSize;
     private int statusBarSize;
@@ -419,6 +426,10 @@ public class ItemActivity extends AppCompatActivity {
     @Subscribe
     public void updateTimerLayout(TimerEntity timerEntity){
         Timber.d("timer update id %s", timerEntity.id);
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
+
         if(timerWrapper != null && timerEntity.isActive){
             timerPresenter.reRenderTimerLayout(timerWrapper, timerEntity);
         }else if(timerWrapper != null && !timerEntity.isActive && !timerEntity.isDeleted){
@@ -718,18 +729,42 @@ public class ItemActivity extends AppCompatActivity {
                 Bundle extras = data.getExtras();
                 TimerEntity addedTimer = (TimerEntity)extras.getSerializable(POSTED_TIMER);
                 timerPresenter.addTimerLayout(timerWrapper, addedTimer);
-                Snackbar.make(coordinatorLayout, "すなっくばーTimerCreated", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_added_timer), Snackbar.LENGTH_LONG).show();
+                View noTimer = timerWrapper.findViewById(R.id.no_timer);
+                noTimer.setVisibility(View.GONE);
                 if(timerPresenter.getTimerCounts() >= Timer.MAX_COUNT_PER_LIST){
                     addTimerButton.setVisibility(View.GONE);
                 }
             } else if (requestCode == TIMER_UPDATED_RESULTCODE){
                 Bundle extras = data.getExtras();
+                Timber.d(extras.toString());
                 TimerEntity updatedTimer = (TimerEntity)extras.getSerializable(POSTED_TIMER);
                 timerPresenter.reRenderTimerLayout(timerWrapper, updatedTimer);
 
-                Snackbar.make(coordinatorLayout, "すなっくばーTimerupdated", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_updated_timer), Snackbar.LENGTH_LONG).show();
 
             }
         }
+    }
+
+    @Subscribe
+    public void subscribeProgressAlert(ProgressAlertEvent event) {
+        progressDialog = event.showProgress(this);
+    }
+
+    @Subscribe
+    public void subscribeAlert(AlertEvent event) {
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
+        showAlert(event);
+    }
+
+    public void showAlert(AlertEvent event){
+        new AlertDialog.Builder(this)
+                .setTitle(event.title)
+                .setMessage(event.message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 }

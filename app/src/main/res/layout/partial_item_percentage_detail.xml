@@ -16,7 +16,7 @@
                 android:id="@+id/item_category_icon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/twitterlogo"
+                android:src="@drawable/bg"
                 android:layout_marginRight="@dimen/padding_between_grid"
                 android:layout_marginEnd="@dimen/padding_between_grid"/>
             <View

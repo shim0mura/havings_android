@@ -39,6 +39,9 @@ public class Timer {
     public static final String HOUR = "Hour";
     public static final String MINUTE = "Minute";
 
+    public static final int REPEAT_TYPE_BY_DAY = 0;
+    public static final int REPEAT_TYPE_BY_WEEK = 1;
+
     public static final String REPEAT_BY_DAY_EVERY_MONTH = "prompt_repeat_by_day_every_month";
     public static final String REPEAT_BY_DAY_EVERY_TWO_MONTH = "prompt_repeat_by_day_every_two_month";
     public static final String REPEAT_BY_DAY_EVERY_THREE_MONTH = "prompt_repeat_by_day_every_three_month";
@@ -177,20 +180,30 @@ public class Timer {
     }
 
     public static int getProgressBarColor(int percentage){
-        return Color.rgb((255 * percentage) / 100, (255 * (100 - percentage)) / 100, 0);
+        //return Color.rgb((255 * percentage) / 100, (255 * (100 - percentage)) / 100, 0);
+        double H = (360 - (percentage * 3.6)) * 0.4; // Hue (note 0.4 = Green, see huge chart below)
+        double S = 0.9; // Saturation
+        double B = 0.9; // Brightness
+        float[] hh = new float[] {(float)H, (float)S, (float)B};
+        Timber.d(hh.toString());
+
+        return Color.HSVToColor(new float[] {(float)H, (float)S, (float)B});
     }
 
     public static Calendar getNextDueAtFromMonth(Calendar currentDate, Map<String, Integer> values){
         Calendar candidateDate = new GregorianCalendar(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), 1);
         Calendar checkDate = Calendar.getInstance();
         int candidateDay = values.get(DAY_OF_MONTH);
-        int monthInterval = values.get(MONTH_INTERVAL);
+        int monthInterval = values.get(MONTH_INTERVAL) + 1;
         int hour = values.get(HOUR);
         int minute = values.get(MINUTE);
 
-        if(candidateDay >= currentDate.getActualMaximum(Calendar.DAY_OF_MONTH)){
-            candidateDate.set(Calendar.DAY_OF_MONTH, currentDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+        checkDate.set(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH) + monthInterval, 1);
+        int candidateDateLastDay = checkDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+        if(candidateDay >= candidateDateLastDay){
+            candidateDate.set(candidateDate.get(Calendar.YEAR), candidateDate.get(Calendar.MONTH) + monthInterval, candidateDateLastDay, hour, minute);
         }else{
+            candidateDate.set(Calendar.MONTH, candidateDate.get(Calendar.MONTH) + monthInterval);
             candidateDate.set(Calendar.DAY_OF_MONTH, candidateDay);
         }
 
@@ -199,19 +212,6 @@ public class Timer {
         candidateDate.set(Calendar.SECOND, 0);
         candidateDate.set(Calendar.MILLISECOND, 0);
 
-
-        if(currentDate.compareTo(candidateDate) >= 0){
-            candidateDate.set(Calendar.MONTH, candidateDate.get(Calendar.MONTH) + 1);
-        }
-
-        checkDate.set(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH) + monthInterval, 1);
-        int candidateDateLastDay = checkDate.getActualMaximum(Calendar.DAY_OF_MONTH);
-        if(candidateDay >= candidateDateLastDay){
-            candidateDate.set(candidateDate.get(Calendar.YEAR), candidateDate.get(Calendar.MONTH) + monthInterval, candidateDateLastDay, hour, minute);
-        }else{
-            candidateDate.set(Calendar.MONTH, candidateDate.get(Calendar.MONTH) + monthInterval);
-        }
-
         return candidateDate;
     }
 
@@ -219,7 +219,10 @@ public class Timer {
         int monthDiff = (candidateYear - currentYear) * 12 + (candidateMonth - currentMonth);
         int candidateDay = values.get(DAY_OF_MONTH);
 
-        if(monthDiff % (values.get(MONTH_INTERVAL) + 1) == 0){
+        if(monthDiff < 0){
+            candidateDay = 0;
+        }else if(monthDiff % (values.get(MONTH_INTERVAL) + 1) == 0){
+            Timber.d("month diff %s, interval: %s", monthDiff, values.get(MONTH_INTERVAL) + 1);
             Calendar candidateDate = new GregorianCalendar(candidateYear, candidateMonth, 1);
             int candidateDateLastDay = candidateDate.getActualMaximum(Calendar.DAY_OF_MONTH);
             if(candidateDay > candidateDateLastDay){
@@ -256,7 +259,7 @@ public class Timer {
         return candidateDate;
     }
 
-    public static List<Integer> getCandidateDatesFromWeek(int year, int month, Map<String, Integer> values){
+    public static List<Integer> getCandidateDatesFromWeek(int year, int month, Calendar target, Map<String, Integer> values){
         int weekNumber = values.get(WEEK_NUMBER);
         int week = values.get(DAY_OF_WEEK);
         Calendar calendar = new GregorianCalendar(year, month, 1);
@@ -270,7 +273,10 @@ public class Timer {
 
         if(weekNumber == 0){
             while(candidateDay <= lastDayOfMonth){
-                candidateDates.add(candidateDay);
+                Calendar candidate = new GregorianCalendar(year, month, candidateDay, target.get(Calendar.HOUR_OF_DAY), target.get(Calendar.MINUTE));
+                if(candidate.compareTo(target) >= 0){
+                    candidateDates.add(candidateDay);
+                }
                 candidateDay = candidateDay + 7;
             }
         }else{
@@ -279,7 +285,10 @@ public class Timer {
             if(candidateDay > lastDayOfMonth){
                 candidateDay = candidateDay - 7;
             }
-            candidateDates.add(candidateDay);
+            Calendar candidate = new GregorianCalendar(year, month, candidateDay, target.get(Calendar.HOUR_OF_DAY), target.get(Calendar.MINUTE));
+            if(candidate.compareTo(target) >= 0){
+                candidateDates.add(candidateDay);
+            }
         }
 
         return candidateDates;

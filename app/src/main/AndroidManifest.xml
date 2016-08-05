@@ -151,6 +151,7 @@
             android:label="@string/title_activity_token_auto_comp"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ImageChooseActivity" />
+        <activity android:name=".TimerEditActivity"></activity>
     </application>
 
 </manifest>

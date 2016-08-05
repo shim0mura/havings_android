@@ -53,6 +53,7 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
+import work.t_s.shim0mura.havings.TimerEditActivity;
 import work.t_s.shim0mura.havings.TimerFormActivity;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
@@ -62,6 +63,8 @@ import work.t_s.shim0mura.havings.model.Timer;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
+import work.t_s.shim0mura.havings.model.event.ProgressAlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 
@@ -129,25 +132,25 @@ public class TimerPresenter {
         );
     }
 
-    public void updateCandidateDate(MaterialCalendarView calendarView, Map<String, Integer> valueMap){
+    public void updateCandidateDate(MaterialCalendarView calendarView, Date target, Map<String, Integer> valueMap){
         ArrayList<CalendarDay> dates = new ArrayList<>();
-        CalendarDay selectedDate = calendarView.getSelectedDate();
         CalendarDay currentDate = calendarView.getCurrentDate();
-        if(selectedDate == null){
-            Timber.d("selected date null");
-            selectedDate = currentDate;
-        }
+
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(target);
 
         if(valueMap.get(Timer.IS_REPEATING) != 0) {
-            if(valueMap.get(Timer.REPEAT_BY) != 0){
-                List<Integer> candidateDates = Timer.getCandidateDatesFromWeek(currentDate.getYear(), currentDate.getMonth(), valueMap);
-                for(int day : candidateDates){
-                    dates.add(CalendarDay.from(currentDate.getYear(), currentDate.getMonth(), day));
-                }
-            }else{
-                int candidateDay = Timer.getCandidateDateFromMonth(selectedDate.getYear(), selectedDate.getMonth(), currentDate.getYear(), currentDate.getMonth(), valueMap);
+            if(valueMap.get(Timer.REPEAT_BY) == Timer.REPEAT_TYPE_BY_DAY){
+                int candidateDay = Timer.getCandidateDateFromMonth(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), currentDate.getYear(), currentDate.getMonth(), valueMap);
                 if (candidateDay != 0) {
                     dates.add(CalendarDay.from(currentDate.getYear(), currentDate.getMonth(), candidateDay));
+                }
+            }else if (valueMap.get(Timer.REPEAT_BY) == Timer.REPEAT_TYPE_BY_WEEK){
+
+
+                List<Integer> candidateDates = Timer.getCandidateDatesFromWeek(currentDate.getYear(), currentDate.getMonth(), calendar, valueMap);
+                for(int day : candidateDates){
+                    dates.add(CalendarDay.from(currentDate.getYear(), currentDate.getMonth(), day));
                 }
             }
         }
@@ -251,6 +254,7 @@ public class TimerPresenter {
             return;
         }
 
+        BusHolder.get().post(new ProgressAlertEvent(activity.getString(R.string.prompt_timer_done)));
         Call<TimerEntity> call = service.doneTimer(timerEntity.id, hashItem);
         call.enqueue(getCallbackOfPostTimer());
     }
@@ -308,7 +312,8 @@ public class TimerPresenter {
                         }
                     }
                 } else {
-
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+                    Timber.d("error");
                 }
             }
 
@@ -402,17 +407,25 @@ public class TimerPresenter {
         TextView nextDueAt = (TextView)swipeLayout.findViewById(R.id.timer_next_due_at);
         if(!timerEntity.isRepeating){
             nextDueAt.setText("");
-        }else if(timerEntity.repeatBy != 0) {
+        }else if(timerEntity.repeatBy == Timer.REPEAT_TYPE_BY_WEEK) {
             Calendar c = Calendar.getInstance();
-            c.setTime(timerEntity.nextDueAt);
+            if(timerEntity.overDueFrom == null){
+                c.setTime(timerEntity.nextDueAt);
+                nextDueAt.setText(Timer.getFormatDueStringWithoutYear(Timer.getNextDueAtFromWeek(c, getDefaultValues(timerEntity)).getTime()));
+            }else{
+                nextDueAt.setText(Timer.getFormatDueStringWithoutYear(timerEntity.nextDueAt));
+            }
             //nextDueAt.setText(Timer.sdfWithoutYear.format(Timer.getNextDueAtFromWeek(c, getDefaultValues(timerEntity)).getTime()));
-            nextDueAt.setText(Timer.getFormatDueStringWithoutYear(Timer.getNextDueAtFromWeek(c, getDefaultValues(timerEntity)).getTime()));
-
-        }else if(timerEntity.repeatBy == 0){
+        }else if(timerEntity.repeatBy == Timer.REPEAT_TYPE_BY_DAY){
             Calendar c = Calendar.getInstance();
-            c.setTime(timerEntity.nextDueAt);
-            //nextDueAt.setText(Timer.sdfWithoutYear.format(Timer.getNextDueAtFromMonth(c, getDefaultValues(timerEntity)).getTime()));
-            nextDueAt.setText(Timer.getFormatDueStringWithoutYear(Timer.getNextDueAtFromMonth(c, getDefaultValues(timerEntity)).getTime()));
+            if(timerEntity.overDueFrom == null){
+                c.setTime(timerEntity.nextDueAt);
+                nextDueAt.setText(Timer.getFormatDueStringWithoutYear(Timer.getNextDueAtFromMonth(c, getDefaultValues(timerEntity)).getTime()));
+            }else{
+                nextDueAt.setText(Timer.getFormatDueStringWithoutYear(timerEntity.nextDueAt));
+            }
+            //c.setTime(timerEntity.nextDueAt);
+            //nextDueAt.setText(Timer.getFormatDueStringWithoutYear(Timer.getNextDueAtFromMonth(c, getDefaultValues(timerEntity)).getTime()));
         }
         timerEntity.tmpNextDueAt = timerEntity.nextDueAt;
 
@@ -432,14 +445,59 @@ public class TimerPresenter {
         swipeLayout.findViewById(R.id.timer_done).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                final Date nextAt;
                 Calendar c = Calendar.getInstance();
                 c.setTime(timerEntity.tmpNextDueAt);
-                timerEntity.nextDueAt = Timer.getNextDueAtFromWeek(c, getDefaultValues(timerEntity)).getTime();
-                attemptToDoneTimer(timerEntity);
+                if(!timerEntity.isRepeating){
+                    nextAt = timerEntity.tmpNextDueAt;
+                }else if(timerEntity.repeatBy == Timer.REPEAT_TYPE_BY_DAY){
+                    if(timerEntity.overDueFrom == null){
+                        nextAt = Timer.getNextDueAtFromMonth(c, getDefaultValues(timerEntity)).getTime();
+                    }else{
+                        nextAt = timerEntity.tmpNextDueAt;
+                    }
+                }else if(timerEntity.repeatBy == Timer.REPEAT_TYPE_BY_WEEK){
+                    if(timerEntity.overDueFrom == null) {
+                        nextAt = Timer.getNextDueAtFromWeek(c, getDefaultValues(timerEntity)).getTime();
+                    }else{
+                        nextAt = timerEntity.tmpNextDueAt;
+                    }
+                }else{
+                    nextAt = null;
+                }
+
+                new AlertDialog.Builder(activity)
+                        .setTitle(activity.getString(R.string.prompt_timer_done))
+                        .setMessage(activity.getString(R.string.prompt_timer_next_due_at, Timer.getFormatDueStringWithoutYear(nextAt)))
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                timerEntity.nextDueAt = nextAt;
+                                attemptToDoneTimer(timerEntity);
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+
             }
         });
-        swipeLayout.findViewById(R.id.timer_already_done).setOnClickListener(getTimerActionDialogListener(timerEntity, true));
-        swipeLayout.findViewById(R.id.timer_later_do).setOnClickListener(getTimerActionDialogListener(timerEntity, false));
+
+        //swipeLayout.findViewById(R.id.timer_already_done).setOnClickListener(getTimerActionDialogListener(timerEntity, true));
+        //swipeLayout.findViewById(R.id.timer_later_do).setOnClickListener(getTimerActionDialogListener(timerEntity, false));
+
+        swipeLayout.findViewById(R.id.timer_already_done).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimerEditActivity.startActivity(activity, timerEntity, TimerEditActivity.TYPE_DONE);
+            }
+        });
+        swipeLayout.findViewById(R.id.timer_later_do).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                TimerEditActivity.startActivity(activity, timerEntity, TimerEditActivity.TYPE_LATER);
+            }
+        });
 
         swipeLayout.findViewById(R.id.timer_menu).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -542,7 +600,7 @@ public class TimerPresenter {
                     calendarView.setSelectedDate(timerEntity.nextDueAt);
                 }
 
-                updateCandidateDate(calendarView, getDefaultValues(timerEntity));
+                //updateCandidateDate(calendarView, getDefaultValues(timerEntity));
                 final TextView doneAt = (TextView) layout.findViewById(R.id.done_time_at);
                 Map<Integer, Integer> hourAndMinute = getGetTimePickerHourAndMinute(timePicker);
                 c.set(Calendar.HOUR_OF_DAY, hourAndMinute.get(Calendar.HOUR_OF_DAY));
@@ -555,7 +613,7 @@ public class TimerPresenter {
                 calendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
                     @Override
                     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
-                        updateCandidateDate(widget, getDefaultValues(timerEntity));
+                        //updateCandidateDate(widget, getDefaultValues(timerEntity));
                     }
                 });
 
@@ -740,7 +798,9 @@ public class TimerPresenter {
     public class CandidateDecorator implements DayViewDecorator {
 
         private Drawable highlightDrawable;
-        private int color = Color.parseColor("#228BC34A");
+        private int color = Color.parseColor("#999CCC65");
+        //private int color = Color.parseColor("#228BC34A");
+
         private HashSet<CalendarDay> dates;
 
         public CandidateDecorator(Collection<CalendarDay> dates) {
