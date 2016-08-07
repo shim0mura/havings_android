@@ -196,11 +196,11 @@ public class NotificationListAdapter extends ArrayAdapter<NotificationEntity> {
                 }
 
                 LinkedHashMap imageFavoritesTarget = (LinkedHashMap)notification.target.get(0);
-                holder.notificationText.setText(acters.toString() + "が" + imageFavoritesTarget.get("belong_item_name") + "の画像にいいね!しました");
+                holder.notificationText.setText(acters.toString() + "が" + imageFavoritesTarget.get("item_name") + "の画像にいいね!しました");
                 holder.subText.setText(ViewUtil.secondsToEasyDateFormat((Activity)context, currentDate.getTime() - notification.date.getTime()) + "前");
 
                 convertView.setTag(R.id.NOTIFICATION_TYPE, notification.type);
-                convertView.setTag(R.id.NOTIFICATION_RELATED_ID, (int)imageFavoritesTarget.get("belong_item_id"));
+                convertView.setTag(R.id.NOTIFICATION_RELATED_ID, (int)imageFavoritesTarget.get("item_id"));
 
                 break;
 

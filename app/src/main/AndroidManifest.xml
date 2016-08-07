@@ -8,12 +8,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
     <permission
         android:name="work.t_s.shim0mura.havings.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="work.t_s.shim0mura.havings.permission.C2D_MESSAGE" />
-
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -26,25 +26,26 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="work.t_s.shim0mura.havings" />
             </intent-filter>
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="work.t_s.shim0mura.havings" />
             </intent-filter>
         </receiver>
-        <service android:name=".util.NotificationGcmIntentService"/>
+
+        <service android:name=".util.NotificationGcmIntentService" />
         <service
             android:name=".util.NotificationGcmListenerService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter android:priority="10000">
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
@@ -56,8 +57,6 @@
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
-
-
 
         <activity
             android:name=".RegisterActivity"
@@ -192,7 +191,8 @@
             android:label="@string/title_activity_token_auto_comp"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ImageChooseActivity" />
-        <activity android:name=".TimerEditActivity"></activity>
+        <activity android:name=".TimerEditActivity" />
+        <activity android:name=".DrawerActivity"></activity>
     </application>
 
 </manifest>

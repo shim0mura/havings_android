@@ -28,7 +28,7 @@ import work.t_s.shim0mura.havings.model.entity.UserEntity;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
 import work.t_s.shim0mura.havings.view.ItemListAdapter;
 
-public class DumpListActivity extends AppCompatActivity {
+public class DumpListActivity extends DrawerActivity {
 
     private final static String SERIALIZED_USER = "SerializedUser";
     private UserEntity user;
@@ -80,6 +80,8 @@ public class DumpListActivity extends AppCompatActivity {
         dumpItemList.setAdapter(null);
 
         userPresenter.getDumpItemList(user.id, 0);
+        onCreateDrawer(false);
+
     }
 
     @Override

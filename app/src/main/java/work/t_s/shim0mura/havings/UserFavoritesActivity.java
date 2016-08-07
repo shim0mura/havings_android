@@ -24,7 +24,7 @@ import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 import work.t_s.shim0mura.havings.presenter.UserFavoritesPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
 
-public class UserFavoritesActivity extends AppCompatActivity {
+public class UserFavoritesActivity extends DrawerActivity {
 
     private static final String SERIALIZED_USER = "SerializedUser";
 
@@ -99,6 +99,8 @@ public class UserFavoritesActivity extends AppCompatActivity {
 
             }
         });
+
+        onCreateDrawer(false);
 
     }
 

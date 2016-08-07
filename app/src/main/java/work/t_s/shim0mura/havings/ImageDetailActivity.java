@@ -50,7 +50,7 @@ import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 import work.t_s.shim0mura.havings.util.Share;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 
-public class ImageDetailActivity extends AppCompatActivity {
+public class ImageDetailActivity extends DrawerActivity {
 
     private static final String SERIALIZED_ITEM = "SerializedItem";
     private static final String SERIALIZED_ITEM_ID = "SerializedItemId";
@@ -133,6 +133,8 @@ public class ImageDetailActivity extends AppCompatActivity {
         }
 
         userId = ApiKey.getSingleton(this).getUserId();
+        onCreateDrawer(false);
+
     }
 
     @Override

@@ -27,7 +27,7 @@ import work.t_s.shim0mura.havings.presenter.HomePresenter;
 import work.t_s.shim0mura.havings.presenter.SearchPresenter;
 import work.t_s.shim0mura.havings.view.ItemListAdapter;
 
-public class PickupActivity extends AppCompatActivity {
+public class PickupActivity extends DrawerActivity {
 
     public final static int PICKUP_TYPE_TAG = 1;
     public final static int PICKUP_TYPE_LIST = 2;
@@ -104,6 +104,8 @@ public class PickupActivity extends AppCompatActivity {
                 scrollWrapper.setVisibility(View.GONE);
                 break;
         }
+
+        onCreateDrawer(false);
 
     }
 

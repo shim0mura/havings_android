@@ -23,7 +23,7 @@ import work.t_s.shim0mura.havings.model.entity.SearchResultEntity;
 import work.t_s.shim0mura.havings.presenter.SearchPresenter;
 import work.t_s.shim0mura.havings.view.SearchResultAdapter;
 
-public class SearchTagResultActivity extends AppCompatActivity {
+public class SearchTagResultActivity extends DrawerActivity {
 
     private final static String SERIALIZED_TAGS = "SerializedTags";
     private View header;
@@ -74,6 +74,9 @@ public class SearchTagResultActivity extends AppCompatActivity {
 
         searchPresenter = new SearchPresenter(this);
         searchPresenter.getTagSearchResult(tags, 1);
+
+        onCreateDrawer(false);
+
     }
 
     @Override

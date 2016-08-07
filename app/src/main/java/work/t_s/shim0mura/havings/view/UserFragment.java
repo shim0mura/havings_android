@@ -29,6 +29,7 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.DumpListActivity;
+import work.t_s.shim0mura.havings.HavingsGlobal;
 import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.ProfileEditActivity;
 import work.t_s.shim0mura.havings.R;
@@ -176,7 +177,6 @@ public class UserFragment extends Fragment {
 
         actionFollow.setVisibility(View.GONE);
         actionSettingUser.setVisibility(View.VISIBLE);
-
     }
 
     private void setUserBackground(String thumbnailUrl){

@@ -26,6 +26,9 @@ public class ApiKey {
     private static final String UID = "uid";
     private static final String USER_ID = "userId";
     private static final String DEVICE_TOKEN = "deviceToken";
+    private static final String USER_NAME = "userName";
+    private static final String ITEM_COUNT = "itemCount";
+    private static final String USER_THUMBNAIL = "userThumbnail";
     private static final String ACCESS_KEY = "secret";
 
     private static ApiKey apiKey;
@@ -33,6 +36,9 @@ public class ApiKey {
     private String token;
     private String uid;
     private int userId;
+    private String userName;
+    private String userThumbnail;
+    private int itemCount;
     private String deviceToken;
 
     private ApiKey(Context c){
@@ -55,6 +61,16 @@ public class ApiKey {
     public int getUserId() { return userId; }
     public String getDeviceToken() {
         return deviceToken;
+    }
+
+    public String getUserName(){
+        return userName;
+    }
+    public String getUserThumbnail(){
+        return userThumbnail;
+    }
+    public int getItemCount(){
+        return itemCount;
     }
 
     public static synchronized ApiKey getSingleton(Context context){
@@ -85,6 +101,22 @@ public class ApiKey {
         editor.putString(DEVICE_TOKEN, token);
 
         deviceToken = token;
+
+        editor.apply();
+    }
+
+    public void updateUserInfo(String name, String thumbnail, int count){
+        SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor;
+
+        editor = preferences.edit();
+        editor.putString(USER_NAME, name);
+        editor.putString(USER_THUMBNAIL, thumbnail);
+        editor.putInt(ITEM_COUNT, count);
+
+        userName = name;
+        userThumbnail = thumbnail;
+        itemCount = count;
 
         editor.apply();
     }

@@ -344,7 +344,8 @@ public class UserPresenter {
             public void onResponse(Response<List<NotificationEntity>> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     List<NotificationEntity> notifications = response.body();
-                    BusHolder.get().post(notifications);
+                    NotificationEvent notification = new NotificationEvent(new ArrayList<NotificationEntity>(notifications));
+                    BusHolder.get().post(notification);
 
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");

@@ -36,7 +36,7 @@ import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.EventListByDayAdapter;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 
-public class DetailGraphActivity extends AppCompatActivity {
+public class DetailGraphActivity extends DrawerActivity {
 
     private static final String SERIALIZED_ITEM = "SerializedItem";
 
@@ -148,7 +148,7 @@ public class DetailGraphActivity extends AppCompatActivity {
         float dx = tempViewport.width() / 4;
         tempViewport.inset(dx, 0);
         //previewChart.setCurrentViewport(tempViewport);
-
+        onCreateDrawer(false);
     }
 
     @Override

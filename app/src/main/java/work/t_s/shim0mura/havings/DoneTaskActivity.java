@@ -38,7 +38,7 @@ import work.t_s.shim0mura.havings.presenter.CommentPresenter;
 import work.t_s.shim0mura.havings.presenter.DoneTaskPresenter;
 import work.t_s.shim0mura.havings.presenter.SearchPresenter;
 
-public class DoneTaskActivity extends AppCompatActivity {
+public class DoneTaskActivity extends DrawerActivity {
 
     private static final String SERIALIZED_LIST_ID = "listId";
     private static final String SERIALIZED_LIST_NAME = "listName";
@@ -82,6 +82,7 @@ public class DoneTaskActivity extends AppCompatActivity {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         setTitle(getString(R.string.prompt_done_task, listName));
+        onCreateDrawer(false);
 
     }
 

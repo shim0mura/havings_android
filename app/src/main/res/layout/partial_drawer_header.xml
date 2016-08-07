@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_height="150dp"
+    android:background="@color/mainColor"
+    android:paddingLeft="@dimen/app_basic_padding"
+    android:paddingStart="@dimen/app_basic_padding"
+    android:paddingBottom="@dimen/app_basic_padding"
+    >
+
+    <TextView
+        android:id="@+id/drawer_item_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primaryTextWhite"
+        android:text=""
+        android:layout_alignParentBottom="true"
+        />
+    <TextView
+        android:id="@+id/drawer_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/drawer_item_count"
+        android:textColor="@color/primaryTextWhite"
+        android:layout_marginBottom="@dimen/padding_between_content"
+        android:text=""
+        android:textSize="18dp"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/drawer_user_thumbnail"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/bg"
+        android:layout_above="@id/drawer_user_name"
+        android:layout_marginBottom="@dimen/padding_between_content"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/divider"
+        android:visibility="gone"/>
+</RelativeLayout>

@@ -47,7 +47,7 @@ import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
 import work.t_s.shim0mura.havings.util.Share;
 
-public class UserActivity extends AppCompatActivity {
+public class UserActivity extends DrawerActivity {
 
     private static final String SERIALIZED_USER_ID = "SerializedUserId";
 
@@ -104,6 +104,8 @@ public class UserActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         userPresenter.getUser(userId);
+
+        onCreateDrawer(false);
     }
 
     @Override

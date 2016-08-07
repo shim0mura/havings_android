@@ -78,7 +78,7 @@ import work.t_s.shim0mura.havings.presenter.TimerPresenter;
 import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 import work.t_s.shim0mura.havings.util.Share;
 
-public class ItemActivity extends AppCompatActivity {
+public class ItemActivity extends DrawerActivity {
 
     private static final String TAG = "ItemActivity";
     public static final String ITEM_ID = "ItemId";
@@ -246,6 +246,8 @@ public class ItemActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
         itemPresenter.getItem(itemId);
+        onCreateDrawer(false);
+
     }
 
     @Override

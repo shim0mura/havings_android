@@ -38,7 +38,7 @@ import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.CommentAdapter;
 import work.t_s.shim0mura.havings.view.UserListAdapter;
 
-public class CommentActivity extends AppCompatActivity {
+public class CommentActivity extends DrawerActivity {
 
     private int itemId;
     private CommentPresenter commentPresenter;
@@ -77,6 +77,8 @@ public class CommentActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         commentPresenter.getComments(itemId);
+        onCreateDrawer(false);
+
     }
 
     @Override

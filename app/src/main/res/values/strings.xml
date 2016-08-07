@@ -310,6 +310,7 @@
     <string name="action_user_setting">プロフィールの編集</string>
 
     <string name="prefix_item_having">having</string>
+    <string name="prompt_item_having">having %1$d item</string>>
 
     <string name="prompt_done_task">%1$sの行ったタスク</string>
     <string name="prompt_show_nested_item_list">階層を表示</string>
@@ -326,6 +327,8 @@
     <string name="prompt_account">アカウント</string>
 
     <string name="view_more">もっと見る</string>
+
+    <string name="prompt_notification">通知</string>
 
     <string name="prompt_search">検索</string>
     <string name="prompt_user_search">検索</string>

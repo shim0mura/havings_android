@@ -3,10 +3,13 @@ package work.t_s.shim0mura.havings;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -24,11 +27,14 @@ import android.view.ViewGroup;
 
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -55,13 +61,18 @@ import work.t_s.shim0mura.havings.model.event.DeviceTokenCheckEvent;
 import work.t_s.shim0mura.havings.model.event.GenericEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.NotificationEvent;
+import work.t_s.shim0mura.havings.model.event.ToggleLoadingEvent;
 import work.t_s.shim0mura.havings.presenter.HomePresenter;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
 import work.t_s.shim0mura.havings.util.NotificationGcmIntentService;
+import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 
-public class HomeActivity extends AppCompatActivity {
+// public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+public class HomeActivity extends DrawerActivity {
+
 
     private UserPresenter userPresenter;
     private View notificationView;
@@ -147,6 +158,8 @@ public class HomeActivity extends AppCompatActivity {
 
         setTitle(R.string.prompt_home);
         checkDeviceToken();
+
+        userPresenter.getSelf();
     }
 
     @Override
@@ -230,5 +243,11 @@ public class HomeActivity extends AppCompatActivity {
             badge.setVisibility(View.GONE);
             icon.setImageResource(R.drawable.ic_notifications_none_white_36dp);
         }
+    }
+
+    @Subscribe
+    public void setUserInfo(UserEntity userEntity){
+        ApiKey.getSingleton(this).updateUserInfo(userEntity.name, userEntity.image, userEntity.count);
+        onCreateDrawer(true);
     }
 }

@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.view.TimerListAdapter;
 
-public class AllTimerActivity extends AppCompatActivity {
+public class AllTimerActivity extends DrawerActivity {
 
     private final static String SERIALIZED_TIMERS = "SerializedTimers";
     private View header;
@@ -65,6 +65,8 @@ public class AllTimerActivity extends AppCompatActivity {
         adapter = new TimerListAdapter(this, R.layout.partial_timer_content, timerEntities);
 
         timerList.setAdapter(adapter);
+
+        onCreateDrawer(false);
 
     }
 

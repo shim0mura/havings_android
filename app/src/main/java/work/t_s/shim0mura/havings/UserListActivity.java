@@ -33,7 +33,7 @@ import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.UserListAdapter;
 
-public class UserListActivity extends AppCompatActivity {
+public class UserListActivity extends DrawerActivity {
 
     private int userListType;
     private int relatedId;
@@ -96,6 +96,9 @@ public class UserListActivity extends AppCompatActivity {
         }else if(searchResultEntity != null){
             setUserList(new ArrayList<UserEntity>(searchResultEntity.users));
         }
+
+        onCreateDrawer(false);
+
     }
 
     @Override

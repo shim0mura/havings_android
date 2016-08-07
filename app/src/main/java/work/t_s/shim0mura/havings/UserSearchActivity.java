@@ -27,7 +27,7 @@ import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.presenter.SearchPresenter;
 import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 
-public class UserSearchActivity extends AppCompatActivity {
+public class UserSearchActivity extends DrawerActivity {
 
     private SearchView searchView;
     private SearchPresenter searchPresenter;
@@ -50,6 +50,8 @@ public class UserSearchActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         searchPresenter = new SearchPresenter(this);
+        onCreateDrawer(false);
+
     }
 
     @Override
