@@ -81,7 +81,7 @@ import work.t_s.shim0mura.havings.util.Share;
 public class ItemActivity extends AppCompatActivity {
 
     private static final String TAG = "ItemActivity";
-    private static final String ITEM_ID = "ItemId";
+    public static final String ITEM_ID = "ItemId";
     private static final String CREATE_LIST = "CreateList";
     public static final int ITEM_CREATED_RESULTCODE = 400;
     public static final int ITEM_UPDATED_RESULTCODE = 500;

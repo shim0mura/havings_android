@@ -321,6 +321,9 @@
     <string name="prompt_self_chart">あなたのアイテムの分類グラフ</string>
     <string name="prompt_self_timers">稼働中のタイマー</string>>
 
+    <string name="prompt_home">ホーム</string>
+    <string name="prompt_social">タイムライン</string>
+    <string name="prompt_account">アカウント</string>
 
     <string name="view_more">もっと見る</string>
 

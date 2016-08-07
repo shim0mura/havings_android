@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,8 +42,11 @@ import work.t_s.shim0mura.havings.model.entity.TimelineEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 import work.t_s.shim0mura.havings.model.event.ToggleLoadingEvent;
 import work.t_s.shim0mura.havings.presenter.HomePresenter;
+import work.t_s.shim0mura.havings.presenter.ItemPresenter;
+import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 import work.t_s.shim0mura.havings.presenter.UserListPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
+import work.t_s.shim0mura.havings.util.Share;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 
 public class UserFragment extends Fragment {

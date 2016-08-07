@@ -1,6 +1,7 @@
 package work.t_s.shim0mura.havings.view;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,9 +23,12 @@ import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.entity.TimelineEntity;
+import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.presenter.HomePresenter;
 
 public class SocialTabFragment extends Fragment {
+
+    private static final String TIMELINE_ENTITY = "TimelimeEntity";
 
     @Bind(R.id.swipe) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.timeline_list) ListView timelineList;
@@ -32,6 +36,7 @@ public class SocialTabFragment extends Fragment {
     private View loader;
     private HomePresenter homePresenter;
     private TimelineAdapter adapter;
+    private TimelineEntity timelineEntity;
 
     public static SocialTabFragment newInstance() {
         SocialTabFragment fragment = new SocialTabFragment();
@@ -52,19 +57,50 @@ public class SocialTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_social_tab, container, false);
         ButterKnife.bind(this, view);
 
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         loader = layoutInflater.inflate(R.layout.loading, timelineList, false);
 
-        timelineList.addFooterView(loader);
-        timelineList.setAdapter(null);
 
         homePresenter = new HomePresenter(getActivity());
-        homePresenter.getTimeline(0);
+
+        if(savedInstanceState == null){
+            timelineList.addFooterView(loader);
+            timelineList.setAdapter(null);
+            adapter = null;
+
+            homePresenter.getTimeline(0);
+        }else{
+
+            timelineEntity = (TimelineEntity) savedInstanceState.getSerializable(TIMELINE_ENTITY);
+            renderTimeline(timelineEntity);
+        }
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                timelineList.addFooterView(loader);
+                timelineList.setAdapter(null);
+                adapter = null;
+
+                homePresenter.getTimeline(0);
+
+            }
+        });
+        swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
+
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+Timber.d("save_instance");
+        outState.putSerializable(TIMELINE_ENTITY, timelineEntity);
     }
 
     @Override
@@ -83,13 +119,21 @@ public class SocialTabFragment extends Fragment {
 
     @Subscribe
     public void setTimeline(TimelineEntity timelineEntity){
-        loader.findViewById(R.id.progress).setVisibility(View.GONE);
+        renderTimeline(timelineEntity);
+        swipeRefreshLayout.setRefreshing(false);
+    }
 
-        Timber.d("header %s", timelineList.getHeaderViewsCount());
+    private void renderTimeline(TimelineEntity timeline){
+        timelineEntity = timeline;
+        loader.findViewById(R.id.progress).setVisibility(View.GONE);
 
         if(adapter == null){
             initializeAdapter(timelineEntity);
         }else {
+            Timber.d("adapter_not_null, %s", timeline.timeline.size());
+            Timber.d(timelineEntity.toString());
+            timelineList.setAdapter(adapter);
+
             adapter.finishLoadNextItem();
             loader.findViewById(R.id.progress).setVisibility(View.GONE);
             adapter.addItem(timelineEntity);

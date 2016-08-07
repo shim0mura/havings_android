@@ -65,6 +65,10 @@ public class DashboardTabFragment extends Fragment {
     private static final String BUNDLE_ARG = "BundleArg";
     private static final int MAX_TIMER_SHOWING = 3;
 
+    private static final String ITEM_PERCENTAGE_EVENT = "ItemPercentageEvent";
+    private static final String TIMER_LIST_RENDER_EVENT = "TimerListRenderEvent";
+    private static final String CALENDAR_TASK_LIST_EVENT = "CalendarTaskListEvent";
+
     @Bind(R.id.swipe) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.total_item_percentage_wrapper) LinearLayout graphDetailWrapper;
     @Bind(R.id.pie_chart) PieChartView pieChartView;
@@ -80,11 +84,15 @@ public class DashboardTabFragment extends Fragment {
     private HomePresenter homePresenter;
     private UserPresenter userPresenter;
     private DoneTaskPresenter doneTaskPresenter;
+    private ItemPercentageGraphEvent itemPercentageGraphEvent;
+    private TimerListRenderEvent timerListRenderEvent;
+    private CalendarTaskListEvent calendarTaskListEvent;
     private ArrayList<ItemPercentageEntity> itemPercentageEntityArrayList;
     private ArrayList<TimerEntity> timerEntities;
     private ArrayList<TaskWrapperEntity> taskWrapperEntities;
 
     private Calendar calendar;
+    private boolean swipeRefreshLayoutShown = false;
 
     public DashboardTabFragment(){}
 
@@ -109,30 +117,50 @@ public class DashboardTabFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
         View view =  inflater.inflate(R.layout.fragment_dashboard_tab, container, false);
         ButterKnife.bind(this, view);
 
-        if(itemPercentageEntityArrayList == null){
+        if(savedInstanceState == null){
             userPresenter.getItemPercentage();
             homePresenter.getAllTimers();
             doneTaskPresenter.getAllTask();
+        }else{
+            itemPercentageGraphEvent = (ItemPercentageGraphEvent) savedInstanceState.getSerializable(ITEM_PERCENTAGE_EVENT);
+            renderPieChart(itemPercentageGraphEvent);
+            timerListRenderEvent = (TimerListRenderEvent) savedInstanceState.getSerializable(TIMER_LIST_RENDER_EVENT);
+            renderTimers(timerListRenderEvent);
+            calendarTaskListEvent = (CalendarTaskListEvent) savedInstanceState.getSerializable(CALENDAR_TASK_LIST_EVENT);
+            renderCalendar(calendarTaskListEvent);
         }
+
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Timber.d("swipe end");
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 3000);
+                swipeRefreshLayoutShown = true;
+                userPresenter.getItemPercentage();
+                homePresenter.getAllTimers();
+                doneTaskPresenter.getAllTask();
+
             }
         });
         swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
 
+
+
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(ITEM_PERCENTAGE_EVENT, itemPercentageGraphEvent);
+        outState.putSerializable(TIMER_LIST_RENDER_EVENT, timerListRenderEvent);
+        outState.putSerializable(CALENDAR_TASK_LIST_EVENT, calendarTaskListEvent);
     }
 
     @Override
@@ -149,8 +177,21 @@ public class DashboardTabFragment extends Fragment {
         super.onPause();
     }
 
+    private void resetSwipe(){
+        if(swipeRefreshLayoutShown){
+            swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayoutShown = false;
+        }
+    }
+
     @Subscribe
-    public void renderPieChart(ItemPercentageGraphEvent graphEvent){
+    public void getPieChartData(ItemPercentageGraphEvent graphEvent){
+        itemPercentageGraphEvent = graphEvent;
+        renderPieChart(graphEvent);
+        resetSwipe();
+    }
+
+    private void renderPieChart(ItemPercentageGraphEvent graphEvent){
         itemPercentageEntityArrayList = graphEvent.itemPercentageEntities;
 
         if(itemPercentageEntityArrayList.isEmpty()){
@@ -165,8 +206,14 @@ public class DashboardTabFragment extends Fragment {
     }
 
     @Subscribe
-    public void renderTimers(TimerListRenderEvent timersEvent){
+    public void getAllTimers(TimerListRenderEvent timersEvent){
+        timerListRenderEvent = timersEvent;
+        renderTimers(timersEvent);
+        resetSwipe();
 
+    }
+
+    private void renderTimers(TimerListRenderEvent timersEvent){
         timerEntities = timersEvent.timerListEntities;
         final Activity activity = getActivity();
 
@@ -212,21 +259,19 @@ public class DashboardTabFragment extends Fragment {
 
         if(timerEntities.size() <= MAX_TIMER_SHOWING){
             viewMoreTimer.setVisibility(View.GONE);
-            /*
-            View v = layoutInflater.inflate(R.layout.partial_view_more, null);
-            deadlineNearingTimers.addView(v);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AllTimerActivity.startActivity(activity, timerEntities);
-                }
-            });
-            */
         }
     }
 
     @Subscribe
-    public void renderCalendar(CalendarTaskListEvent taskListEvent) {
+    public void getCalendarEvents(CalendarTaskListEvent taskListEvent) {
+        renderCalendar(taskListEvent);
+        resetSwipe();
+
+    }
+
+    private void renderCalendar(CalendarTaskListEvent taskListEvent){
+        calendarTaskListEvent = taskListEvent;
+
         taskWrapperEntities = taskListEvent.taskWrapperEntities;
 
         doneTaskPresenter.setDefaultDecorator(calendarView, calendar);
@@ -253,6 +298,7 @@ public class DashboardTabFragment extends Fragment {
             }
         });
     }
+
 
     private void showDoneDate(CalendarDay date){
 

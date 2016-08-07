@@ -48,14 +48,17 @@ import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.DefaultTag;
 import work.t_s.shim0mura.havings.model.StatusCode;
+import work.t_s.shim0mura.havings.model.entity.DeviceTokenEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
+import work.t_s.shim0mura.havings.model.event.DeviceTokenCheckEvent;
 import work.t_s.shim0mura.havings.model.event.GenericEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.NotificationEvent;
 import work.t_s.shim0mura.havings.presenter.HomePresenter;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
+import work.t_s.shim0mura.havings.util.NotificationGcmIntentService;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 
 public class HomeActivity extends AppCompatActivity {
@@ -135,12 +138,15 @@ public class HomeActivity extends AppCompatActivity {
             if(tab != null) {
                 if(i == 0){
                     tab.setIcon(pagerAdapter.getTabIcon(tab.getPosition(), true));
+                    tab.select();
                 }else{
                     tab.setIcon(pagerAdapter.getTabIcon(tab.getPosition(), false));
                 }
             }
         }
 
+        setTitle(R.string.prompt_home);
+        checkDeviceToken();
     }
 
     @Override
@@ -184,8 +190,30 @@ public class HomeActivity extends AppCompatActivity {
 
     @Subscribe
     public void getUnreadNotificationCount(NotificationEvent event){
-        Timber.d("get unread notification %s", event.notificationEntities.size());
+        Timber.d("get unread_notification %s", event.notificationEntities.size());
         setNotificationBadge(event.notificationEntities.size());
+    }
+
+    @Subscribe
+    public void checkDeviceTokenState(DeviceTokenCheckEvent event){
+        String registedToken = ApiKey.getSingleton(this).getDeviceToken();
+        HomePresenter homePresenter = new HomePresenter(this);
+        if(event.deviceTokenEntity.token != null && registedToken == null){
+            homePresenter.postDeviceToken(event.deviceTokenEntity.token);
+        }else if(event.deviceTokenEntity.token != null && !event.deviceTokenEntity.token.equals(registedToken)){
+            homePresenter.putDeviceToken(event.deviceTokenEntity.token);
+        }
+    }
+
+    @Subscribe
+    public void deviceTokenUpdateSuccess(DeviceTokenEntity deviceTokenEntity){
+        Timber.d("token_update_success");
+        ApiKey.getSingleton(this).updateDeviceToken(deviceTokenEntity.token);
+    }
+
+    private void checkDeviceToken(){
+        Intent intent = new Intent(this, NotificationGcmIntentService.class);
+        startService(intent);
     }
 
     private void setNotificationBadge(int count) {

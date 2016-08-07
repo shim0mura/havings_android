@@ -50,6 +50,7 @@ public class SearchTagResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_tag_result);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ButterKnife.bind(this);
 
@@ -60,6 +61,7 @@ public class SearchTagResultActivity extends AppCompatActivity {
         TextView searchContent = (TextView)header.findViewById(R.id.search_content);
 
         searchContent.setText(String.format(this.getString(R.string.postfix_search_result), tags));
+        setTitle(String.format(this.getString(R.string.postfix_search_result), tags));
 
         searchResultList.addHeaderView(header);
 
@@ -72,6 +74,12 @@ public class SearchTagResultActivity extends AppCompatActivity {
 
         searchPresenter = new SearchPresenter(this);
         searchPresenter.getTagSearchResult(tags, 1);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override

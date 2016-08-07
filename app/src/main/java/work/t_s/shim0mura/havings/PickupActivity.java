@@ -67,6 +67,7 @@ public class PickupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pickup);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ButterKnife.bind(this);
 
@@ -77,9 +78,10 @@ public class PickupActivity extends AppCompatActivity {
 
         switch(pickupType) {
             case PICKUP_TYPE_TAG:
-                pageBreadcrumb.setText(this.getString(R.string.popular_tags));
+                //pageBreadcrumb.setText(this.getString(R.string.popular_tags));
                 pageTitle.setText(this.getString(R.string.popular_tags));
-                pageIcon.setImageResource(R.drawable.ic_label_outline_cyan_300_36dp);
+                setTitle(this.getString(R.string.popular_tags));
+                pageIcon.setImageResource(R.drawable.ic_label_outline_yellow_600_24dp);
                 pickupList.setVisibility(View.GONE);
 
                 headerWrapper.addView(header);
@@ -87,9 +89,10 @@ public class PickupActivity extends AppCompatActivity {
 
                 break;
             case PICKUP_TYPE_LIST:
-                pageBreadcrumb.setText(this.getString(R.string.popular_list));
+                //pageBreadcrumb.setText(this.getString(R.string.popular_list));
                 pageTitle.setText(this.getString(R.string.popular_list));
-                pageIcon.setImageResource(R.drawable.ic_whatshot_cyan_300_36dp);
+                setTitle(this.getString(R.string.popular_list));
+                pageIcon.setImageResource(R.drawable.ic_whatshot_yellow_600_24dp);
                 pickupList.setVisibility(View.GONE);
 
                 headerWrapper.addView(header);
@@ -102,6 +105,12 @@ public class PickupActivity extends AppCompatActivity {
                 break;
         }
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
     @Override

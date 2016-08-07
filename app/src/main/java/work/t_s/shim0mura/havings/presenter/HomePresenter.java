@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.wefika.flowlayout.FlowLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -35,6 +36,7 @@ import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.User;
+import work.t_s.shim0mura.havings.model.entity.DeviceTokenEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
@@ -55,6 +57,7 @@ import work.t_s.shim0mura.havings.view.UserFragment;
  */
 public class HomePresenter {
 
+    private static String DEVICE_TOKEN_KEY = "device_token";
     private static int POPULAR_TAG_IMAGE_SIZE = 120;
     private static int MAX_SHOWING_POPULAR_LIST = 5;
 
@@ -113,6 +116,88 @@ public class HomePresenter {
                 if (response.isSuccess()) {
                     TimelineEntity timeline = response.body();
                     BusHolder.get().post(timeline);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    for (Map.Entry<String, List<String>> e : error.errors.entrySet()) {
+                        switch (e.getKey()) {
+                            default:
+                                //sendErrorToGetUser();
+                                break;
+                        }
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("timer get failed");
+            }
+        });
+    }
+
+    public void postDeviceToken(String token){
+        DeviceTokenEntity deviceTokenEntity = new DeviceTokenEntity();
+        deviceTokenEntity.token = token;
+        HashMap<String, DeviceTokenEntity> hashItem = new HashMap<String, DeviceTokenEntity>();
+        hashItem.put(DEVICE_TOKEN_KEY, deviceTokenEntity);
+        Call<DeviceTokenEntity> call = service.postDeviceToken(0, hashItem);
+
+        call.enqueue(new Callback<DeviceTokenEntity>() {
+            @Override
+            public void onResponse(Response<DeviceTokenEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    DeviceTokenEntity deviceToken = response.body();
+                    BusHolder.get().post(deviceToken);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    for (Map.Entry<String, List<String>> e : error.errors.entrySet()) {
+                        switch (e.getKey()) {
+                            default:
+                                //sendErrorToGetUser();
+                                break;
+                        }
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("timer get failed");
+            }
+        });
+    }
+
+    public void putDeviceToken(String token){
+        DeviceTokenEntity deviceTokenEntity = new DeviceTokenEntity();
+        deviceTokenEntity.token = token;
+        HashMap<String, DeviceTokenEntity> hashItem = new HashMap<String, DeviceTokenEntity>();
+        hashItem.put(DEVICE_TOKEN_KEY, deviceTokenEntity);
+        Call<DeviceTokenEntity> call = service.putDeviceToken(0, hashItem);
+
+        call.enqueue(new Callback<DeviceTokenEntity>() {
+            @Override
+            public void onResponse(Response<DeviceTokenEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    DeviceTokenEntity deviceToken = response.body();
+                    BusHolder.get().post(deviceToken);
 
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");
@@ -261,14 +346,24 @@ public class HomePresenter {
 
     public static class HomeTabPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] tabTitle = {"ホーム", "ソーシャル", "検索", "アカウント"};
+        private final String[] tabTitle = new String[4];
         private Context context;
         private LayoutInflater layoutInflater;
+
+        private android.support.v4.app.Fragment homeFragment;
+        private android.support.v4.app.Fragment socialFragment;
+        private android.support.v4.app.Fragment searchFragment;
+        private android.support.v4.app.Fragment accountFragment;
+
 
         public HomeTabPagerAdapter(android.support.v4.app.FragmentManager fm, Context c){
             super(fm);
             context = c;
             layoutInflater = LayoutInflater.from(c);
+            tabTitle[0] = context.getString(R.string.prompt_home);
+            tabTitle[1] = context.getString(R.string.prompt_social);
+            tabTitle[2] = context.getString(R.string.prompt_search);
+            tabTitle[3] = context.getString(R.string.prompt_account);
         }
 
         public String getTabTitle(int position){
@@ -323,12 +418,26 @@ public class HomePresenter {
             if(position == 0) {
                 return DashboardTabFragment.newInstance();
             }else if(position == 1) {
-                return SocialTabFragment.newInstance();
-                //v = activity.getLayoutInflater().inflate(R.layout.item_list_tab, container, false);
+                if(socialFragment == null){
+                    socialFragment = SocialTabFragment.newInstance();
+                    Timber.d("create_social");
+
+                }
+                return socialFragment;
             }else if(position == 2){
-                return SearchTabFragment.newInstance();
+                if(searchFragment == null){
+                    searchFragment = SearchTabFragment.newInstance();
+                    Timber.d("create_search");
+
+                }
+                return searchFragment;
             }else if(position == 3){
-                return UserFragment.newInstance();
+                if(accountFragment == null){
+                    accountFragment = UserFragment.newInstance();
+                    Timber.d("create_account");
+
+                }
+                return accountFragment;
             }else{
                 return UserFragment.newInstance();
             }

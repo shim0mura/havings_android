@@ -88,7 +88,6 @@ public class SearchTabFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    Timber.d("action search %s", v.getText());
                     String tags = v.getText().toString();
                     SearchTagResultActivity.startActivity(getActivity(), tags);
                     return true;
@@ -97,9 +96,9 @@ public class SearchTabFragment extends Fragment {
             }
         });
 
-        if(pickupEntity == null) {
+        //if(pickupEntity == null) {
             searchPresenter.getPickup();
-        }
+        //}
         layoutInflater = LayoutInflater.from(getActivity());
 
         return view;

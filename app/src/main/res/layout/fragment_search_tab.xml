@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/padding_between_content"
-        android:hint="@string/prompt_search"
+        android:hint="@string/prompt_user_search"
         android:drawableLeft="@drawable/ic_search_black_36dp"
         android:drawableStart="@drawable/ic_search_black_36dp"
         android:maxLines="1"
@@ -34,7 +34,6 @@
                 android:id="@+id/popular_tag_card"
                 card_view:cardCornerRadius="2dp"
                 card_view:cardUseCompatPadding="true"
-                card_view:contentPadding="@dimen/app_basic_padding"
                 card_view:cardElevation="6dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -43,7 +42,8 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/app_basic_padding">
+                        android:padding="@dimen/app_basic_padding"
+                        android:background="@color/mainColor">
                         <LinearLayout
                             android:id="@+id/cardtitle_tag"
                             android:layout_width="wrap_content"
@@ -53,11 +53,12 @@
                             <ImageView
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
-                                android:src="@drawable/ic_label_outline_cyan_300_36dp"/>
+                                android:src="@drawable/ic_label_outline_yellow_600_24dp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/popular_tags"
+                                android:textColor="@color/primaryTextWhite"
                                 android:textSize="18dp"/>
                         </LinearLayout>
 
@@ -67,12 +68,12 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_alignParentEnd="true"
-                            android:layout_alignBottom="@id/cardtitle_tag">
+                            android:layout_centerVertical="true">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/view_more"
-                                android:textColor="@color/link"/>
+                                android:textColor="@color/colorAccent"/>
                         </LinearLayout>
                     </RelativeLayout>
 
@@ -80,6 +81,7 @@
                         android:id="@+id/popular_tag_wrapper"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/app_basic_padding"
                         android:orientation="vertical">
                     </LinearLayout>
                 </LinearLayout>
@@ -94,7 +96,6 @@
                 android:id="@+id/popular_list_card"
                 card_view:cardCornerRadius="2dp"
                 card_view:cardUseCompatPadding="true"
-                card_view:contentPadding="@dimen/app_basic_padding"
                 card_view:cardElevation="6dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -103,7 +104,8 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/app_basic_padding">
+                        android:background="@color/mainColor"
+                        android:padding="@dimen/app_basic_padding">
                         <LinearLayout
                             android:id="@+id/cardtitle_list"
                             android:layout_width="wrap_content"
@@ -113,11 +115,12 @@
                             <ImageView
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
-                                android:src="@drawable/ic_whatshot_cyan_300_36dp"/>
+                                android:src="@drawable/ic_whatshot_yellow_600_24dp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/popular_list"
+                                android:textColor="@color/primaryTextWhite"
                                 android:textSize="18dp"/>
                         </LinearLayout>
 
@@ -127,12 +130,12 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_alignParentEnd="true"
-                            android:layout_alignBottom="@id/cardtitle_list">
+                            android:layout_centerVertical="true">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/view_more"
-                                android:textColor="@color/link"/>
+                                android:textColor="@color/colorAccent"/>
                         </LinearLayout>
                     </RelativeLayout>
 
@@ -140,6 +143,7 @@
                         android:id="@+id/popular_list_wrapper"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/app_basic_padding"
                         android:orientation="vertical">
                         <!--
                         <include layout="@layout/partial_popular_item_list" />

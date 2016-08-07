@@ -23,6 +23,7 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 import work.t_s.shim0mura.havings.model.entity.CommentEntity;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
+import work.t_s.shim0mura.havings.model.entity.DeviceTokenEntity;
 import work.t_s.shim0mura.havings.model.entity.FavoriteItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.FavoriteItemListEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
@@ -334,4 +335,16 @@ public interface ApiService {
 
     @GET("/tags/current_migration_version")
     Call<TagMigrationEntity> getTagMigrationVersion();
+
+    @POST("/device_token/{type}/")
+    Call<DeviceTokenEntity> postDeviceToken(
+            @Path("type") int type,
+            @Body HashMap<String, DeviceTokenEntity> deviceToken
+    );
+
+    @PUT("/device_token/{type}/")
+    Call<DeviceTokenEntity> putDeviceToken(
+            @Path("type") int type,
+            @Body HashMap<String, DeviceTokenEntity> deviceToken
+    );
 }
