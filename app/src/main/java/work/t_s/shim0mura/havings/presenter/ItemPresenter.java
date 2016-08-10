@@ -52,6 +52,7 @@ import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 import work.t_s.shim0mura.havings.util.ViewUtil;
@@ -88,6 +89,7 @@ public class ItemPresenter {
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");
                 } else {
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
 
                 }
             }

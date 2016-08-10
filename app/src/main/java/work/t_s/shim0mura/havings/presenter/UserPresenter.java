@@ -44,6 +44,7 @@ import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
+import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.NotificationEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
@@ -81,19 +82,8 @@ public class UserPresenter {
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");
                 } else if (response.code() == StatusCode.UnprocessableEntity) {
-                    Timber.d("failed to post");
-
-                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
-
-                    Timber.d(error.toString());
-                    for(Map.Entry<String, List<String>> e: error.errors.entrySet()){
-                        switch(e.getKey()){
-                            default:
-                                //sendErrorToGetUser();
-                                break;
-                        }
-                    }
                 } else {
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
 
                 }
             }
@@ -130,6 +120,7 @@ public class UserPresenter {
                         }
                     }
                 } else {
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
 
                 }
             }
@@ -403,6 +394,33 @@ public class UserPresenter {
         });
     }
 
+    public void getItemTree(int userId, boolean includeDump){
+        Call<ItemEntity> call = service.getItemTree(userId, (includeDump ? 1 : 0));
+
+        call.enqueue(new Callback<ItemEntity>() {
+            @Override
+            public void onResponse(Response<ItemEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ItemEntity item = response.body();
+                    BusHolder.get().post(item);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+
+                } else {
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("userrr", t.toString());
+            }
+        });
+    }
+
+
     public void editProfile(UserEntity userEntity){
 
         HashMap<String, UserEntity> hashItem = new HashMap<String, UserEntity>();
@@ -441,6 +459,8 @@ public class UserPresenter {
             }
         });
     }
+
+
 
     public void followUser(int userId){
         Call<ResultEntity> call = service.followUser(userId);

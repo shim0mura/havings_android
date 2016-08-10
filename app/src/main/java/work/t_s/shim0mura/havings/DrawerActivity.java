@@ -80,7 +80,9 @@ public class DrawerActivity extends AppCompatActivity implements NavigationView.
                 int userId = ApiKey.getSingleton(this).getUserId();
                 UserActivity.startActivity(this, userId);
                 break;
-
+            case R.id.menu_setting:
+                Intent settingIntent = new Intent(this, SettingActivity.class);
+                this.startActivity(settingIntent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -15,6 +15,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.model.TooltipManager;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
@@ -69,6 +70,12 @@ public class ItemImageEditActivity extends ItemFormBaseActivity {
         if(progressDialog != null){
             progressDialog.dismiss();
         }
+        TooltipManager tm = TooltipManager.getSingleton(this);
+        int status = tm.getStatus();
+        if(status == TooltipManager.STATUS_IMAGE){
+            tm.setNextStatus();
+        }
+
         Intent data = getIntent();
         Bundle extras = new Bundle();
         extras.putSerializable(ItemActivity.ADDED_IMAGES, itemEntity.itemImages);

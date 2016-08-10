@@ -62,11 +62,49 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.nhaarman.supertooltips.ToolTipRelativeLayout
+                android:id="@+id/activity_main_tooltipRelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/padding_between_content"/>
+            <!--
+            <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom" android:layout_margin="@dimen/fab_margin"
+                android:src="@android:drawable/ic_dialog_email" />
+            -->
 
-        <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom" android:layout_margin="@dimen/fab_margin"
-            android:src="@android:drawable/ic_dialog_email" />
+            <com.github.clans.fab.FloatingActionMenu
+                xmlns:fab="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/fab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                fab:menu_labels_ellipsize="end"
+                fab:menu_labels_singleLine="true"
+                fab:menu_backgroundColor="#ffffff"
+                fab:menu_labels_position="left"
+                fab:menu_colorNormal="@color/colorAccent"
+                fab:menu_colorPressed="@color/colorAccent"
+                app:layout_behavior="work.t_s.shim0mura.havings.util.FloatingActionMenuBehavior"
+                >
+
+            </com.github.clans.fab.FloatingActionMenu>
+            <RelativeLayout
+                android:id="@+id/fab_placeholder"
+                android:layout_width="86dp"
+                android:layout_height="80dp"
+                android:layout_alignEnd="@id/fab"
+                android:layout_alignRight="@id/fab"
+                android:layout_alignBottom="@id/fab">
+
+            </RelativeLayout>
+        </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 

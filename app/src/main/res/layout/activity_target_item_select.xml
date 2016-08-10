@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fitsSystemWindows="true"
+    tools:context="work.t_s.shim0mura.havings.ImageChooseActivity">
+
+    <RelativeLayout
+        android:id="@+id/loading"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+    </RelativeLayout>
+    <ListView
+        android:id="@+id/target_items"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</android.support.design.widget.CoordinatorLayout>

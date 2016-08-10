@@ -50,6 +50,7 @@ import io.realm.Realm;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.Item;
+import work.t_s.shim0mura.havings.model.TooltipManager;
 import work.t_s.shim0mura.havings.model.entity.TagEntity;
 import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
@@ -144,6 +145,12 @@ public class ItemFormActivity extends ItemFormBaseActivity {
 
         if(progressDialog != null){
             progressDialog.dismiss();
+        }
+
+        TooltipManager tm = TooltipManager.getSingleton(this);
+        int status = tm.getStatus();
+        if(status == TooltipManager.STATUS_LIST || status == TooltipManager.STATUS_ITEM || status == TooltipManager.STATUS_DUMP){
+            tm.setNextStatus();
         }
 
         if(item.isList){

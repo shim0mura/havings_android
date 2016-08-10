@@ -2,10 +2,13 @@ package work.t_s.shim0mura.havings;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.DrawerLayout;
@@ -31,10 +34,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.github.clans.fab.FloatingActionMenu;
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -54,14 +62,20 @@ import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.DefaultTag;
 import work.t_s.shim0mura.havings.model.StatusCode;
+import work.t_s.shim0mura.havings.model.Timer;
+import work.t_s.shim0mura.havings.model.TooltipManager;
 import work.t_s.shim0mura.havings.model.entity.DeviceTokenEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
+import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 import work.t_s.shim0mura.havings.model.event.DeviceTokenCheckEvent;
 import work.t_s.shim0mura.havings.model.event.GenericEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.NotificationEvent;
 import work.t_s.shim0mura.havings.model.event.ToggleLoadingEvent;
+import work.t_s.shim0mura.havings.presenter.FormPresenter;
 import work.t_s.shim0mura.havings.presenter.HomePresenter;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
@@ -83,6 +97,11 @@ public class HomeActivity extends DrawerActivity {
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
+    //final FloatingActionMenu fab = (FloatingActionMenu)findViewById(R.id.fab);
+    @Bind(R.id.fab) FloatingActionMenu fab;
+    @Bind(R.id.fab_placeholder) RelativeLayout fabPlaceholder;
+    @Bind(R.id.main_content) CoordinatorLayout coordinatorLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,15 +109,6 @@ public class HomeActivity extends DrawerActivity {
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own bccb", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DefaultTag tag = DefaultTag.getSingleton(this);
         tag.checkMigrationVersion();
@@ -156,10 +166,14 @@ public class HomeActivity extends DrawerActivity {
             }
         }
 
+        ButterKnife.bind(this);
         setTitle(R.string.prompt_home);
         checkDeviceToken();
 
         userPresenter.getSelf();
+
+        showTooltip();
+        setFAB();
     }
 
     @Override
@@ -249,5 +263,150 @@ public class HomeActivity extends DrawerActivity {
     public void setUserInfo(UserEntity userEntity){
         ApiKey.getSingleton(this).updateUserInfo(userEntity.name, userEntity.image, userEntity.count);
         onCreateDrawer(true);
+    }
+
+    private void showTooltip(){
+        ToolTipRelativeLayout toolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
+
+        TooltipManager tm = TooltipManager.getSingleton(this);
+        String text = tm.getStatusText();
+        if(text == null || text.isEmpty()){
+            return;
+        }
+
+        ToolTip toolTip = new ToolTip()
+                .withText(text)
+                .withColor(ContextCompat.getColor(this, R.color.colorAccent))
+                .withShadow()
+                .withAnimationType(ToolTip.AnimationType.NONE);
+        ToolTipView tv = toolTipRelativeLayout.showToolTipForView(toolTip, fabPlaceholder);
+    }
+
+    private void setFAB(){
+        final Activity act = this;
+        fab.setClosedOnTouchOutside(true);
+        fab.setMenuButtonColorNormal(ContextCompat.getColor(this, R.color.colorAccent));
+
+        //String itemTypeStr = (item.isList) ? getString(R.string.list) : getString(R.string.item);
+
+        final com.github.clans.fab.FloatingActionButton deleteItem = new com.github.clans.fab.FloatingActionButton(this);
+        deleteItem.setButtonSize(com.github.clans.fab.FloatingActionButton.SIZE_MINI);
+        deleteItem.setLabelText(getString(R.string.prompt_action_delete_item_from_home));
+        deleteItem.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        deleteItem.setImageResource(R.drawable.ic_clear_black_24dp);
+        deleteItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TargetItemSelectActivity.startActivity(act, TargetItemSelectActivity.TYPE_DELETE_ITEM);
+            }
+        });
+        fab.addMenuButton(deleteItem);
+
+        final com.github.clans.fab.FloatingActionButton dumpItem = new com.github.clans.fab.FloatingActionButton(this);
+        dumpItem.setButtonSize(com.github.clans.fab.FloatingActionButton.SIZE_MINI);
+        dumpItem.setLabelText(getString(R.string.prompt_action_dump_item_from_home));
+        dumpItem.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        dumpItem.setImageResource(R.drawable.ic_delete_black_24dp);
+        dumpItem.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+        dumpItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TargetItemSelectActivity.startActivity(act, TargetItemSelectActivity.TYPE_DUMP_ITEM);
+            }
+        });
+        fab.addMenuButton(dumpItem);
+
+        final com.github.clans.fab.FloatingActionButton editItem = new com.github.clans.fab.FloatingActionButton(this);
+        editItem.setButtonSize(com.github.clans.fab.FloatingActionButton.SIZE_MINI);
+        editItem.setLabelText(getString(R.string.prompt_action_edit_item_from_home));
+        editItem.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        editItem.setImageResource(R.drawable.ic_mode_edit_black_24dp);
+        editItem.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+        editItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TargetItemSelectActivity.startActivity(act, TargetItemSelectActivity.TYPE_EDIT_ITEM);
+            }
+        });
+        fab.addMenuButton(editItem);
+
+        final com.github.clans.fab.FloatingActionButton addImageFAB = new com.github.clans.fab.FloatingActionButton(this);
+        addImageFAB.setButtonSize(com.github.clans.fab.FloatingActionButton.SIZE_MINI);
+        addImageFAB.setLabelText(getString(R.string.prompt_action_add_image_from_home));
+        addImageFAB.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        addImageFAB.setImageResource(R.drawable.ic_photo_black_24dp);
+        addImageFAB.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_EDIT_ITEM);
+        addImageFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TargetItemSelectActivity.startActivity(act, TargetItemSelectActivity.TYPE_ADD_IMAGE);
+            }
+        });
+        fab.addMenuButton(addImageFAB);
+
+        final com.github.clans.fab.FloatingActionButton addItemFAB = new com.github.clans.fab.FloatingActionButton(this);
+        addItemFAB.setButtonSize(com.github.clans.fab.FloatingActionButton.SIZE_MINI);
+        addItemFAB.setLabelText(getString(R.string.prompt_action_add_item));
+        addItemFAB.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        addItemFAB.setImageResource(R.drawable.item_icon_for_tab);
+        addItemFAB.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_ADD_ITEM);
+        addItemFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemFormActivity.startActivityToCreateItem(act, new ItemEntity());
+            }
+        });
+        fab.addMenuButton(addItemFAB);
+
+        final com.github.clans.fab.FloatingActionButton addListFAB = new com.github.clans.fab.FloatingActionButton(this);
+        addListFAB.setButtonSize(com.github.clans.fab.FloatingActionButton.SIZE_MINI);
+        addListFAB.setLabelText(getString(R.string.prompt_action_add_list));
+        addListFAB.setColorNormal(ContextCompat.getColor(this, R.color.fabBackground));
+        addListFAB.setImageResource(R.drawable.list_icon_for_tab);
+        addListFAB.setTag(R.id.FAB_MENU_TYPE, FormPresenter.FAB_TYPE_ADD_ITEM);
+        addListFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListNameSelectActivity.startActivity(act, 0);
+
+            }
+        });
+        fab.addMenuButton(addListFAB);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Timber.d("activity result");
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == ItemActivity.ITEM_CREATED_RESULTCODE) {
+
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.item)), Snackbar.LENGTH_LONG).show();
+
+
+            } else if (requestCode == ItemActivity.ITEM_UPDATED_RESULTCODE) {
+                Bundle extras = data.getExtras();
+                ItemEntity item = (ItemEntity)extras.getSerializable(ItemActivity.UPDATED_ITEM);
+
+                String itemType = item.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_updated, itemType), Snackbar.LENGTH_LONG).show();
+            } else if (requestCode == ItemActivity.IMAGE_ADDED_RESULTCODE) {
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_image_added), Snackbar.LENGTH_LONG).show();
+            } else if (requestCode == ItemActivity.ITEM_DUMP_RESULTCODE){
+                Bundle extras = data.getExtras();
+                ItemEntity deletedItem = (ItemEntity)extras.getSerializable(ItemActivity.DUMP_ITEM);
+                String itemType = deletedItem.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_dumped, itemType), Snackbar.LENGTH_LONG).show();
+
+            } else if (requestCode == ItemActivity.ITEM_DELETE_RESULTCODE){
+                Bundle extras = data.getExtras();
+                ItemEntity deletedItem = (ItemEntity)extras.getSerializable(ItemActivity.DELETE_ITEM);
+                String itemType = deletedItem.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_deleted, itemType), Snackbar.LENGTH_LONG).show();
+            }
+            showTooltip();
+        }
     }
 }

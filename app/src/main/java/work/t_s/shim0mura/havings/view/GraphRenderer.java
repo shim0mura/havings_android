@@ -56,6 +56,10 @@ public class GraphRenderer {
 
     public static void renderSimpleLineGraph(LineChartView lineChartView, List<CountDataEntity> countData){
 
+        if(countData.size() <= 0){
+            return;
+        }
+
         if(shouldAddTodayData(countData.get(countData.size()-1).date)){
             addTodayData(countData);
         }

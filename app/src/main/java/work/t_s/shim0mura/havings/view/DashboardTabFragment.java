@@ -31,9 +31,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.AllTimerActivity;
+import work.t_s.shim0mura.havings.DetailGraphActivity;
 import work.t_s.shim0mura.havings.DoneTaskActivity;
 import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.ProfileEditActivity;
@@ -45,17 +47,23 @@ import work.t_s.shim0mura.havings.UserSearchActivity;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.Timer;
+import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
+import work.t_s.shim0mura.havings.model.entity.EventEntity;
+import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
 import work.t_s.shim0mura.havings.model.entity.TaskWrapperEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
 import work.t_s.shim0mura.havings.model.event.CalendarTaskListEvent;
+import work.t_s.shim0mura.havings.model.event.CountGraphEvent;
 import work.t_s.shim0mura.havings.model.event.GenericEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.TimerListRenderEvent;
 import work.t_s.shim0mura.havings.presenter.DoneTaskPresenter;
 import work.t_s.shim0mura.havings.presenter.HomePresenter;
+import work.t_s.shim0mura.havings.presenter.StickyScrollPresenter;
 import work.t_s.shim0mura.havings.presenter.TimerPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
+import work.t_s.shim0mura.havings.util.ViewUtil;
 
 /**
  * Created by shim0mura on 2016/03/30.
@@ -65,6 +73,7 @@ public class DashboardTabFragment extends Fragment {
     private static final String BUNDLE_ARG = "BundleArg";
     private static final int MAX_TIMER_SHOWING = 3;
 
+    private static final String COUNT_GRAPH_EVENT = "CountGraphEvent";
     private static final String ITEM_PERCENTAGE_EVENT = "ItemPercentageEvent";
     private static final String TIMER_LIST_RENDER_EVENT = "TimerListRenderEvent";
     private static final String CALENDAR_TASK_LIST_EVENT = "CalendarTaskListEvent";
@@ -77,6 +86,11 @@ public class DashboardTabFragment extends Fragment {
     @Bind(R.id.calendar) MaterialCalendarView calendarView;
     @Bind(R.id.task_done_header) View taskDoneHeader;
     @Bind(R.id.task_done_date) LinearLayout taskDoneDate;
+    @Bind(R.id.item_graph_date_from) TextView graphDateFrom;
+    @Bind(R.id.item_graph_date_to) TextView graphDateTo;
+    @Bind(R.id.no_graph) TextView noGraph;
+    @Bind(R.id.graph_date_range) LinearLayout graphDateWrapper;
+    @Bind(R.id.to_detail_graph) LinearLayout detailCountWrapper;
 
     @Bind(R.id.chart_wrapper) LinearLayout chartWrapper;
     @Bind(R.id.calendar_wrapper) LinearLayout calendarWrapper;
@@ -84,6 +98,7 @@ public class DashboardTabFragment extends Fragment {
     private HomePresenter homePresenter;
     private UserPresenter userPresenter;
     private DoneTaskPresenter doneTaskPresenter;
+    private CountGraphEvent countGraphEvent;
     private ItemPercentageGraphEvent itemPercentageGraphEvent;
     private TimerListRenderEvent timerListRenderEvent;
     private CalendarTaskListEvent calendarTaskListEvent;
@@ -126,7 +141,10 @@ public class DashboardTabFragment extends Fragment {
             userPresenter.getItemPercentage();
             homePresenter.getAllTimers();
             doneTaskPresenter.getAllTask();
+            homePresenter.getCountData();
         }else{
+            countGraphEvent = (CountGraphEvent) savedInstanceState.getSerializable(COUNT_GRAPH_EVENT);
+            renderCountGraph(countGraphEvent);
             itemPercentageGraphEvent = (ItemPercentageGraphEvent) savedInstanceState.getSerializable(ITEM_PERCENTAGE_EVENT);
             renderPieChart(itemPercentageGraphEvent);
             timerListRenderEvent = (TimerListRenderEvent) savedInstanceState.getSerializable(TIMER_LIST_RENDER_EVENT);
@@ -148,9 +166,6 @@ public class DashboardTabFragment extends Fragment {
         });
         swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
 
-
-
-
         return view;
     }
 
@@ -158,6 +173,7 @@ public class DashboardTabFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putSerializable(COUNT_GRAPH_EVENT, countGraphEvent);
         outState.putSerializable(ITEM_PERCENTAGE_EVENT, itemPercentageGraphEvent);
         outState.putSerializable(TIMER_LIST_RENDER_EVENT, timerListRenderEvent);
         outState.putSerializable(CALENDAR_TASK_LIST_EVENT, calendarTaskListEvent);
@@ -338,6 +354,50 @@ public class DashboardTabFragment extends Fragment {
                 }
             });
             taskDoneDate.addView(v);
+        }
+    }
+
+    @Subscribe
+    public void getCountGraph(CountGraphEvent event){
+        renderCountGraph(event);
+        countGraphEvent = event;
+    }
+
+    private void renderCountGraph(final CountGraphEvent event){
+        LineChartView lineChartView = (LineChartView)getActivity().findViewById(R.id.item_graph);
+
+
+        final Activity act = getActivity();
+        if(event.countDataEntities.size() > 0){
+            GraphRenderer.renderSimpleLineGraph(lineChartView, event.countDataEntities);
+
+            getActivity().findViewById(R.id.navigate_to_detailgraph).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ItemEntity item = new ItemEntity();
+                    item.name = getString(R.string.prompt_you);
+                    item.countProperties = event.countDataEntities;
+                    DetailGraphActivity.startActivity(act, item);
+                }
+            });
+
+            int countSize = event.countDataEntities.size();
+            Date start;
+            Date end;
+            if(event.countDataEntities.size() > 0){
+                start = event.countDataEntities.get(0).date;
+                end = event.countDataEntities.get(countSize - 1).date;
+            }else{
+                start = new Date();
+                end = start;
+            }
+            graphDateFrom.setText(ViewUtil.dateToString(start, true));
+            graphDateTo.setText(ViewUtil.dateToString(end, true));
+
+        }else{
+            noGraph.setVisibility(View.VISIBLE);
+            graphDateWrapper.setVisibility(View.GONE);
+            detailCountWrapper.setVisibility(View.GONE);
         }
     }
 

@@ -43,6 +43,11 @@
     <string name="prompt_action_dump_item">この%1$sを手放す</string>
     <string name="prompt_action_delete_item">この%1$sを削除</string>
 
+    <string name="prompt_action_add_image_from_home">画像を追加</string>
+    <string name="prompt_action_edit_item_from_home">編集する</string>
+    <string name="prompt_action_dump_item_from_home">手放す</string>
+    <string name="prompt_action_delete_item_from_home">削除する</string>
+
 
     <string name="prompt_item_private">非公開のアイテム</string>
     <string name="item_list">モノリスト</string>
@@ -362,6 +367,9 @@
 
     <string name="prompt_share">シェアするアプリを選択</string>
 
+    <string name="prompt_count_graph">モノの個数グラフ</string>
+
+    <string name="prompt_no_count_graph">リスト、アイテムがありません。\n\nリストやアイテムを追加して記録を始めましょう!</string>
     <string name="prompt_no_chart">グラフはありません。\n \nアイテムやリストを追加すると、グラフが自動的に作成されます</string>
     <string name="prompt_done_task_result">%1$sにこなしたタスク %2$d件</string>
     <string name="prompt_done_task_list">こなしたタスク一覧</string>
@@ -374,6 +382,20 @@
 
     <string name="prompt_connection_error">接続エラー</string>
     <string name="prompt_connection_error_detail">通信に失敗しました。時間をおいてから再度お試しください</string>
+
+    <string name="prompt_setting">設定</string>
+    <string name="prompt_push_notification">通知</string>
+    <string name="prompt_push_notification_detail">タイマーの期限が過ぎた時に通知を行います</string>
+
+    <string name="prompt_target_select">アイテムまたはリストを選択</string>
+
+    <string name="prompt_tooltip_list">まずはあなたが今片付けたいところを「リスト」として追加しましょう。\n最初は1日で片付け終えられるような小さなところから片付け始めるといいかもしれません。</string>
+    <string name="prompt_tooltip_item">片付けたいところにあるモノを「アイテム」として追加しましょう。\nリストにアイテムを追加することで、あなたが片付けたいところに、何があるのか把握しましょう！</string>
+    <string name="prompt_tooltip_dump">「手放す」からモノを捨てた記録ができます。\n手放したアイテムの情報は後で見ることができるので、モノを捨てても、思い出やそのモノの写真を保存しておくことができます。</string>
+    <string name="prompt_tooltip_image">「画像を追加」で片付けている場所の今の状態を記録してみませんか？\n片付けの進み具合を記録しておけば、後で片付けを行うときの参考になるかもしれません。</string>
+
+
+    <string name="prompt_you">あなた</string>
 
     <string name="tag_item_id">itemId</string>
     <string name="tag_image_date">imageDate</string>

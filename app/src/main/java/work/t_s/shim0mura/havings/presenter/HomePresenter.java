@@ -36,6 +36,7 @@ import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.User;
+import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
 import work.t_s.shim0mura.havings.model.entity.DeviceTokenEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemPercentageEntity;
@@ -43,6 +44,7 @@ import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
 import work.t_s.shim0mura.havings.model.entity.PopularTagEntity;
 import work.t_s.shim0mura.havings.model.entity.TimelineEntity;
 import work.t_s.shim0mura.havings.model.entity.TimerEntity;
+import work.t_s.shim0mura.havings.model.event.CountGraphEvent;
 import work.t_s.shim0mura.havings.model.event.ItemPercentageGraphEvent;
 import work.t_s.shim0mura.havings.model.event.TimerListRenderEvent;
 import work.t_s.shim0mura.havings.util.ApiErrorUtil;
@@ -144,6 +146,32 @@ public class HomePresenter {
         });
     }
 
+    public void getCountData(){
+        Call<List<CountDataEntity>> call = service.getCountData();
+
+        call.enqueue(new Callback<List<CountDataEntity>>() {
+            @Override
+            public void onResponse(Response<List<CountDataEntity>> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    List<CountDataEntity> data = response.body();
+                    BusHolder.get().post(new CountGraphEvent(data));
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("timer get failed");
+            }
+        });
+    }
+
     public void postDeviceToken(String token){
         DeviceTokenEntity deviceTokenEntity = new DeviceTokenEntity();
         deviceTokenEntity.token = token;
@@ -191,6 +219,44 @@ public class HomePresenter {
         HashMap<String, DeviceTokenEntity> hashItem = new HashMap<String, DeviceTokenEntity>();
         hashItem.put(DEVICE_TOKEN_KEY, deviceTokenEntity);
         Call<DeviceTokenEntity> call = service.putDeviceToken(0, hashItem);
+
+        call.enqueue(new Callback<DeviceTokenEntity>() {
+            @Override
+            public void onResponse(Response<DeviceTokenEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    DeviceTokenEntity deviceToken = response.body();
+                    BusHolder.get().post(deviceToken);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    for (Map.Entry<String, List<String>> e : error.errors.entrySet()) {
+                        switch (e.getKey()) {
+                            default:
+                                //sendErrorToGetUser();
+                                break;
+                        }
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Timber.d("timer get failed");
+            }
+        });
+    }
+
+    public void changeDeviceTokenState(boolean isEnable){
+        int value = isEnable ? 1 : 0;
+        Call<DeviceTokenEntity> call = service.changeDeviceTokenState(0, value);
 
         call.enqueue(new Callback<DeviceTokenEntity>() {
             @Override

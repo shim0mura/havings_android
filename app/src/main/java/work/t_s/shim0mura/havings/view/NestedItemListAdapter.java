@@ -54,7 +54,9 @@ public class NestedItemListAdapter extends ArrayAdapter<ItemEntity> {
 
             //items.remove(item);
             //Timber.d("after remove, items.size %s, nest: %s", items.size(), nest);
-            setItemEntityList(new ArrayList<ItemEntity>(item.owningItems), nest + 1);
+            if(item.owningItems != null){
+                setItemEntityList(new ArrayList<ItemEntity>(item.owningItems), nest + 1);
+            }
         }
     }
 
@@ -79,6 +81,7 @@ public class NestedItemListAdapter extends ArrayAdapter<ItemEntity> {
 
             holder.imageWrapper = (LinearLayout)convertView.findViewById(R.id.image_wrapper);
             holder.itemType = (ImageView)convertView.findViewById(R.id.item_type);
+            holder.isPrivate = (ImageView)convertView.findViewById(R.id.is_private);
             holder.name = (TextView)convertView.findViewById(R.id.item_name);
             holder.count = (TextView)convertView.findViewById(R.id.item_count);
 
@@ -91,11 +94,20 @@ public class NestedItemListAdapter extends ArrayAdapter<ItemEntity> {
         ItemEntity item = getItem(position);
 
         convertView.setTag(R.id.TAG_ITEM_ID, item.id);
-        if(item.isList){
+        if(item.isGarbage) {
+            holder.itemType.setImageResource(R.drawable.ic_delete_black_24dp);
+        }else if(item.isList){
             holder.itemType.setImageResource(R.drawable.list_icon_for_tab);
         }else {
             holder.itemType.setImageResource(R.drawable.item_icon_for_tab);
         }
+
+        if(item.privateType > 0){
+            holder.isPrivate.setVisibility(View.VISIBLE);
+        }else{
+            holder.isPrivate.setVisibility(View.GONE);
+        }
+
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.imageWrapper.getLayoutParams();
         Timber.d("nest deep %s , %s", item.nest, item.nest * nestDepthMargin);
         params.setMargins(item.nest * nestDepthMargin, 0, 0, 0);
@@ -175,6 +187,7 @@ public class NestedItemListAdapter extends ArrayAdapter<ItemEntity> {
 
         LinearLayout imageWrapper;
         ImageView itemType;
+        ImageView isPrivate;
         TextView name;
         TextView count;
 

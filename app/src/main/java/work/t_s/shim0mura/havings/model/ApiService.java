@@ -295,6 +295,15 @@ public interface ApiService {
     @GET("/home/all_done_task")
     Call<List<TaskWrapperEntity>> getAllDoneTasks();
 
+    @GET("/home/item_count")
+    Call<List<CountDataEntity>> getCountData();
+
+    @GET("/user/{user_id}/item_tree")
+    Call<ItemEntity> getItemTree(
+            @Path("user_id") int userId,
+            @Query("include_dump") int includeDump
+    );
+
     @GET("/pickup")
     Call<PickupEntity> getPickup();
 
@@ -346,5 +355,11 @@ public interface ApiService {
     Call<DeviceTokenEntity> putDeviceToken(
             @Path("type") int type,
             @Body HashMap<String, DeviceTokenEntity> deviceToken
+    );
+
+    @PUT("/device_token/state/{type}/{state}")
+    Call<DeviceTokenEntity> changeDeviceTokenState(
+            @Path("type") int type,
+            @Path("state") int state
     );
 }

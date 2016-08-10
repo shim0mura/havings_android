@@ -242,32 +242,8 @@
         fab:menu_labels_position="left"
         fab:menu_colorNormal="@color/colorAccent"
         fab:menu_colorPressed="@color/colorAccent"
-
         app:layout_behavior="work.t_s.shim0mura.havings.util.FloatingActionMenuBehavior"
         >
-
-        <!--
-        <com.github.clans.fab.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_image_black_18dp"
-            fab:fab_size="mini"
-            fab:fab_label="Menu item 1" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_visibility_black_18dp"
-            fab:fab_size="mini"
-            fab:fab_label="Menu item 2" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_black_18dp"
-            fab:fab_size="mini"
-            fab:fab_label="aaa" />
-        -->
 
     </com.github.clans.fab.FloatingActionMenu>
 

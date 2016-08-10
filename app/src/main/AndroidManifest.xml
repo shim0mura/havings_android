@@ -192,7 +192,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ImageChooseActivity" />
         <activity android:name=".TimerEditActivity" />
-        <activity android:name=".DrawerActivity"></activity>
+        <activity android:name=".DrawerActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".TargetItemSelectActivity"></activity>
     </application>
 
 </manifest>

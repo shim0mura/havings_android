@@ -12,4 +12,5 @@ public class DeviceTokenEntity {
     public int userId;
     public String token;
     public int type;
+    public boolean isEnable;
 }
