@@ -8,6 +8,9 @@
     <string name="password">パスワード</string>
 
     <string name="twitter">twitter</string>
+    <string name="facebook">facebook</string>
+    <string name="instagram">instagram</string>
+    <string name="hatena">hatena</string>
 
     <!-- Strings related to login -->
     <string name="prompt_name">ユーザー名</string>
@@ -15,6 +18,18 @@
     <string name="prompt_password">パスワード(半角英数字8文字以上)</string>
     <string name="action_register">登録</string>
     <string name="action_sign_in">ログイン</string>
+
+    <string name="prompt_register_by_twitter">Twitterから登録</string>
+    <string name="prompt_register_by_facebook">Facebookから登録</string>
+    <string name="prompt_register_by_instagram">Instagramから登録</string>
+    <string name="prompt_register_by_hatena">はてなから登録</string>
+    <string name="prompt_signin_by_twitter">Twitterからログイン</string>
+    <string name="prompt_signin_by_facebook">Facebookからログイン</string>
+    <string name="prompt_signin_by_instagram">Instagramからログイン</string>
+    <string name="prompt_signin_by_hatena">はてなからログイン</string>
+    <string name="prompt_already_signup">既に登録済みの場合は</string>
+    <string name="prompt_signin">ログイン</string>
+    <string name="prompt_signout">ログアウト</string>
 
     <string name="error_invalid_email">メールアドレスが有効ではありません。</string>
     <string name="error_invalid_password">パスワードが短すぎます。</string>
@@ -394,6 +409,10 @@
     <string name="prompt_tooltip_dump">「手放す」からモノを捨てた記録ができます。\n手放したアイテムの情報は後で見ることができるので、モノを捨てても、思い出やそのモノの写真を保存しておくことができます。</string>
     <string name="prompt_tooltip_image">「画像を追加」で片付けている場所の今の状態を記録してみませんか？\n片付けの進み具合を記録しておけば、後で片付けを行うときの参考になるかもしれません。</string>
 
+    <string name="prompt_count_help">このアイテムの数です。\n指定した数の分だけリストのグラフや分類グラフに記録されます。</string>
+    <string name="prompt_belong_list_help">このアイテムまたはリストは、ここで指定したリストの中に入ります。\n中に入れたアイテムやリストを編集した場合、その情報はリストにも伝えられ、グラフに反映されます。</string>
+    <string name="prompt_tag_help">追加するモノの名前や種類を入力すると、モノをカテゴリに分類します。\n自分がどのカテゴリのモノをいくつ持っているかは、ダッシュボードのグラフから確認できます。</string>
+    <string name="prompt_garbage_help">手放したアイテムとして追加します。手放したアイテムの個数はリストに反映されなくなります。</string>
 
     <string name="prompt_you">あなた</string>
 

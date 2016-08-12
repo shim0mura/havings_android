@@ -111,7 +111,7 @@ public class LoginPresenter extends SessionBasePresenter {
                             Log.d(TAG, token);
                             String uid = jsonResult.getString("uid");
                             Log.d(TAG, uid);
-                            int userId = Integer.valueOf(jsonResult.getString("userid"));
+                            int userId = Integer.valueOf(jsonResult.getString("id"));
                             asm.setApiKey(token, uid, userId);
                             BusHolder.get().post(new NavigateEvent());
                         }catch (JSONException e){

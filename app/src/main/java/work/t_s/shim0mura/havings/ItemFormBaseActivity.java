@@ -40,6 +40,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
 import com.squareup.otto.Subscribe;
 import com.tokenautocomplete.FilteredArrayAdapter;
 import com.wefika.flowlayout.FlowLayout;
@@ -564,6 +567,33 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     @Nullable @OnClick(R.id.item_count_changer)
     public void itemCountChange(){
         showItemCountChanger();
+    }
+
+    @Nullable @OnClick(R.id.count_help)
+    public void showCountHelp(){
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.prompt_item_count))
+                .setMessage(getString(R.string.prompt_count_help))
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    @Nullable @OnClick(R.id.tag_help)
+    public void showTagHelp(View view){
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.prompt_tag))
+                .setMessage(getString(R.string.prompt_tag_help))
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    @Nullable @OnClick(R.id.belong_list_help)
+    public void showBelongListHelp(View view){
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.prompt_add_to_list))
+                .setMessage(getString(R.string.prompt_belong_list_help))
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     @OnClick(R.id.post_item)

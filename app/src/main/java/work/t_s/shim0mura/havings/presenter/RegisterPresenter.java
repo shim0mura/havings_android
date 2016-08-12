@@ -76,18 +76,15 @@ public class RegisterPresenter extends SessionBasePresenter {
             public void onResponse(Response response) throws IOException {
 
                 String result = response.body().string();
-                Log.d(TAG, result);
-                Log.d(TAG, String.valueOf(response.code()));
+
                 switch (response.code()){
                     case StatusCode.CREATED:
                         Log.d(TAG, "response successed, user created");
                         try{
                             JSONObject jsonResult = new JSONObject(result);
                             String token = jsonResult.getString("token");
-                            Log.d(TAG, token);
                             String uid = jsonResult.getString("uid");
-                            int userId = Integer.valueOf(jsonResult.getString("userid"));
-                            Log.d(TAG, uid);
+                            int userId = Integer.valueOf(jsonResult.getString("id"));
                             asm.setApiKey(token, uid, userId);
                             BusHolder.get().post(new NavigateEvent());
                         }catch (JSONException e){

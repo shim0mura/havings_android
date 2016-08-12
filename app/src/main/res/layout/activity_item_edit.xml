@@ -158,10 +158,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/tag_help"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/prompt_tag"/>
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/prompt_tag"/>
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="@dimen/padding_to_highlight_text"
+                            android:layout_marginLeft="@dimen/padding_to_highlight_text"
+                            android:src="@drawable/ic_help_outline_grey_400_18dp"/>
+                    </LinearLayout>
                     <work.t_s.shim0mura.havings.util.TagCompletionView
                         android:id="@+id/searchView"
                         android:layout_width="match_parent"
@@ -191,10 +203,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/count_help"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/prompt_item_count"/>
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/prompt_item_count"/>
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="@dimen/padding_to_highlight_text"
+                            android:layout_marginLeft="@dimen/padding_to_highlight_text"
+                            android:src="@drawable/ic_help_outline_grey_400_18dp"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/item_count_changer"
@@ -241,10 +265,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/belong_list_help"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/prompt_add_to_list"/>
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/prompt_add_to_list"/>
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="@dimen/padding_to_highlight_text"
+                            android:layout_marginLeft="@dimen/padding_to_highlight_text"
+                            android:src="@drawable/ic_help_outline_grey_400_18dp"/>
+                    </LinearLayout>
                     <Spinner
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

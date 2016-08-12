@@ -166,7 +166,6 @@ public class ItemFormActivity extends ItemFormBaseActivity {
         }
     }
 
-
     @Subscribe
     @Override
     public void subscribeSetListUserOwning(UserListEntity[] list){

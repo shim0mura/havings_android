@@ -244,18 +244,20 @@ public class HomeActivity extends DrawerActivity {
     }
 
     private void setNotificationBadge(int count) {
-        TextView badge = (TextView) notificationView.findViewById(R.id.notification_badge);
-        ImageView icon = (ImageView) notificationView.findViewById(R.id.notification_icon);
+        if(notificationView != null){
+            TextView badge = (TextView) notificationView.findViewById(R.id.notification_badge);
+            ImageView icon = (ImageView) notificationView.findViewById(R.id.notification_icon);
 
-        if (count != 0) {
-            notificationView.setTag(R.id.NOTIFICATION_EXIST, true);
-            badge.setVisibility(View.VISIBLE);
-            badge.setText(String.valueOf(count));
-            icon.setImageResource(R.drawable.ic_notifications_white_36dp);
-        } else {
-            notificationView.setTag(R.id.NOTIFICATION_EXIST, false);
-            badge.setVisibility(View.GONE);
-            icon.setImageResource(R.drawable.ic_notifications_none_white_36dp);
+            if (count != 0) {
+                notificationView.setTag(R.id.NOTIFICATION_EXIST, true);
+                badge.setVisibility(View.VISIBLE);
+                badge.setText(String.valueOf(count));
+                icon.setImageResource(R.drawable.ic_notifications_white_36dp);
+            } else {
+                notificationView.setTag(R.id.NOTIFICATION_EXIST, false);
+                badge.setVisibility(View.GONE);
+                icon.setImageResource(R.drawable.ic_notifications_none_white_36dp);
+            }
         }
     }
 

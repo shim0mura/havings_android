@@ -18,6 +18,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 
 public class DrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -83,6 +84,12 @@ public class DrawerActivity extends AppCompatActivity implements NavigationView.
             case R.id.menu_setting:
                 Intent settingIntent = new Intent(this, SettingActivity.class);
                 this.startActivity(settingIntent);
+            case R.id.menu_logout:
+                ApiServiceManager asm = ApiServiceManager.getSingleton(this);
+                asm.clearApiKey();
+                Intent registerIntent = new Intent(this, RegisterActivity.class);
+                startActivity(registerIntent);
+                this.finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

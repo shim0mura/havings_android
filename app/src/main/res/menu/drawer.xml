@@ -20,6 +20,7 @@
         <item
             android:title="使い方" />
         <item
-            android:title="ログアウト" />
+            android:id="@+id/menu_logout"
+            android:title="@string/prompt_signout" />
     </group>
 </menu>
