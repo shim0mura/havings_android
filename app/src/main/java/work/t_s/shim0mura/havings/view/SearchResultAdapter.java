@@ -16,6 +16,7 @@ import java.util.List;
 
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.SearchResultEntity;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
@@ -103,7 +104,7 @@ public class SearchResultAdapter extends ArrayAdapter<ItemEntity> {
         convertView.setTag(R.string.tag_item_id, item.id);
 
         if(item.thumbnail != null){
-            String thumbnailUrl = ApiService.BASE_URL + item.thumbnail;
+            String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + item.thumbnail;
             Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
         }
         if(item.isList){

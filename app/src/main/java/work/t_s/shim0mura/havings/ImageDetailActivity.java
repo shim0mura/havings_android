@@ -37,6 +37,7 @@ import butterknife.OnClick;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.Item;
@@ -210,7 +211,7 @@ public class ImageDetailActivity extends DrawerActivity {
         updateImageData();
         toggleFavoriteState();
 
-        String thumbnail = ApiService.BASE_URL + itemImageEntity.url;
+        String thumbnail = ApiServiceManager.getSingleton(this).getApiUrl() + itemImageEntity.url;
         Glide.with(this)
                 .load(thumbnail)
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -334,7 +335,7 @@ public class ImageDetailActivity extends DrawerActivity {
         }else {
             itemImageName = null;
         }
-        Share.startIntent(this, Item.getImagePath(itemImageEntity), itemImageName, detailImage);
+        Share.startIntent(this, Item.getImagePath(itemImageEntity, this), itemImageName, detailImage);
     }
 
     @OnClick(R.id.favorite_count_wrapper)

@@ -53,9 +53,6 @@ public class DrawerActivity extends AppCompatActivity implements NavigationView.
         String thumbnail = apiKey.getUserThumbnail();
         int count = apiKey.getItemCount();
 
-        Timber.d(name);
-        Timber.d(userName.toString());
-
         if(name != null && userName != null){
             userName.setText(name);
             itemCount.setText(getString(R.string.prompt_item_having, count));
@@ -63,7 +60,7 @@ public class DrawerActivity extends AppCompatActivity implements NavigationView.
 
         if(thumbnail != null && userThumbnail != null){
             userThumbnail.setVisibility(View.VISIBLE);
-            String thumbnailUrl = ApiService.BASE_URL + thumbnail;
+            String thumbnailUrl = ApiServiceManager.getSingleton(this).getApiUrl() + thumbnail;
             Glide.with(this).load(thumbnailUrl).into(userThumbnail);
         }
     }

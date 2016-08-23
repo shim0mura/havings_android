@@ -90,8 +90,8 @@ public class SessionBaseActivity extends AppCompatActivity {
     @OnClick({R.id.register_by_twitter, R.id.register_by_facebook, R.id.register_by_instagram, R.id.register_by_hatena})
     public void openBrowser(View v){
         String providerTag = v.getTag().toString();
-        Log.d(TAG, "provider: "+providerTag);
-        Intent intent = new Intent(Intent.ACTION_VIEW, LoginPresenter.getAuthUri(providerTag));
+        LoginPresenter loginPresenter = new LoginPresenter(this);
+        Intent intent = new Intent(Intent.ACTION_VIEW, loginPresenter.getAuthUri(providerTag));
 
         //新しいタブを開かせる
         //http://stackoverflow.com/questions/4119084/android-browser-open-several-urls-each-on-new-window-tab-programmatically

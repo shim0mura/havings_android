@@ -35,6 +35,7 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.User;
@@ -191,7 +192,7 @@ public class UserActivity extends DrawerActivity {
         }
 
         if(user.image != null){
-            String thumbnailUrl = ApiService.BASE_URL + user.image;
+            String thumbnailUrl = ApiServiceManager.getSingleton(this).getApiUrl() + user.image;
             Glide.with(this).load(thumbnailUrl).into(userThumbnail);
         }
 
@@ -251,7 +252,7 @@ public class UserActivity extends DrawerActivity {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Share.startIntent(self, user.name, User.getPath(user), backgroundImage);
+                Share.startIntent(self, user.name, User.getPath(user, self), backgroundImage);
             }
         });
     }
@@ -296,7 +297,7 @@ public class UserActivity extends DrawerActivity {
     }
 
     private void setUserBackground(String thumbnailUrl){
-        thumbnailUrl = ApiService.BASE_URL + thumbnailUrl;
+        thumbnailUrl = ApiServiceManager.getSingleton(this).getApiUrl() + thumbnailUrl;
         Glide.with(this).load(thumbnailUrl).into(backgroundImage);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             overlay.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.shadow));

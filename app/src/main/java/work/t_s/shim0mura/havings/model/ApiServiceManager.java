@@ -1,7 +1,6 @@
 package work.t_s.shim0mura.havings.model;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.integration.okhttp.OkHttpUrlLoader;
@@ -22,6 +21,7 @@ import javax.inject.Inject;
 import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.di.Api;
 import work.t_s.shim0mura.havings.model.di.ApiComponent;
 import work.t_s.shim0mura.havings.model.di.ApiModule;
@@ -36,11 +36,7 @@ public class ApiServiceManager {
 
     private static ApiServiceManager asm;
     private static ApiService service;
-    private static Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl(ApiService.BASE_URL)
-                    .addConverterFactory(JacksonConverterFactory.create(
-                            new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
-                    ));
+    private static Retrofit.Builder builder;
     //ruby風のスネークケースをjava風のキャメルケースに置き換えたいので、その指定をcreateの中でしてる
     //http://stackoverflow.com/questions/10519265/jackson-overcoming-underscores-in-favor-of-camel-case
 
@@ -52,13 +48,15 @@ public class ApiServiceManager {
     private ApiServiceManager(Context c){
         ApiComponent api = DaggerApiComponent.builder().apiModule(new ApiModule(c)).build();
         api.inject(this);
-        retrofit = builder.client(okhttpClient.getClient()).build();
         context = c;
-
-        Timber.d("access manager1");
+        builder = new Retrofit.Builder()
+                .baseUrl(getApiUrl())
+                .addConverterFactory(JacksonConverterFactory.create(
+                        new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
+                ));
+        retrofit = builder.client(okhttpClient.getClient()).build();
 
         apiKey = ApiKey.getSingleton(context);
-        Timber.d("access manager2");
 
         addJsonHeader();
         addRawJsonLogInterceptor();
@@ -66,9 +64,7 @@ public class ApiServiceManager {
 
         if(canAccessToApi()) {
             addAuthHeader(apiKey.getToken(), apiKey.getUid());
-            Timber.d("access manager3");
         }
-        Timber.d("access manager4");
 
     }
 
@@ -89,6 +85,22 @@ public class ApiServiceManager {
         }
 
         return service;
+    }
+
+    public String getApiUrl(){
+        return context.getString(R.string.api_url);
+    }
+
+    public String getWebUrl(){
+        return context.getString(R.string.url_by_web);
+    }
+
+    public String getRegisterUrl(){
+        return context.getString(R.string.api_url) + ApiService.REGISTER;
+    }
+
+    public String getLoginUrl(){
+        return context.getString(R.string.api_url) + ApiService.SIGNIN;
     }
 
     public Boolean canAccessToApi(){

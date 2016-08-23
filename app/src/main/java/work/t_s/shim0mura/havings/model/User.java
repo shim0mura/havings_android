@@ -1,5 +1,6 @@
 package work.t_s.shim0mura.havings.model;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -44,12 +45,14 @@ public class User {
     public static final String NOTIFICATION_TYPE_DUMP = "dump";
 
     private static User user;
+    private Context context;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+");
 
-    private User(Context context){
-        ApiComponent api = DaggerApiComponent.builder().apiModule(new ApiModule(context)).build();
+    private User(Context c){
+        ApiComponent api = DaggerApiComponent.builder().apiModule(new ApiModule(c)).build();
         api.inject(this);
+        context = c;
     }
 
     public static synchronized User getSingleton(Context context){
@@ -60,11 +63,12 @@ public class User {
         return user;
     }
 
-    public static String getPath(UserEntity userEntity){
+    public static String getPath(UserEntity userEntity, Activity activity){
+        ApiServiceManager asm = ApiServiceManager.getSingleton(activity);
         if(userEntity.path.isEmpty()) {
-            return ApiService.BASE_URL_BY_WEB + "/user/" + String.valueOf(userEntity.id);
+            return asm.getWebUrl() + "/user/" + String.valueOf(userEntity.id);
         }else{
-            return ApiService.BASE_URL_BY_WEB + userEntity.path;
+            return asm.getWebUrl() + userEntity.path;
         }
     }
 
@@ -124,8 +128,9 @@ public class User {
 
         RequestBody requestBody = RequestBody.create(ApiService.JSON, userWrapper.toString());
 
+        ApiServiceManager asm = ApiServiceManager.getSingleton(context);
         Request request = new Request.Builder()
-                .url(ApiService.REGISTER)
+                .url(asm.getRegisterUrl())
                 .addHeader("Accept", ApiService.JSON.toString())
                 .post(requestBody)
                 .build();
@@ -147,8 +152,9 @@ public class User {
 
         RequestBody requestBody = RequestBody.create(ApiService.JSON, userWrapper.toString());
 
+        ApiServiceManager asm = ApiServiceManager.getSingleton(context);
         Request request = new Request.Builder()
-                .url(ApiService.SIGNIN)
+                .url(asm.getLoginUrl())
                 .addHeader("Accept", ApiService.JSON.toString())
                 .post(requestBody)
                 .build();

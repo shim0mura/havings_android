@@ -26,6 +26,7 @@ import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.UserActivity;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
@@ -137,7 +138,7 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
         */
 
         if(target.get("image") != null){
-            String thumbnailUrl = ApiService.BASE_URL + target.get("image");
+            String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + target.get("image");
             Glide.with(context).load(thumbnailUrl).into(holder.targetImage);
         }else{
             holder.targetImage.setImageResource(R.drawable.bg);

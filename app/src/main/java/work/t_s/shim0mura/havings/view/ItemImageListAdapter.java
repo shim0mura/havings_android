@@ -25,6 +25,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.UserListActivity;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
@@ -147,7 +148,7 @@ public class ItemImageListAdapter extends ArrayAdapter<ItemImageEntity> {
         //convertView.setTag(R.string.tag_image_url, itemImage.url);
         //convertView.setTag(R.string.tag_image_date, itemImage.date);
 
-        String thumbnailUrl = ApiService.BASE_URL + itemImage.url;
+        String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + itemImage.url;
         Glide.with(context).load(thumbnailUrl).into(holder.image);
 
         holder.imageDate.setText(ViewUtil.dateToString(itemImage.addedDate, true));

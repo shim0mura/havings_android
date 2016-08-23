@@ -18,6 +18,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 
@@ -115,7 +116,7 @@ public class ItemListAdapter extends ArrayAdapter<ItemEntity> {
         convertView.setTag(R.string.tag_item_id, item.id);
 
         if(item.thumbnail != null){
-            String thumbnailUrl = ApiService.BASE_URL + item.thumbnail;
+            String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + item.thumbnail;
             Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
         }else{
             holder.thumbnail.setImageResource(R.drawable.bg);

@@ -20,6 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.entity.CommentEntity;
 import work.t_s.shim0mura.havings.presenter.CommentPresenter;
 import work.t_s.shim0mura.havings.util.ViewUtil;
@@ -92,7 +93,7 @@ public class CommentAdapter extends ArrayAdapter<CommentEntity> {
         final CommentEntity comment = getItem(position);
 
         if(comment.commenter.image != null){
-            String thumbnailUrl = ApiService.BASE_URL + comment.commenter.image;
+            String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + comment.commenter.image;
             Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
         }
         if(comment.canDelete) {

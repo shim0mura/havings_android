@@ -318,7 +318,7 @@ public class HomePresenter {
             for(ItemEntity item : popularTag.items){
                 ImageView image = new ImageView(context);
                 if(item.thumbnail != null) {
-                    String thumbnailUrl = ApiService.BASE_URL + item.thumbnail;
+                    String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + item.thumbnail;
                     Glide.with(context).load(thumbnailUrl).into(image);
                 }else{
                     image.setImageResource(R.drawable.ic_image_black_18dp);
@@ -380,7 +380,7 @@ public class HomePresenter {
 
             wrapper.setPadding(0, 0, 0, px);
             if(item.thumbnail != null){
-                String thumbnailUrl = ApiService.BASE_URL + item.thumbnail;
+                String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + item.thumbnail;
                 Glide.with(context).load(thumbnailUrl).into(thumbnail);
             }
             if(item.isList){

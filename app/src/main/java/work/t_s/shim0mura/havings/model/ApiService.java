@@ -48,12 +48,12 @@ public interface ApiService {
 
     MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    String BASE_URL = "https://192.168.1.25:9292";
+    //String BASE_URL = "https://192.168.1.25:9292";
     String BASE_URL_BY_WEB = "http://192.168.1.25:9292";
 
-    String REGISTER = BASE_URL + "/users";
-    String SIGNIN = BASE_URL + "/users/sign_in";
-    String SIGNIN_BY_OAUTH = BASE_URL + "/users/auth/";
+    String REGISTER = "/users";
+    String SIGNIN = "/users/sign_in";
+    String SIGNIN_BY_OAUTH = "/users/auth/";
     String SIGNIN_BY_OAUTH_PARAMS = "?origin=android";
 
     String ACCESS_TOKEN_HEADER = "X_ACCESS_TOKEN";

@@ -40,13 +40,15 @@ public class Item {
         return p;
     }
 
-    public static String getPath(ItemEntity itemEntity){
-        return ApiService.BASE_URL_BY_WEB + "/items/" + String.valueOf(itemEntity.id);
+    public static String getPath(ItemEntity itemEntity, Activity activity){
+        ApiServiceManager asm = ApiServiceManager.getSingleton(activity);
+        return asm.getWebUrl() + "/items/" + String.valueOf(itemEntity.id);
     }
 
-    public static String getImagePath(ItemImageEntity itemImageEntity){
+    public static String getImagePath(ItemImageEntity itemImageEntity, Activity activity){
         // itemImageEntity.pathを使いたい
-        return ApiService.BASE_URL_BY_WEB + "/items/" + String.valueOf(itemImageEntity.itemId) + "/image/" + itemImageEntity.id;
+        ApiServiceManager asm = ApiServiceManager.getSingleton(activity);
+        return asm.getWebUrl() + "/items/" + String.valueOf(itemImageEntity.itemId) + "/image/" + itemImageEntity.id;
     }
 
     public boolean isValidName(String name){

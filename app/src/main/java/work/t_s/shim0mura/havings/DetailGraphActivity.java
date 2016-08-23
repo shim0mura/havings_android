@@ -28,6 +28,7 @@ import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
@@ -191,7 +192,7 @@ public class DetailGraphActivity extends DrawerActivity {
             }
         }
         if(thumbnail != null){
-            thumbnail = ApiService.BASE_URL + thumbnail;
+            thumbnail = ApiServiceManager.getSingleton(this).getApiUrl() + thumbnail;
             Glide.with(this).load(thumbnail).into(image);
             image.setVisibility(View.VISIBLE);
         }else{

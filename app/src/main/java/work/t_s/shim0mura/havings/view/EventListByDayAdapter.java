@@ -26,6 +26,7 @@ import work.t_s.shim0mura.havings.ImageDetailActivity;
 import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.entity.CountDataEntity;
 import work.t_s.shim0mura.havings.model.entity.EventEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
@@ -146,7 +147,7 @@ public class EventListByDayAdapter extends ArrayAdapter<CountDataEntity> {
                 }
                 itemName.setText(eventEntity.item.name);
                 if(eventEntity.item.thumbnail != null){
-                    String thumbnailUrl = ApiService.BASE_URL + eventEntity.item.thumbnail;
+                    String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + eventEntity.item.thumbnail;
                     Glide.with(context).load(thumbnailUrl).into(thumbnail);
                 }
                 itemWrapper.setVisibility(View.VISIBLE);

@@ -471,7 +471,7 @@ public class UserFavoritesPresenter {
 
             final ItemImageEntity itemImage = getItem(position);
 
-            String thumbnailUrl = ApiService.BASE_URL + itemImage.url;
+            String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + itemImage.url;
             Glide.with(context).load(thumbnailUrl).into(holder.image);
 
             holder.itemName.setText(itemImage.itemName);

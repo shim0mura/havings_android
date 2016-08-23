@@ -1,5 +1,33 @@
 package work.t_s.shim0mura.havings.model.di;
 
+/**
+ * Created by shim0mura on 2016/08/21.
+ */
+
+import android.content.Context;
+import android.util.Log;
+
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.util.Collection;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManagerFactory;
+
+import okio.Buffer;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -41,6 +69,8 @@ public class WebApiImpl implements Api {
 
         // 開発環境下でオレオレ証明書を認証できるよう証明書のチェック無効
         // http://stackoverflow.com/questions/31917988/okhttp-javax-net-ssl-sslpeerunverifiedexception-hostname-domain-com-not-verifie
+
+        /*
         client.setHostnameVerifier(new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession session) {
@@ -53,6 +83,7 @@ public class WebApiImpl implements Api {
         // https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/com/squareup/okhttp/recipes/CustomTrust.java
         SSLContext sslContext = sslContextForTrustedCertificates(trustedCertificatesInputStream());
         client.setSslSocketFactory(sslContext.getSocketFactory());
+        */
     }
 
     public void test(){
@@ -160,3 +191,4 @@ public class WebApiImpl implements Api {
     }
 
 }
+

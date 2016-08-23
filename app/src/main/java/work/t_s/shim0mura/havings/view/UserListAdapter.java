@@ -24,6 +24,7 @@ import lecho.lib.hellocharts.model.Line;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.UserEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
@@ -99,7 +100,7 @@ public class UserListAdapter extends ArrayAdapter<UserEntity> {
 
         convertView.setTag(R.id.TAG_USER_ID, user.id);
         if(user.image != null){
-            String thumbnailUrl = ApiService.BASE_URL + user.image;
+            String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + user.image;
             Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
         }
         holder.name.setText(user.name);

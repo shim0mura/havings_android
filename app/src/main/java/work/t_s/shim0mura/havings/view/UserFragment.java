@@ -37,6 +37,7 @@ import work.t_s.shim0mura.havings.UserActivity;
 import work.t_s.shim0mura.havings.UserFavoritesActivity;
 import work.t_s.shim0mura.havings.UserListActivity;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.TimelineEntity;
@@ -164,7 +165,7 @@ public class UserFragment extends Fragment {
         }
 
         if(user.image != null){
-            String thumbnailUrl = ApiService.BASE_URL + user.image;
+            String thumbnailUrl = ApiServiceManager.getSingleton(getActivity()).getApiUrl() + user.image;
             Glide.with(this).load(thumbnailUrl).into(userThumbnail);
         }
 
@@ -180,7 +181,7 @@ public class UserFragment extends Fragment {
     }
 
     private void setUserBackground(String thumbnailUrl){
-        thumbnailUrl = ApiService.BASE_URL + thumbnailUrl;
+        thumbnailUrl = ApiServiceManager.getSingleton(getActivity()).getApiUrl() + thumbnailUrl;
         Glide.with(this).load(thumbnailUrl).into(backgroundImage);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             overlay.setBackgroundDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.shadow));

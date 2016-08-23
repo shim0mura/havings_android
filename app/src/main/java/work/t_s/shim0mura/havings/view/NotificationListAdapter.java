@@ -26,6 +26,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.User;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.NotificationEntity;
@@ -142,7 +143,7 @@ public class NotificationListAdapter extends ArrayAdapter<NotificationEntity> {
 
                 LinkedHashMap commentUser = (LinkedHashMap)notification.acter.get(0);
                 if(commentUser.get("image") != null){
-                    String thumbnailUrl = ApiService.BASE_URL + commentUser.get("image");
+                    String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + commentUser.get("image");
                     Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
                 }else{
                     holder.thumbnail.setImageResource(R.drawable.bg);
@@ -176,7 +177,7 @@ public class NotificationListAdapter extends ArrayAdapter<NotificationEntity> {
 
                 LinkedHashMap imageFavoritesUser = (LinkedHashMap)notification.acter.get(0);
                 if(imageFavoritesUser.get("image") != null){
-                    String thumbnailUrl = ApiService.BASE_URL + imageFavoritesUser.get("image");
+                    String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + imageFavoritesUser.get("image");
                     Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
                 }else{
                     holder.thumbnail.setImageResource(R.drawable.bg);
@@ -211,7 +212,7 @@ public class NotificationListAdapter extends ArrayAdapter<NotificationEntity> {
 
                 LinkedHashMap favoritesUser = (LinkedHashMap)notification.acter.get(0);
                 if(favoritesUser.get("image") != null){
-                    String thumbnailUrl = ApiService.BASE_URL + favoritesUser.get("image");
+                    String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + favoritesUser.get("image");
                     Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
                 }else{
                     holder.thumbnail.setImageResource(R.drawable.bg);
@@ -246,7 +247,7 @@ public class NotificationListAdapter extends ArrayAdapter<NotificationEntity> {
 
                 LinkedHashMap followUser = (LinkedHashMap)notification.acter.get(0);
                 if(followUser.get("image") != null){
-                    String thumbnailUrl = ApiService.BASE_URL + followUser.get("image");
+                    String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + followUser.get("image");
                     Glide.with(context).load(thumbnailUrl).into(holder.thumbnail);
                 }else{
                     holder.thumbnail.setImageResource(R.drawable.bg);

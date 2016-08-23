@@ -60,6 +60,7 @@ import lecho.lib.hellocharts.model.Line;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.Item;
@@ -321,7 +322,7 @@ public class ItemActivity extends DrawerActivity {
 
         ownerName.setText(item.owner.name);
         if(item.owner.image != null){
-            String ownerThumbnail = ApiService.BASE_URL + item.owner.image;
+            String ownerThumbnail = ApiServiceManager.getSingleton(this).getApiUrl() + item.owner.image;
             Glide.with(this).load(ownerThumbnail).into(ownerImage);
         }
 
@@ -394,7 +395,7 @@ public class ItemActivity extends DrawerActivity {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Share.startIntent(self, item.name, Item.getPath(item), thumbnail);
+                Share.startIntent(self, item.name, Item.getPath(item, (Activity)self), thumbnail);
             }
         });
 
@@ -453,7 +454,7 @@ public class ItemActivity extends DrawerActivity {
     }
 
     private void setItemThumbnail(String thumbnailUrl){
-        thumbnailUrl = ApiService.BASE_URL + thumbnailUrl;
+        thumbnailUrl = ApiServiceManager.getSingleton(this).getApiUrl() + thumbnailUrl;
         Glide.with(this).load(thumbnailUrl).into(thumbnail);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             overlay.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.shadow));

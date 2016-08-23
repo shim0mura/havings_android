@@ -21,6 +21,7 @@ import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiKey;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.event.AlertEvent;
@@ -51,8 +52,11 @@ public class LoginPresenter extends SessionBasePresenter {
         return isValid;
     }
 
-    static public Uri getAuthUri(String provider){
-        String uri = ApiService.SIGNIN_BY_OAUTH + provider + ApiService.SIGNIN_BY_OAUTH_PARAMS;
+    public Uri getAuthUri(String provider){
+        ApiServiceManager asm = ApiServiceManager.getSingleton(activity);
+        //String uri = ApiService.SIGNIN_BY_OAUTH + provider + ApiService.SIGNIN_BY_OAUTH_PARAMS;
+        String uri = asm.getApiUrl() + ApiService.SIGNIN_BY_OAUTH + provider + ApiService.SIGNIN_BY_OAUTH_PARAMS;
+
         return Uri.parse(uri);
     }
 

@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiService;
+import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
 import work.t_s.shim0mura.havings.model.entity.ResultEntity;
@@ -184,7 +185,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         existImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         if(userEntity.image != null){
-            String thumbnailUrl = ApiService.BASE_URL + userEntity.image;
+            String thumbnailUrl = ApiServiceManager.getSingleton(this).getApiUrl() + userEntity.image;
             Glide.with(this).load(thumbnailUrl).into(existImage);
             TextView existingImagePrompt = (TextView)existProfileImage.findViewById(R.id.image_prompt);
             existingImagePrompt.setText(R.string.prompt_existing_profile_image);
