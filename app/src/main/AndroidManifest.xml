@@ -61,6 +61,7 @@
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter
                 android:label="@string/app_name">
@@ -72,10 +73,12 @@
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SignInByOauthActivity"
             android:label="@string/title_activity_sign_in_by_oauth"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -93,109 +96,142 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_sign_in"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemActivity"
             android:label="@string/title_activity_item"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TestActivity"
             android:label="@string/title_activity_test"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DetailGraphActivity"
             android:label="@string/title_activity_test_graph"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ImageDetailActivity"
             android:label="@string/title_activity_image_detail"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemFormActivity"
             android:label="@string/title_activity_item_form"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ListNameSelectActivity"
             android:label="@string/title_activity_list_select"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemEditActivity"
             android:label="@string/title_activity_item_edit"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemImageEditActivity"
             android:label="@string/title_activity_item_image_edit"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemDumpActivity"
             android:label="@string/title_activity_item_dump"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ItemDeleteActivity"
             android:label="@string/title_activity_item_delete"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TimerFormActivity"
             android:label="@string/title_activity_timer_form"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".UserListActivity" />
+        <activity
+            android:name=".UserListActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CommentActivity"
             android:label="@string/title_activity_comment"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_user"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UserFavoritesActivity"
             android:label="@string/title_activity_user_favorites"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DumpListActivity"
             android:label="@string/title_activity_dump_list"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".NotificationActivity"
             android:label="@string/title_activity_notification"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AllTimerActivity"
             android:label="@string/title_activity_all_timer"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SearchTagResultActivity"
             android:label="@string/title_activity_search_tag_result"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PickupActivity"
             android:label="@string/title_activity_pickup"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ProfileEditActivity"
             android:label="@string/title_activity_profile_edit"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UserSearchActivity"
             android:label="@string/title_activity_user_search"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ShareToClipboardActivity"
             android:label="@string/title_activity_share_to_clipboard"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DoneTaskActivity"
             android:label="@string/title_activity_done_task"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TokenAutoCompActivity"
             android:label="@string/title_activity_token_auto_comp"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ImageChooseActivity" />
-        <activity android:name=".TimerEditActivity" />
-        <activity android:name=".DrawerActivity" />
-        <activity android:name=".SettingActivity" />
-        <activity android:name=".TargetItemSelectActivity"></activity>
+        <activity android:name=".ImageChooseActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".TimerEditActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".DrawerActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".TargetItemSelectActivity"
+            android:screenOrientation="portrait"
+            ></activity>
     </application>
 
 </manifest>

@@ -9,7 +9,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -21,7 +20,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,37 +37,25 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.nhaarman.supertooltips.ToolTip;
-import com.nhaarman.supertooltips.ToolTipRelativeLayout;
-import com.nhaarman.supertooltips.ToolTipView;
 import com.squareup.otto.Subscribe;
 import com.tokenautocomplete.FilteredArrayAdapter;
 import com.wefika.flowlayout.FlowLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import io.realm.Realm;
 import timber.log.Timber;
-import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.DefaultTag;
-import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
-import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
 import work.t_s.shim0mura.havings.model.entity.TagEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
 import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
-import work.t_s.shim0mura.havings.model.realm.Tag;
 import work.t_s.shim0mura.havings.presenter.FormPresenter;
 import work.t_s.shim0mura.havings.util.PermissionUtil;
 import work.t_s.shim0mura.havings.util.SpaceTokenizer;
@@ -764,7 +750,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     protected void addListName(int id){
         Timber.d("selected tag_id %s", id);
         Realm realm = Realm.getInstance(this);
-        Tag result = realm.where(Tag.class).equalTo("id", id).findFirst();
+        TagEntity result = realm.where(TagEntity.class).equalTo("id", id).findFirst();
 
         showListNameInputView();
 

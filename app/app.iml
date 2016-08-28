@@ -44,6 +44,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/stagingRelease/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/stagingRelease/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/stagingRelease/shaders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/test/staging/release" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testStagingRelease/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testStagingRelease/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testStagingRelease/assets" type="java-test-resource" />
@@ -60,14 +61,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/staging/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/staging/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/staging/shaders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testStaging/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testStaging/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testStaging/assets" type="java-test-resource" />
@@ -76,6 +69,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/testStaging/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testStaging/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testStaging/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestStaging/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/release/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/release/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/release/assets" type="java-resource" />
@@ -132,6 +133,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/23.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.daimajia.swipelayout/library/1.1.8/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.facebook.conceal/conceal/1.0.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.getkeepsafe.relinker/relinker/1.2.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.clans/fab/1.6.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.ksoichiro/android-observablescrollview/1.6.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.lecho/hellocharts-android/v1.5.8/jars" />
@@ -152,6 +154,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.splitwise/tokenautocomplete/2.0.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.wefika/flowlayout/0.4.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/de.hdodenhof/circleimageview/2.0.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/io.realm/realm-android-library/1.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/it.sephiroth.android.library.imagezoom/imagezoom/2.2.4/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/se.emilsjolander/stickylistheaders/2.7.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
@@ -180,6 +183,7 @@
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
     <orderEntry type="library" exported="" name="constraint-layout-solver-1.0.0-alpha1" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-9.4.0" level="project" />
+    <orderEntry type="library" exported="" name="relinker-1.2.1" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.5.0" level="project" />
     <orderEntry type="library" exported="" name="library-1.1.8" level="project" />
     <orderEntry type="library" exported="" name="tokenautocomplete-2.0.2" level="project" />
@@ -206,11 +210,12 @@
     <orderEntry type="library" exported="" name="library-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="converter-jackson-2.0.0-beta2" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.4.0" level="project" />
-    <orderEntry type="library" exported="" name="realm-android-0.87.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-impl-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="joda-time-2.9.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-core-9.4.0" level="project" />
+    <orderEntry type="library" exported="" name="realm-android-library-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="animated-vector-drawable-23.4.0" level="project" />
+    <orderEntry type="library" exported="" name="realm-annotations-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.4.0" level="project" />
     <orderEntry type="library" exported="" name="jsr250-api-1.0" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-23.4.0" level="project" />

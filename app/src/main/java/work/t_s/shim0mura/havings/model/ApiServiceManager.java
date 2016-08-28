@@ -13,8 +13,10 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.inject.Inject;
 
@@ -125,6 +127,7 @@ public class ApiServiceManager {
         // jsonHeaderInterceptorを入れたくないので別のclientを作る
         OkHttpClient client = WebApiImpl.createNewClient();
         Glide.get(c).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+
     }
 
     public void addJsonHeader(){
@@ -192,6 +195,7 @@ public class ApiServiceManager {
             Request request = chain.request();
 
             Response response = chain.proceed(request);
+
             String rawJson = response.body().string();
 
             Timber.d("raw JSON response is: %s", rawJson);

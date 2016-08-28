@@ -1,22 +1,24 @@
 package work.t_s.shim0mura.havings.model;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.DynamicRealm;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
 import io.realm.RealmResults;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
-import work.t_s.shim0mura.havings.model.entity.TagEntity;
-import work.t_s.shim0mura.havings.model.entity.TagMigrationEntity;
-import work.t_s.shim0mura.havings.model.realm.Tag;
-import work.t_s.shim0mura.havings.model.realm.TagMigrationVersion;
+import work.t_s.shim0mura.havings.model.realm.TagEntity;
+import work.t_s.shim0mura.havings.model.realm.TagMigrationEntity;
 
 /**
  * Created by shim0mura on 2015/12/29.
@@ -24,14 +26,16 @@ import work.t_s.shim0mura.havings.model.realm.TagMigrationVersion;
 public class DefaultTag {
 
     private static DefaultTag tag;
-    private List<TagEntity> tagEntities = new ArrayList<TagEntity>();
+    private List<work.t_s.shim0mura.havings.model.entity.TagEntity> tagEntities = new ArrayList<work.t_s.shim0mura.havings.model.entity.TagEntity>();
     private Activity activity;
     static ApiService service;
 
-    public static final int TAG_TYPE_PLACE = 1;
+    private static RealmConfiguration defaultConfig;
+
+    public static final int TAG_TYPE_PLACE = 0;
     public static final int TAG_TYPE_CATEGORY = 3;
     public static final int TAG_TYPE_ITEM = 2;
-    public static final int TAG_TYPE_CLOSET = 4;
+    public static final int TAG_TYPE_CLOSET = 1;
 
     private DefaultTag(Activity act){
         activity = act;
@@ -47,42 +51,45 @@ public class DefaultTag {
     }
 
     public void getDefaultTag(){
-        Call<List<TagMigrationEntity>> call = service.getDefaultTag();
+        Call<List<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity>> call = service.getDefaultTag();
 
         call.enqueue(getTagMigrateCallback("DefaultTag"));
     }
 
     public void migrateTag(){
-        Call<List<TagMigrationEntity>> call = service.getTagMigration(getCurrentMigrationVersionOfLocal());
+        Call<List<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity>> call = service.getTagMigration(getCurrentMigrationVersionOfLocal());
 
         call.enqueue(getTagMigrateCallback("MigrateTag"));
     }
 
     public void checkMigrationVersion(){
-        Call<TagMigrationEntity> call = service.getTagMigrationVersion();
+        Timber.d("tag_mig: start");
 
-        call.enqueue(new Callback<TagMigrationEntity>() {
+        Call<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity> call = service.getTagMigrationVersion();
+
+        call.enqueue(new Callback<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity>() {
             @Override
-            public void onResponse(Response<TagMigrationEntity> response, Retrofit retrofit) {
+            public void onResponse(Response<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
-                    TagMigrationEntity migration = response.body();
+                    work.t_s.shim0mura.havings.model.entity.TagMigrationEntity migration = response.body();
 
-                    Timber.d("get version from api %s", migration.migrationVersion);
-                    Timber.d("get version from local %s", getCurrentMigrationVersionOfLocal());
+                    Timber.d("tag_mig: get version from api %s", migration.migrationVersion);
+                    Timber.d("tag_mig: get version from local %s", getCurrentMigrationVersionOfLocal());
 
                     if(getCurrentMigrationVersionOfLocal() == 0){
-                        Timber.d("tag missing");
+                        Timber.d("tag_mig: tag missing");
                         getDefaultTag();
                     }else if(getCurrentMigrationVersionOfLocal() != migration.migrationVersion){
-                        Timber.d("tag migration version differences");
+                        Timber.d("tag_mig: tag migration version differences");
                         migrateTag();
                     }else{
-                        Timber.d("same migration version");
+                        Timber.d("tag_mig: same migration version");
                     }
 
                 } else if (response.code() == StatusCode.Unauthorized) {
                     Log.d("failed to authorize", "401 failed to authorize");
                 } else {
+                    Timber.d("tag_mig: error");
 
                 }
             }
@@ -96,24 +103,24 @@ public class DefaultTag {
     }
 
     public int getCurrentMigrationVersionOfLocal(){
-        Realm realm = Realm.getInstance(activity);
-        RealmResults<TagMigrationVersion> result = realm.where(TagMigrationVersion.class).findAll();
+        Realm realm = Realm.getInstance(getRealmConfig(activity));
+        RealmResults<TagMigrationEntity> result = realm.where(TagMigrationEntity.class).findAll();
         if(result.size() == 0){
             return 0;
         }else{
-            return result.get(0).getCurrentVersion();
+            return result.get(0).getMigrationVersion();
         }
     }
 
-    public List<TagEntity> getTagEntities(){
+    public List<work.t_s.shim0mura.havings.model.entity.TagEntity> getTagEntities(){
         if(tagEntities.isEmpty()) {
-            Realm realm = Realm.getInstance(activity);
-            RealmResults<Tag> result = realm.where(Tag.class).equalTo("isDeleted", false).findAll();
+            Realm realm = Realm.getInstance(getRealmConfig(activity));
+            RealmResults<TagEntity> result = realm.where(TagEntity.class).equalTo("isDeleted", false).findAll();
 
-            List<TagEntity> tags = new ArrayList<TagEntity>();
+            List<work.t_s.shim0mura.havings.model.entity.TagEntity> tags = new ArrayList<work.t_s.shim0mura.havings.model.entity.TagEntity>();
 
-            for (Tag t : result) {
-                TagEntity tagEntity = new TagEntity();
+            for (TagEntity t : result) {
+                work.t_s.shim0mura.havings.model.entity.TagEntity tagEntity = new work.t_s.shim0mura.havings.model.entity.TagEntity();
 
                 tagEntity.id = t.getId();
                 tagEntity.name = t.getName();
@@ -130,39 +137,40 @@ public class DefaultTag {
         return tagEntities;
     }
 
-    private Callback<List<TagMigrationEntity>> getTagMigrateCallback(final String loggingTag){
-        return new Callback<List<TagMigrationEntity>>() {
+    private Callback<List<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity>> getTagMigrateCallback(final String loggingTag){
+        return new Callback<List<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity>>() {
             @Override
-            public void onResponse(Response<List<TagMigrationEntity>> response, Retrofit retrofit) {
+            public void onResponse(Response<List<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity>> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
-                    List<TagMigrationEntity> list = response.body();
+                    List<work.t_s.shim0mura.havings.model.entity.TagMigrationEntity> list = response.body();
 
-                    for(TagMigrationEntity tagMigration: list){
-                        Timber.d(loggingTag + " aaaa");
+                    Timber.d("tag_mig: success");
+                    for(work.t_s.shim0mura.havings.model.entity.TagMigrationEntity tagMigration: list){
                         setTag(tagMigration);
                     }
 
                 } else if (response.code() == StatusCode.Unauthorized) {
-                    Log.d("failed to authorize", "401 failed to authorize");
+                    Timber.d("tag_mig: failed auth");
                 } else {
+                    Timber.d("tag_mig: failed load");
 
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Timber.d("failed to " + loggingTag);
+                Timber.d("tag_mig, failed to " + loggingTag);
                 t.printStackTrace();
             }
         };
     }
 
-    private void setTag(TagMigrationEntity tagMigrationEntity){
-        Realm realm = Realm.getInstance(activity);
-        List<Tag> realmTags = new ArrayList<Tag>();
+    private void setTag(work.t_s.shim0mura.havings.model.entity.TagMigrationEntity tagMigrationEntity){
+        Realm realm = Realm.getInstance(getRealmConfig(activity));
+        List<TagEntity> realmTags = new ArrayList<TagEntity>();
 
-        for(TagEntity tag: tagMigrationEntity.updatedTags){
-            Tag tagRealm = new Tag();
+        for(work.t_s.shim0mura.havings.model.entity.TagEntity tag: tagMigrationEntity.updatedTags){
+            TagEntity tagRealm = new TagEntity();
             tagRealm.setId(tag.id);
             tagRealm.setName(tag.name);
             tagRealm.setParentId(tag.parentId);
@@ -177,17 +185,51 @@ public class DefaultTag {
         realm.copyToRealmOrUpdate(realmTags);
 
         // set migration version
-        RealmResults<TagMigrationVersion> result = realm.where(TagMigrationVersion.class).findAll();
-        TagMigrationVersion migration;
+        RealmResults<TagMigrationEntity> result = realm.where(TagMigrationEntity.class).findAll();
+        TagMigrationEntity migration;
         if(result.size() == 0){
-            migration = new TagMigrationVersion();
+            migration = new TagMigrationEntity();
         }else{
             migration = result.get(0);
         }
-        migration.setCurrentVersion(tagMigrationEntity.migrationVersion);
+        migration.setMigrationVersion(tagMigrationEntity.migrationVersion);
         realm.copyToRealmOrUpdate(migration);
 
         realm.commitTransaction();
+    }
+
+    public static RealmConfiguration getRealmConfig(Context context){
+
+        if (defaultConfig == null) {
+            /*
+            defaultConfig = new RealmConfiguration.Builder(context)
+                    .assetFile(context, "tag.realm")
+                    .schemaVersion(1)
+                    .migration(new RealmMigration() {
+                        @Override
+                        public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+
+                        }
+                    })
+                    .build();
+                    */
+            defaultConfig = new RealmConfiguration.Builder(context)
+                    .assetFile(context, "tag.realm")
+                    .schemaVersion(1)
+                    .migration(new RealmMigration() {
+                        @Override
+                        public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+
+                        }
+                    })
+                    .build();
+            Realm realm = Realm.getInstance(defaultConfig);
+
+            RealmResults<TagEntity> result = realm.where(TagEntity.class).equalTo("id", 18).findAll();
+            Timber.d("test_tag %s", result.first().getName());
+        }
+
+        return defaultConfig;
     }
 
 }

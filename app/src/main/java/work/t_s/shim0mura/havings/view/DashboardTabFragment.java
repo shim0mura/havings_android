@@ -417,6 +417,7 @@ public class DashboardTabFragment extends Fragment {
         AllTimerActivity.startActivity(getActivity(), timerEntities);
     }
 
+    /*
     @OnClick(R.id.logout)
     public void logout(View v){
         Log.d("ssss", "logout");
@@ -468,5 +469,6 @@ public class DashboardTabFragment extends Fragment {
         Intent intent = new Intent(getActivity(), TokenAutoCompActivity.class);
         startActivity(intent);
     }
+    */
 
 }

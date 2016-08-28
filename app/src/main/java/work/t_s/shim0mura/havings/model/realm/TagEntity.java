@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by shim0mura on 2015/12/20.
  */
-public class Tag extends RealmObject {
+public class TagEntity extends RealmObject {
     @PrimaryKey
     private int id;
 
@@ -22,11 +22,11 @@ public class Tag extends RealmObject {
     private int tagType;
     private boolean isDeleted;
 
-    public Tag(){}
+    public TagEntity(){}
 
-    public Tag(String n){ this.name = n; }
+    public TagEntity(String n){ this.name = n; }
 
-    public Tag(int i, String n, @Nullable String yj, @Nullable String yr){
+    public TagEntity(int i, String n, @Nullable String yj, @Nullable String yr){
         this.id = i;
         this.name = n;
         this.yomiJp = (yj == null) ? "" : yj;

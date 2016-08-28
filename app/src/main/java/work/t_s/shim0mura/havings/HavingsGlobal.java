@@ -17,6 +17,8 @@ public class HavingsGlobal extends Application {
             Timber.plant(new ExtTree());
         } else {
             //Timber.plant(new MyCrashReportingTree());
+            Timber.plant(new Timber.DebugTree());
+            Timber.plant(new ExtTree());
         }
 
         super.onCreate();

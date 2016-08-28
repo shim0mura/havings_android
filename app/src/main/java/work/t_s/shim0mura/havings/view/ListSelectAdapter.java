@@ -1,7 +1,6 @@
 package work.t_s.shim0mura.havings.view;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,9 @@ import java.util.HashMap;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
-import timber.log.Timber;
 import work.t_s.shim0mura.havings.R;
-import work.t_s.shim0mura.havings.model.entity.ItemEntity;
-import work.t_s.shim0mura.havings.model.realm.Tag;
+import work.t_s.shim0mura.havings.model.DefaultTag;
+import work.t_s.shim0mura.havings.model.realm.TagEntity;
 
 /**
  * Created by shim0mura on 2015/12/30.
@@ -42,25 +40,25 @@ public class ListSelectAdapter extends BaseAdapter implements StickyListHeadersA
         layoutInflater = LayoutInflater.from(c);
         context = c;
 
-        Realm realm = Realm.getInstance(c);
+        Realm realm = Realm.getInstance(DefaultTag.getRealmConfig(c));
 
-        RealmResults<Tag> tags = realm.where(Tag.class).equalTo("tagType", 3).equalTo("parentId", 0).equalTo("isDeleted", false).findAll();
+        RealmResults<TagEntity> tags = realm.where(TagEntity.class).equalTo("tagType", 3).equalTo("parentId", 0).equalTo("isDeleted", false).findAll();
 
-        for(Tag t: tags){
+        for(TagEntity t: tags){
             kindIds.add(t.getId());
-            getTagRecursive(realm, t, t.getId());
+            getTagRecursive(realm, t, t.getId(), 0);
         }
 
     }
 
-    private void getTagRecursive(Realm realm, Tag parentTag, int kindId){
-        RealmResults<Tag> childTag = realm.where(Tag.class).equalTo("parentId", parentTag.getId()).findAll();
+    private void getTagRecursive(Realm realm, TagEntity parentTag, int kindId, int nest){
+        RealmResults<TagEntity> childTag = realm.where(TagEntity.class).equalTo("parentId", parentTag.getId()).findAll();
 
         StringBuilder subtext = new StringBuilder();
         int tagCount = (childTag.size() > subtextCount) ? subtextCount : childTag.size();
 
         for(int i = 0; i < tagCount; i++){
-            Tag t = childTag.get(i);
+            TagEntity t = childTag.get(i);
             subtext.append(t.getName());
             if(i != tagCount -1){
                 subtext.append(", ");
@@ -77,9 +75,9 @@ public class ListSelectAdapter extends BaseAdapter implements StickyListHeadersA
 
         tagHash.add(hash);
 
-        for(Tag t: childTag){
-            if(t.getTagType() == 3) {
-                getTagRecursive(realm, t, kindId);
+        for(TagEntity t: childTag){
+            if(t.getTagType() == 3 && nest < 1) {
+                getTagRecursive(realm, t, kindId, nest + 1);
             }
         }
     }

@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
@@ -51,8 +49,6 @@ import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.ImageChooseActivity;
-import work.t_s.shim0mura.havings.ItemActivity;
-import work.t_s.shim0mura.havings.ItemFormActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
@@ -62,13 +58,11 @@ import work.t_s.shim0mura.havings.model.Item;
 import work.t_s.shim0mura.havings.model.StatusCode;
 import work.t_s.shim0mura.havings.model.entity.ItemEntity;
 import work.t_s.shim0mura.havings.model.entity.ItemImageEntity;
-import work.t_s.shim0mura.havings.model.entity.ItemImageListEntity;
 import work.t_s.shim0mura.havings.model.entity.ModelErrorEntity;
-import work.t_s.shim0mura.havings.model.entity.TagEntity;
 import work.t_s.shim0mura.havings.model.entity.UserListEntity;
 import work.t_s.shim0mura.havings.model.event.AlertEvent;
 import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
-import work.t_s.shim0mura.havings.model.realm.Tag;
+import work.t_s.shim0mura.havings.model.realm.TagEntity;
 import work.t_s.shim0mura.havings.util.ApiErrorUtil;
 import work.t_s.shim0mura.havings.util.SpaceTokenizer;
 import work.t_s.shim0mura.havings.util.ViewUtil;
@@ -514,7 +508,7 @@ public class FormPresenter {
 
         private ArrayList<String> tagStringByPlace = new ArrayList<>();
         private ArrayList<String> tagStringByCloset = new ArrayList<>();
-        private ArrayList<TagEntity> tagEntities = new ArrayList<>();
+        private ArrayList<work.t_s.shim0mura.havings.model.entity.TagEntity> tagEntities = new ArrayList<>();
 
         private ArrayList<String> inputTags = new ArrayList<>();
         private MultiAutoCompleteTextView textView;
@@ -523,14 +517,15 @@ public class FormPresenter {
             activity = a;
             listId = id;
 
-            Realm realm = Realm.getInstance(activity);
 
-            RealmResults<Tag> tagsByPlace = realm.where(Tag.class).equalTo("tagType", DefaultTag.TAG_TYPE_PLACE).equalTo("isDeleted", false).findAll();
-            for(Tag t: tagsByPlace){
+            Realm realm = Realm.getInstance(DefaultTag.getRealmConfig(activity));
+
+            RealmResults<TagEntity> tagsByPlace = realm.where(TagEntity.class).equalTo("tagType", DefaultTag.TAG_TYPE_PLACE).equalTo("isDeleted", false).findAll();
+            for(TagEntity t: tagsByPlace){
                 tagStringByPlace.add(t.getName());
             }
-            RealmResults<Tag> tagsByCloset = realm.where(Tag.class).equalTo("tagType", DefaultTag.TAG_TYPE_CLOSET).equalTo("isDeleted", false).findAll();
-            for(Tag t: tagsByCloset){
+            RealmResults<TagEntity> tagsByCloset = realm.where(TagEntity.class).equalTo("tagType", DefaultTag.TAG_TYPE_CLOSET).equalTo("isDeleted", false).findAll();
+            for(TagEntity t: tagsByCloset){
                 tagStringByCloset.add(t.getName());
             }
             tagEntities = new ArrayList<>(DefaultTag.getSingleton(activity).getTagEntities());
@@ -633,7 +628,7 @@ public class FormPresenter {
 
             final ListView listView = (ListView)view.findViewById(R.id.list_name);
 
-            listView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, (tabPosition == 1 ? tagStringByPlace : tagStringByCloset)));
+            listView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, (tabPosition == 0 ? tagStringByPlace : tagStringByCloset)));
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -664,7 +659,7 @@ public class FormPresenter {
 
             textView = (MultiAutoCompleteTextView) view.findViewById(R.id.comp);
 
-            ArrayAdapter<TagEntity> adapter = new FilteredArrayAdapter<TagEntity>(activity, android.R.layout.simple_list_item_1, tagEntities) {
+            ArrayAdapter<work.t_s.shim0mura.havings.model.entity.TagEntity> adapter = new FilteredArrayAdapter<work.t_s.shim0mura.havings.model.entity.TagEntity>(activity, android.R.layout.simple_list_item_1, tagEntities) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     if (convertView == null) {
@@ -672,13 +667,13 @@ public class FormPresenter {
                         convertView = l.inflate(android.R.layout.simple_list_item_1, parent, false);
                     }
 
-                    TagEntity p = getItem(position);
+                    work.t_s.shim0mura.havings.model.entity.TagEntity p = getItem(position);
                     ((TextView)convertView).setText(p.getName());
                     return convertView;
                 }
 
                 @Override
-                protected boolean keepObject(TagEntity tag, String mask) {
+                protected boolean keepObject(work.t_s.shim0mura.havings.model.entity.TagEntity tag, String mask) {
                     mask = mask.toLowerCase();
                     return tag.getName().toLowerCase().startsWith(mask) || tag.getYomiJp().startsWith(mask) || tag.getYomiRoma().toLowerCase().startsWith(mask);
                 }

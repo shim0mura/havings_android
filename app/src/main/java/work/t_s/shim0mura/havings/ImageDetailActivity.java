@@ -212,12 +212,13 @@ public class ImageDetailActivity extends DrawerActivity {
         toggleFavoriteState();
 
         String thumbnail = ApiServiceManager.getSingleton(this).getApiUrl() + itemImageEntity.url;
+        Timber.d("thumbnail_image %s", thumbnail);
         Glide.with(this)
                 .load(thumbnail)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        Timber.d("failed to get image");
+                        Timber.d("thumbnail_image %s", e.toString());
                         return false;
                     }
 

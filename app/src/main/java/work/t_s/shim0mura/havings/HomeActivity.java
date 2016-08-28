@@ -50,6 +50,10 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.DynamicRealm;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
 import lecho.lib.hellocharts.view.PieChartView;
 import retrofit.Call;
 import retrofit.Callback;
@@ -110,9 +114,21 @@ public class HomeActivity extends DrawerActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /*
+        RealmConfiguration c = new RealmConfiguration.Builder(this).schemaVersion(1).migration(new RealmMigration() {
+            @Override
+            public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+
+            }
+        }).build();
+        Realm a = Realm.getInstance(c);
+        a.close();
+        Realm.deleteRealm(c);
+        */
+
         DefaultTag tag = DefaultTag.getSingleton(this);
-        tag.checkMigrationVersion();
-        Timber.d("version %s", tag.getCurrentMigrationVersionOfLocal());
+        //tag.checkMigrationVersion();
+        //Timber.d("version %s", tag.getCurrentMigrationVersionOfLocal());
 
         userPresenter = new UserPresenter(this);
 
@@ -224,6 +240,7 @@ public class HomeActivity extends DrawerActivity {
     @Subscribe
     public void checkDeviceTokenState(DeviceTokenCheckEvent event){
         String registedToken = ApiKey.getSingleton(this).getDeviceToken();
+        Timber.d("regist_token_local %s", registedToken);
         HomePresenter homePresenter = new HomePresenter(this);
         if(event.deviceTokenEntity.token != null && registedToken == null){
             homePresenter.postDeviceToken(event.deviceTokenEntity.token);

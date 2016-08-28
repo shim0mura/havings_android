@@ -14,11 +14,8 @@ import com.tokenautocomplete.TokenCompleteTextView;
 
 import java.util.List;
 
-import timber.log.Timber;
-import work.t_s.shim0mura.havings.ItemFormActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.entity.TagEntity;
-import work.t_s.shim0mura.havings.model.realm.Tag;
 
 /**
  * Created by shim0mura on 2015/12/18.

@@ -47,7 +47,9 @@ public class User {
     private static User user;
     private Context context;
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+");
+    //private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b");
+
 
     private User(Context c){
         ApiComponent api = DaggerApiComponent.builder().apiModule(new ApiModule(c)).build();
