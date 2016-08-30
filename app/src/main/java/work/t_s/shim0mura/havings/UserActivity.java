@@ -27,6 +27,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
@@ -255,6 +257,10 @@ public class UserActivity extends DrawerActivity {
                 Share.startIntent(self, user.name, User.getPath(user, self), backgroundImage);
             }
         });
+
+        AdView mAdView = (AdView) findViewById(R.id.ad_view);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Subscribe

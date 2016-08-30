@@ -32,8 +32,10 @@
             android:layout_below="@id/appbar_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/padding_for_ad"
             >
         </ListView>
+        <include layout="@layout/partial_ad" />
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

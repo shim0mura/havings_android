@@ -39,6 +39,7 @@ public class Share {
             text = " ";
         }
 
+        /*
         imageView.setDrawingCacheEnabled(true);
         Bitmap bitmap = imageView.getDrawingCache();
 
@@ -47,20 +48,27 @@ public class Share {
             Timber.d("drawable_is_not_null");
             bitmap = ((GlideBitmapDrawable) imageView.getDrawable().getCurrent()).getBitmap();
         }
+        */
 
         // http://android-note.open-memo.net/sub/system__share_with_sns.html
         List<ResolveInfo> resolveInfoList;
+        /*
         if(drawable != null) {
             resolveInfoList = context.getPackageManager().queryIntentActivities(new Intent(Intent.ACTION_SEND).setType("image/*"), 0);
         }else{
             resolveInfoList = context.getPackageManager().queryIntentActivities(new Intent(Intent.ACTION_SEND).setType("text/plain"), 0);
         }
+        */
+
+        resolveInfoList = context.getPackageManager().queryIntentActivities(new Intent(Intent.ACTION_SEND).setType("text/plain"), 0);
+
 
         File f = null;
 
         String filePath = Environment.getExternalStorageDirectory() + File.separator + TMP_IMAGE_DIR + File.separator + TMP_IMAGE_NAME;
         byte[] bitmapdata = null;
 
+        /*
         if(drawable != null && bitmap != null) {
             try {
                 // http://stackoverflow.com/questions/7661875/how-to-use-share-image-using-sharing-intent-to-share-images-in-android
@@ -95,6 +103,7 @@ public class Share {
                 bitmapdata = null;
             }
         }
+        */
 
         //SNSアプリの一覧
         for(ResolveInfo info : resolveInfoList){
@@ -102,13 +111,13 @@ public class Share {
 
             if(packageName.contains("twitter") && info.activityInfo.name.contains("com.twitter.android.composer.ComposerActivity")){
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                if(drawable == null || bitmapdata == null){
+                //if(drawable == null || bitmapdata == null){
                     shareIntent.setType("text/plain");
-                }else{
-                    shareIntent.setType("image/*");
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + filePath));
-                }
-                shareIntent.putExtra(Intent.EXTRA_TEXT, text + " " + link);
+                //}else{
+                //    shareIntent.setType("image/*");
+                //    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + filePath));
+                //}
+                shareIntent.putExtra(Intent.EXTRA_TEXT, text + " " + link + " #havings");
                 shareIntent.setPackage(info.activityInfo.packageName);
                 shareIntent.setClassName(
                         info.activityInfo.packageName,
@@ -126,14 +135,17 @@ public class Share {
             }else {
                 // instagramはテキストを入れれない（公式アナウンスあり）
                 // 多分API経由でやらないとダメ
+                // 何にしても画像しかpost出来なくてurlは渡せないし
+                // 自分の画像だけ共有できるようにするのが面倒なので
+                // とりあえずはinstagramは共有しない
 
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                if(drawable == null || bitmapdata == null){
+                //if(drawable == null || bitmapdata == null){
                     shareIntent.setType("text/plain");
-                }else{
-                    shareIntent.setType("image/*");
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + filePath));
-                }
+                //}else{
+                //    shareIntent.setType("image/*");
+                //    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + filePath));
+                //}
 
                 shareIntent.putExtra(Intent.EXTRA_TEXT, text + " " + link);
                 shareIntent.setPackage(info.activityInfo.packageName);

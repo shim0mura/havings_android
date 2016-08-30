@@ -148,6 +148,11 @@ public class UserFragment extends Fragment {
         ProfileEditActivity.startActivity(getActivity(), user);
     }
 
+    @OnClick(R.id.share)
+    public void shareSelf(){
+        Share.startIntent(getActivity(), user.name, User.getPath(user, getActivity()), backgroundImage);
+    }
+
     @Subscribe
     public void renderUser(UserEntity userEntity){
 

@@ -38,6 +38,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/padding_for_ad"
             tools:context="lecho.lib.hellocharts.samples.PreviewLineChartActivity$PlaceholderFragment" >
 
 
@@ -78,6 +79,7 @@
             </ListView>
 
         </LinearLayout>
+        <include layout="@layout/partial_ad" />
     </FrameLayout>
 
 

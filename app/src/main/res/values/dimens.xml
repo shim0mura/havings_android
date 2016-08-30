@@ -9,6 +9,7 @@
     <dimen name="flexible_space_height">300dp</dimen>
     <dimen name="toolbar_margin_start">72dp</dimen>
 
+    <dimen name="padding_for_ad">60dp</dimen>
     <dimen name="tab_height">72dp</dimen>
 
     <dimen name="app_basic_padding">16dp</dimen>

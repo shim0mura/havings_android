@@ -28,7 +28,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_margin="@dimen/app_basic_padding">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -124,12 +125,13 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/app_basic_padding">
                     <Button
                         android:id="@+id/change_profile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="change profile"/>
+                        android:text="@string/prompt_edit_profile"/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

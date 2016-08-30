@@ -371,6 +371,8 @@
     <string name="prompt_no_timeline">アクティビティはありません。 \n \n誰かをフォローすると、その人がいいね!したアイテムや追加したアイテムの情報がここに表示されます。 \n \n気になる人たちをフォローしてみましょう！</string>
     <string name="prompt_no_searched_user">該当するユーザーはいません</string>
 
+    <string name="prompt_edit_profile">プロフィールの編集</string>
+
     <string name="prompt_profile">自己紹介</string>
     <string name="prompt_profile_image">プロフィール画像</string>
     <string name="prompt_existing_profile_image">現在のプロフィール画像</string>

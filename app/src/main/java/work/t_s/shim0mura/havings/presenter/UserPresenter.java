@@ -634,6 +634,14 @@ public class UserPresenter {
             placeholderItem.owningItems = nestedItemListAdapter.itemEntityList;
             itemListAdapter = new ItemListAdapter(activity, R.layout.item_list, placeholderItem);
 
+            nestedItemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                          @Override
+                                                          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                              ItemActivity.startActivity(activity, (int) view.getTag(R.string.tag_item_id));
+                                                          }
+                                                      });
+
+
             itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                     @Override
                                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

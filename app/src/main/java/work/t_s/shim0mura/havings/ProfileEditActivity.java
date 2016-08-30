@@ -95,6 +95,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             setDefaultValue();
         }
 
+        setTitle(R.string.prompt_edit_profile);
         changedProfileImage = (ImageView)addImage.findViewById(R.id.added_image);
         changeImagePrompt = (TextView)addImage.findViewById(R.id.image_prompt);
         changeImagePrompt.setText(R.string.prompt_change_profile_image);

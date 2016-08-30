@@ -41,6 +41,8 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.squareup.otto.Subscribe;
 import com.wefika.flowlayout.FlowLayout;
 
@@ -249,6 +251,9 @@ public class ItemActivity extends DrawerActivity {
         itemPresenter.getItem(itemId);
         onCreateDrawer(false);
 
+        AdView mAdView = (AdView) findViewById(R.id.ad_view);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override
@@ -401,6 +406,8 @@ public class ItemActivity extends DrawerActivity {
 
         if(userId == item.owner.id){
             setFAB();
+        }else{
+            findViewById(R.id.menu_labels_right).setVisibility(View.GONE);
         }
     }
 

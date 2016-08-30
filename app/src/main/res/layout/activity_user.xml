@@ -38,6 +38,7 @@
         android:layout_height="match_parent"
         android:clipChildren="false"
         android:visibility="gone"
+        android:layout_marginBottom="@dimen/padding_for_ad"
         >
 
         <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
@@ -313,7 +314,7 @@
             />
 
     </FrameLayout>
-
+    <include layout="@layout/partial_ad" ></include>
 
 </android.support.design.widget.CoordinatorLayout>
     <android.support.design.widget.NavigationView

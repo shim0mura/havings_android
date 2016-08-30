@@ -28,12 +28,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:minHeight="@dimen/flexible_space_height"
+        android:layout_marginBottom="@dimen/padding_for_ad"
         >
     </ListView>
     <ScrollView
         android:id="@+id/scroll_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/padding_for_ad">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -55,6 +57,7 @@
 
     </ScrollView>
 
+    <include layout="@layout/partial_ad" />
 
 </android.support.design.widget.CoordinatorLayout>
     <android.support.design.widget.NavigationView

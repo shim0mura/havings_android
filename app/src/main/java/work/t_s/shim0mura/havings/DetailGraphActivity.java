@@ -14,6 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -150,6 +152,10 @@ public class DetailGraphActivity extends DrawerActivity {
         tempViewport.inset(dx, 0);
         //previewChart.setCurrentViewport(tempViewport);
         onCreateDrawer(false);
+
+        AdView mAdView = (AdView) findViewById(R.id.ad_view);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override

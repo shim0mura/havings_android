@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
 import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -64,6 +65,8 @@ public class GraphRenderer {
             addTodayData(countData);
         }
 
+        int maxCount = 0;
+
         List<PointValue> yValues = new ArrayList<PointValue>();
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
         for (int x = 0; x < countData.size(); ++x) {
@@ -71,13 +74,15 @@ public class GraphRenderer {
             //DateTime recordedAt = dataItem.date.getRecordedAt();
             //String formattedRecordedAt = DateTimeFormatter.getFormattedDateTime(recordedAt);
             int yValue = dataItem.count;
+            if(maxCount > yValue){
+                maxCount = yValue;
+            }
             yValues.add(new PointValue(dataItem.date.getTime(), yValue));
             AxisValue axisValue = new AxisValue(dataItem.date.getTime());
 
             axisValue.setLabel(ViewUtil.dateToString(dataItem.date, false));
             axisValues.add(axisValue);
         }
-
 
         //In most cased you can call data model methods in builder-pattern-like manner.
         Line line = new Line(yValues).setColor(Color.BLUE).setCubic(false);
@@ -88,7 +93,16 @@ public class GraphRenderer {
         data.setLines(lines);
 
         Axis axisX = new Axis(axisValues);
-        Axis axisY = new Axis().setHasLines(true);
+
+        //Axis axisY = new Axis().setHasLines(true);
+        List<AxisValue> axisYValues = new ArrayList<AxisValue>();
+
+        for(int i = 0; i < maxCount + 10; i++){
+            axisYValues.add(new AxisValue(i).setLabel(String.valueOf(i)));
+        }
+        Axis axisY = new Axis(axisYValues);
+
+        axisY.setHasLines(true);
         axisY.setName("モノの数");
         axisX.setHasTiltedLabels(true);
         axisX.setMaxLabelChars(5);
