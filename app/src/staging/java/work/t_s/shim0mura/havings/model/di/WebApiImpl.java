@@ -47,6 +47,7 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManagerFactory;
@@ -66,6 +67,10 @@ public class WebApiImpl implements Api {
     private static final OkHttpClient client = new OkHttpClient();
 
     public WebApiImpl(Context context){
+
+        client.setConnectTimeout(20, TimeUnit.SECONDS);
+        client.setWriteTimeout(20, TimeUnit.SECONDS);
+        client.setReadTimeout(30, TimeUnit.SECONDS);
 
         // 開発環境下でオレオレ証明書を認証できるよう証明書のチェック無効
         // http://stackoverflow.com/questions/31917988/okhttp-javax-net-ssl-sslpeerunverifiedexception-hostname-domain-com-not-verifie
@@ -100,6 +105,7 @@ public class WebApiImpl implements Api {
 
     public static OkHttpClient createNewClient(){
         OkHttpClient c = new OkHttpClient();
+        /*
         c.setHostnameVerifier(new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession session) {
@@ -109,6 +115,7 @@ public class WebApiImpl implements Api {
 
         SSLContext sslContext = sslContextForTrustedCertificates(trustedCertificatesInputStream());
         c.setSslSocketFactory(sslContext.getSocketFactory());
+        */
         return c;
     }
 

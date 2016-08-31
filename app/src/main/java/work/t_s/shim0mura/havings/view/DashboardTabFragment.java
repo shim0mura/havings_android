@@ -161,6 +161,7 @@ public class DashboardTabFragment extends Fragment {
                 userPresenter.getItemPercentage();
                 homePresenter.getAllTimers();
                 doneTaskPresenter.getAllTask();
+                homePresenter.getCountData();
 
             }
         });
@@ -241,9 +242,11 @@ public class DashboardTabFragment extends Fragment {
             deadlineNearingTimers.addView(v);
             return;
         }else{
+            deadlineNearingTimers.removeAllViews();
             LayoutInflater layoutInflater = LayoutInflater.from(activity);
 
-            for(int i = 0; i < MAX_TIMER_SHOWING; i++){
+            int max = timerEntities.size() > MAX_TIMER_SHOWING ? MAX_TIMER_SHOWING : timerEntities.size();
+            for(int i = 0; i < max; i++){
                 TimerEntity timer = timerEntities.get(i);
 
                 View v = layoutInflater.inflate(R.layout.partial_timer_content, null);

@@ -276,6 +276,7 @@ public class HomeActivity extends DrawerActivity {
                 notificationView.setTag(R.id.NOTIFICATION_EXIST, true);
                 badge.setVisibility(View.VISIBLE);
                 badge.setText(String.valueOf(count));
+                badge.setBackgroundColor(ContextCompat.getColor(this, R.color.unread_notification));
                 icon.setImageResource(R.drawable.ic_notifications_white_36dp);
             } else {
                 notificationView.setTag(R.id.NOTIFICATION_EXIST, false);
@@ -404,7 +405,7 @@ public class HomeActivity extends DrawerActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Timber.d("activity result");
+        Timber.d("activity_result");
         if (resultCode == RESULT_OK) {
 
             if (requestCode == ItemActivity.ITEM_CREATED_RESULTCODE) {

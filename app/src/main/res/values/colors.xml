@@ -52,9 +52,13 @@
     <color name="categoryClothing">#4FC3F7</color>
     <color name="categoryFood">#FFB74D</color>
     <color name="categoryLiving">#9CCC65</color>
-    <color name="categoryEtc">#b6b6b6</color>
+    <color name="categoryEtc">#E38692</color>
+    <color name="categoryNone">#b6b6b6</color>
+
 
     <color name="link">#81D4FA</color>
+
+    <color name="unread_notification">#FF5252</color>
 
     <color name="dateSelect">#6EB7DB</color>
 </resources>

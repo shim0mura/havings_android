@@ -27,7 +27,7 @@ public class ItemPercentageEntity implements Serializable {
         put(4, "その他");
     }};
     public static Map<Integer, Integer> categoryColor = new TreeMap<Integer, Integer>(){{
-        put(0, R.color.categoryEtc);
+        put(0, R.color.categoryNone);
         put(1, R.color.categoryClothing);
         put(2, R.color.categoryFood);
         put(3, R.color.categoryLiving);

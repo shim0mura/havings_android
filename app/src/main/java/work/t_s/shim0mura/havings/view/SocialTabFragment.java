@@ -64,13 +64,13 @@ public class SocialTabFragment extends Fragment {
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         loader = layoutInflater.inflate(R.layout.loading, timelineList, false);
 
-
         homePresenter = new HomePresenter(getActivity());
 
         if(savedInstanceState == null){
             timelineList.addFooterView(loader);
             timelineList.setAdapter(null);
             adapter = null;
+            timelineList.setOnScrollListener(null);
 
             homePresenter.getTimeline(0);
         }else{
@@ -85,6 +85,7 @@ public class SocialTabFragment extends Fragment {
                 timelineList.addFooterView(loader);
                 timelineList.setAdapter(null);
                 adapter = null;
+                timelineList.setOnScrollListener(null);
 
                 homePresenter.getTimeline(0);
 
@@ -99,7 +100,7 @@ public class SocialTabFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-Timber.d("save_instance");
+        Timber.d("save_instance");
         outState.putSerializable(TIMELINE_ENTITY, timelineEntity);
     }
 
@@ -142,6 +143,7 @@ Timber.d("save_instance");
     }
 
     private void initializeAdapter(TimelineEntity timelineEntity){
+        Timber.d("initialize adapter");
         if(timelineEntity.timeline == null || timelineEntity.timeline.isEmpty()){
             View v = View.inflate(getActivity(), R.layout.partial_nothing_text, null);
             TextView text = (TextView)v.findViewById(R.id.nothing);

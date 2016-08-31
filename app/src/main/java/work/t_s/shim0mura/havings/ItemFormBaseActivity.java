@@ -29,12 +29,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
@@ -106,6 +108,11 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
     @Nullable @Bind(R.id.garbage_reason) TextView garbageReason;
     @Nullable @Bind(R.id.fellow_ids) ExpandableListView fellowIds;
 
+    @Nullable @Bind(R.id.garbage_reason_text) EditText garbageReasonEdit;
+    @Nullable @Bind(R.id.as_garbage_wrapper) LinearLayout asGarbageWrapper;
+    @Nullable @Bind(R.id.as_garbage_switch) Switch asGarbageSwitch;
+    @Nullable @Bind(R.id.garbage_reason_wrapper) LinearLayout garbageReasonWrapper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,6 +168,18 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
                 changePrivateType(!isChecked, parentPrivate);
             }
         });
+
+        garbageReasonWrapper.setVisibility(View.GONE);
+        asGarbageSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    garbageReasonWrapper.setVisibility(View.VISIBLE);
+                }else{
+                    garbageReasonWrapper.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     protected void setDefaultValue(){
@@ -198,7 +217,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
 
     protected void showItemCountChanger(){
         final Dialog d = new Dialog(this);
-        d.setTitle("NumberPicker");
+        d.setTitle(R.string.prompt_item_count);
         d.setContentView(R.layout.dialog_item_count);
         Button b1 = (Button) d.findViewById(R.id.button1);
         Button b2 = (Button) d.findViewById(R.id.button2);
@@ -582,6 +601,15 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
                 .show();
     }
 
+    @Nullable @OnClick(R.id.garbage_help)
+    public void showGarbageHelp(View view){
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.prompt_as_garbage))
+                .setMessage(getString(R.string.prompt_garbage_help))
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
     @OnClick(R.id.post_item)
     abstract public void postItem();
 
@@ -610,6 +638,9 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
         //Item.PrivateType selectedPrivateType = (Item.PrivateType)privateTypeSpinner.getSelectedItem();
         int privateType = privateTypeSwitch.isChecked() ? 0 : 3;
         item.privateType = privateType;
+
+        item.isGarbage = asGarbageSwitch.isChecked();
+        item.garbageReason = garbageReasonEdit.getText().toString();
     }
 
     protected List<ImageView> getAddedImageViews(){

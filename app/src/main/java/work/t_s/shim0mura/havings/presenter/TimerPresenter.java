@@ -343,6 +343,10 @@ public class TimerPresenter {
     }
 
     private Boolean isValidDueTime(TimerEntity timerEntity){
+        if(!timerEntity.isRepeating){
+            return true;
+        }
+
         if(Timer.isValidDueTime(timerEntity)){
             return true;
         }else{
@@ -449,27 +453,32 @@ public class TimerPresenter {
                 final Date nextAt;
                 Calendar c = Calendar.getInstance();
                 c.setTime(timerEntity.tmpNextDueAt);
+
+                String nextString = "";
                 if(!timerEntity.isRepeating){
                     nextAt = timerEntity.tmpNextDueAt;
+                    nextString = "";
                 }else if(timerEntity.repeatBy == Timer.REPEAT_TYPE_BY_DAY){
                     if(timerEntity.overDueFrom == null){
                         nextAt = Timer.getNextDueAtFromMonth(c, getDefaultValues(timerEntity)).getTime();
                     }else{
                         nextAt = timerEntity.tmpNextDueAt;
                     }
+                    nextString = activity.getString(R.string.prompt_timer_next_due_at, Timer.getFormatDueStringWithoutYear(nextAt));
                 }else if(timerEntity.repeatBy == Timer.REPEAT_TYPE_BY_WEEK){
                     if(timerEntity.overDueFrom == null) {
                         nextAt = Timer.getNextDueAtFromWeek(c, getDefaultValues(timerEntity)).getTime();
                     }else{
                         nextAt = timerEntity.tmpNextDueAt;
                     }
+                    nextString = activity.getString(R.string.prompt_timer_next_due_at, Timer.getFormatDueStringWithoutYear(nextAt));
                 }else{
                     nextAt = null;
                 }
 
                 new AlertDialog.Builder(activity)
                         .setTitle(activity.getString(R.string.prompt_timer_done))
-                        .setMessage(activity.getString(R.string.prompt_timer_next_due_at, Timer.getFormatDueStringWithoutYear(nextAt)))
+                        .setMessage(nextString)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -529,23 +538,27 @@ public class TimerPresenter {
         return swipeLayout;
     }
 
-    public static View assignTimerText(View v, TimerEntity timer, Activity activity){
-        TextView timerName = (TextView)v.findViewById(R.id.timer_name);
+    public static View assignTimerText(View v, TimerEntity timer, Activity activity) {
+        TextView timerName = (TextView) v.findViewById(R.id.timer_name);
         timerName.setText(timer.name);
 
-        TextView noticeInterval = (TextView)v.findViewById(R.id.notice_interval);
+        TextView noticeInterval = (TextView) v.findViewById(R.id.notice_interval);
         noticeInterval.setText(Timer.getIntervalString(activity, timer));
 
-        TextView limitFrom = (TextView)v.findViewById(R.id.limit_from);
+        TextView limitFrom = (TextView) v.findViewById(R.id.limit_from);
         Date due = (timer.overDueFrom == null ? timer.nextDueAt : timer.overDueFrom);
         limitFrom.setText(Timer.getRemainingTimeString(activity, due));
 
-        TextView noticeAt = (TextView)v.findViewById(R.id.notice_at);
+        TextView noticeAt = (TextView) v.findViewById(R.id.notice_at);
         String noticeString = Timer.getFormatDueStringWithoutYear(timer.nextDueAt);
         if(timer.overDueFrom == null){
             noticeString = noticeString + activity.getString(R.string.postfix_prompt_next_due_at);
         }else{
-            noticeString = noticeString + activity.getString(R.string.postfix_prompt_next_due_at_again);
+            if(timer.isRepeating) {
+                noticeString = noticeString + activity.getString(R.string.postfix_prompt_next_due_at_again);
+            }else{
+                noticeString = activity.getString(R.string.prompt_nothing_notice);
+            }
         }
         noticeAt.setText(noticeString);
 

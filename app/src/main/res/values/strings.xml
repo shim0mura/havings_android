@@ -38,8 +38,8 @@
     <string name="error_list_name_required">リスト名を入力してください。</string>
     <string name="error_item_name_required">アイテム名を入力してください。</string>
     <string name="error_image_required">画像を最低1枚指定してください。</string>
-    <string name="error_invalid_timer_due_at">"現在時刻より前の時間は指定できません。"</string>
-    <string name="error_invalid_timer_done_at">"現在時刻より先の時間は指定できません。"</string>
+    <string name="error_invalid_timer_due_at">現在時刻より前の時間は指定できません。</string>
+    <string name="error_invalid_timer_done_at">現在時刻より先の時間は指定できません。</string>
 
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
 
@@ -137,6 +137,9 @@
     <string name="prompt_post_item_button">%1$sを追加する</string>
     <string name="prompt_edit_item_button">%1$sを編集する</string>
     <string name="prompt_add_image_button">画像を追加する</string>
+    <string name="prompt_as_garbage">手放したアイテムとして登録</string>
+    <string name="prompt_garbage_reason_hint">手放す理由を入力...(オプション)</string>
+
 
     <string name="prompt_cancel">キャンセル</string>
     <string name="prompt_sending">送信中...</string>
@@ -168,6 +171,7 @@
     <string name="prompt_delete_item_button">削除する</string>
 
 
+    <string name="prompt_nothing">なし</string>
     <string name="unit_item_count">個</string>
     <string name="unit_item_count_en">items</string>
     <string name="prefix_unit_item_count_en">having</string>
@@ -212,6 +216,8 @@
     <string name="prompt_close">閉じる</string>
 
     <string name="prompt_timer_next_due_at">次回通知予定: %1$s</string>
+    <string name="prompt_nothing_notice">通知予定なし</string>
+
 
     <string name="prompt_timer_done_desc">タスクを完了した日時を選択</string>
     <string name="prompt_timer_do_later_desc">タスクを行う予定の日時を選択</string>

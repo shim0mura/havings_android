@@ -25,10 +25,10 @@ public class Timer {
 
     public static final int MAX_COUNT_PER_LIST = 4;
 
-    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分");
-    public static SimpleDateFormat sdfWithoutYear = new SimpleDateFormat("MM月dd日HH時mm分");
-    public static final String DUE_DATEFORMAT = "yyyy年MM月dd日(E) HH時mm分";
-    public static final String DUE_DATEFORMAT_WITHOUT_YEAR = "MM月dd日(E) HH時mm分";
+    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 kk時mm分");
+    public static SimpleDateFormat sdfWithoutYear = new SimpleDateFormat("MM月dd日kk時mm分");
+    public static final String DUE_DATEFORMAT = "yyyy年MM月dd日(E) kk時mm分";
+    public static final String DUE_DATEFORMAT_WITHOUT_YEAR = "MM月dd日(E) kk時mm分";
 
     public static final String IS_REPEATING = "IsRepeating";
     public static final String REPEAT_BY = "RepeatBy";

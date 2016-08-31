@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:fitsSystemWindows="true"
-    tools:context="work.t_s.shim0mura.havings.ImageChooseActivity">
+    tools:context="work.t_s.shim0mura.havings.ImageChooseActivity"
+    android:id="@+id/wrapper">
 
     <RelativeLayout
         android:id="@+id/loading"

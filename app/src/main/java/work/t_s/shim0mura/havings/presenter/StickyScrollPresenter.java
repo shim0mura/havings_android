@@ -614,15 +614,17 @@ public class StickyScrollPresenter {
 
 
                 } else if (MotionEvent.ACTION_DOWN == event.getAction()) {
-                    presenter.scrollView.dispatchTouchEvent(event);
-                    //v.onTouchEvent(event);
+                    //presenter.scrollView.dispatchTouchEvent(event);
+                    presenter.scrollView.onTouchEvent(event);
                     Log.d("action type", "down");
                     lastY = (int) event.getRawY();
                     pointY = (int) event.getRawY();
                     pointX = (int) event.getRawX();
                     Log.d("point", String.valueOf(lastY));
                 } else if (MotionEvent.ACTION_UP == event.getAction()){
-                    presenter.scrollView.dispatchTouchEvent(event);
+                    //presenter.scrollView.dispatchTouchEvent(event);
+                    presenter.scrollView.onTouchEvent(event);
+
                     int totalDiffX = Math.abs(pointX - (int)event.getRawX());
                     int totalDiffY = Math.abs(pointY - (int)event.getRawY());
                     if(totalDiffX < 30 && totalDiffY < 30){

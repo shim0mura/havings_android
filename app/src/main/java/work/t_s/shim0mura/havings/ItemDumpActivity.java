@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
@@ -39,6 +40,8 @@ import work.t_s.shim0mura.havings.model.event.SetErrorEvent;
 import work.t_s.shim0mura.havings.view.FellowSelectExpandableListAdapter;
 
 public class ItemDumpActivity extends ItemFormBaseActivity {
+
+    @Bind(R.id.fellow_item_wrapper) LinearLayout fellowWrapper;
 
     public static void startActivity(Context context, ItemEntity i, boolean asList){
         Intent intent = new Intent(context, new Object(){ }.getClass().getEnclosingClass());
@@ -58,6 +61,10 @@ public class ItemDumpActivity extends ItemFormBaseActivity {
 
         setTitle(getString(R.string.prompt_item_dump, (item.isList ? getString(R.string.list) : getString(R.string.item))));
         ButterKnife.bind(this);
+        if(!item.isList){
+            fellowWrapper.setVisibility(View.GONE);
+        }
+
         setFellowAdapter(getText(R.string.prompt_dump_fellow_items_explanation).toString(), getText(R.string.prompt_dump_fellow_items_sub_explanation).toString(), getText(R.string.prompt_dump_item_button).toString());
     }
 

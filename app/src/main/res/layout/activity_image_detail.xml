@@ -11,7 +11,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:fitsSystemWindows="true"
+    android:layout_height="match_parent"
     tools:context="work.t_s.shim0mura.havings.ImageDetailActivity"
     android:id="@+id/wrapper">
 

@@ -194,7 +194,7 @@ public class TimerFormActivity extends AppCompatActivity {
             }
         });
 
-        noticeTime.setText(DateFormat.format("HH時mm分", timer.tmpNextDueAt).toString());
+        noticeTime.setText(DateFormat.format("kk時mm分", timer.tmpNextDueAt).toString());
 
         noticeTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,7 +206,7 @@ public class TimerFormActivity extends AppCompatActivity {
                         tmpCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         tmpCalendar.set(Calendar.MINUTE, TimerPresenter.IntervalTimePicker.MINUTES_TABLE[minute/15]);
                         timer.tmpNextDueAt = tmpCalendar.getTime();
-                        noticeTime.setText(DateFormat.format("HH時mm分", timer.tmpNextDueAt).toString());
+                        noticeTime.setText(DateFormat.format("kk時mm分", timer.tmpNextDueAt).toString());
                         setNextDueAt();
                     }
                 };
@@ -288,7 +288,7 @@ public class TimerFormActivity extends AppCompatActivity {
         selectWeekInterval.setOnItemSelectedListener(null);
         //selectRepeatDayOfWeek.setOnItemSelectedListener(null);
         noticeDate.setText(DateFormat.format("yyyy年MM月dd日(E)", timer.tmpNextDueAt).toString());
-        noticeTime.setText(DateFormat.format("HH時mm分", timer.nextDueAt).toString());
+        noticeTime.setText(DateFormat.format("kk時mm分", timer.nextDueAt).toString());
 
         timer.tmpNextDueAt = timer.nextDueAt;
         tmpCalendar.setTime(timer.nextDueAt);

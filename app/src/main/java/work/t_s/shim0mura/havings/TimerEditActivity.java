@@ -276,7 +276,7 @@ public class TimerEditActivity extends AppCompatActivity {
     }
 
     private void setTargetTimeText(){
-        targetTime.setText(DateFormat.format("HH時mm分", tmpCalendar.getTime()).toString());
+        targetTime.setText(DateFormat.format("kk時mm分", tmpCalendar.getTime()).toString());
     }
 
     private void setNextDueAtText(){
@@ -291,9 +291,15 @@ public class TimerEditActivity extends AppCompatActivity {
         Calendar nextOfNext;
         if(timerEntity.repeatBy == Timer.REPEAT_TYPE_BY_DAY){
             nextOfNext = Timer.getNextDueAtFromMonth(tmpCalendar, timerPresenter.getDefaultValues(timerEntity));
-        }else{
+            nextOfNextDueAt.setText(Timer.getFormatDueString(nextOfNext.getTime()));
+
+        }else if (timerEntity.repeatBy == Timer.REPEAT_TYPE_BY_WEEK) {
             nextOfNext = Timer.getNextDueAtFromWeek(tmpCalendar, timerPresenter.getDefaultValues(timerEntity));
+            nextOfNextDueAt.setText(Timer.getFormatDueString(nextOfNext.getTime()));
+
+        }else{
+            nextOfNextDueAt.setText(R.string.prompt_nothing);
+
         }
-        nextOfNextDueAt.setText(Timer.getFormatDueString(nextOfNext.getTime()));
     }
 }

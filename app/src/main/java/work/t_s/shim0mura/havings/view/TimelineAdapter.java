@@ -119,7 +119,7 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
         // List<?>だとそれぞれの型にキャストできないので
         // しょうがないからacterとtargetはLinkedHashMapのまま使ってる
         final LinkedHashMap acter = (LinkedHashMap)event.acter.get(0);
-        LinkedHashMap target = (LinkedHashMap)event.target.get(0);
+        final LinkedHashMap target = (LinkedHashMap)event.target.get(0);
 
         if(acter == null || target == null){
             Timber.d("acter or target null %s %s", acter == null, target == null);
@@ -128,14 +128,6 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
 
         //holder.acter.setText((String) acter.get("name") + honorific);
         holder.acter.setTag(R.id.TAG_USER_ID, (int) acter.get("id"));
-        /*
-        holder.acter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UserActivity.startActivity(context, (int) v.getTag(R.id.TAG_USER_ID));
-            }
-        });
-        */
 
         if(target.get("image") != null){
             String thumbnailUrl = ApiServiceManager.getSingleton(context).getApiUrl() + target.get("image");
@@ -169,7 +161,9 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        //ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        ItemActivity.startActivity(context, (int) target.get("id"));
+
                     }
                 });
 
@@ -183,7 +177,9 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        //ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        ItemActivity.startActivity(context, (int) target.get("id"));
+
                     }
                 });
 
@@ -197,7 +193,9 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        //ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        ItemActivity.startActivity(context, (int) target.get("id"));
+
                     }
                 });
 
@@ -211,7 +209,9 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        UserActivity.startActivity(context, (int) v.getTag(R.id.TAG_USER_ID));
+                        //UserActivity.startActivity(context, (int) v.getTag(R.id.TAG_USER_ID));
+                        UserActivity.startActivity(context, (int) target.get("id"));
+
                     }
                 });
 
@@ -225,7 +225,9 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        //ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        ItemActivity.startActivity(context, (int) target.get("id"));
+
                     }
                 });
 
@@ -239,7 +241,7 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        ItemActivity.startActivity(context, (int) target.get("id"));
                     }
                 });
 
@@ -249,11 +251,13 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 LinkBuilder.on(holder.subText).addLink(acterLink).build();
 
                 holder.eventTypeIcon.setImageResource(R.drawable.ic_photo_blue_grey_400_36dp);
-                holder.target.setTag(R.id.TAG_ITEM_ID, (int) target.get("id"));
+                holder.target.setTag(R.id.TAG_ITEM_ID, (int) target.get("item_id"));
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        //ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        ItemActivity.startActivity(context, (int) target.get("item_id"));
+
                     }
                 });
 
@@ -267,7 +271,7 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ItemActivity.startActivity(context, (int) v.getTag(R.id.TAG_ITEM_ID));
+                        ItemActivity.startActivity(context, (int) target.get("id"));
                     }
                 });
 

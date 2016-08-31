@@ -220,7 +220,37 @@ public class FormPresenter {
             try{
                 InputStream is = activity.getContentResolver().openInputStream(u);
 
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
+                decodeOptions.inJustDecodeBounds = true;
+
+                BitmapFactory.decodeStream(is, null, decodeOptions);
+
+                int actualWidth = decodeOptions.outWidth;
+                int actualHeight = decodeOptions.outHeight;
+
+                int desiredWidth = getResizedDimension(800, 800,
+                        actualWidth, actualHeight);
+                int desiredHeight = getResizedDimension(800, 800,
+                        actualHeight, actualWidth);
+                decodeOptions.inJustDecodeBounds = false;
+
+                decodeOptions.inSampleSize =
+                        findBestSampleSize(actualWidth, actualHeight, desiredWidth, desiredHeight);
+                Bitmap bitmap;
+                is = activity.getContentResolver().openInputStream(u);
+
+                Bitmap tempBitmap = BitmapFactory.decodeStream(is, null, decodeOptions);
+                is.close();
+                if (tempBitmap != null && (tempBitmap.getWidth() > desiredWidth ||
+                        tempBitmap.getHeight() > desiredHeight)) {
+                    bitmap = Bitmap.createScaledBitmap(tempBitmap,
+                            desiredWidth, desiredHeight, true);
+                    tempBitmap.recycle();
+                } else {
+                    bitmap = tempBitmap;
+                }
+                Timber.d("bitmap_ %s %s %s", bitmap.toString(), bitmap.getWidth(), bitmap.getHeight());
+
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                 bitmapdata = bos.toByteArray();
@@ -258,6 +288,42 @@ public class FormPresenter {
 
         return itemImageEntities;
     }
+
+    private int getResizedDimension(int maxPrimary, int maxSecondary, int actualPrimary,
+                                    int actualSecondary) {
+        if ((maxPrimary == 0) && (maxSecondary == 0)) {
+            return actualPrimary;
+        }
+
+        if (maxPrimary == 0) {
+            double ratio = (double) maxSecondary / (double) actualSecondary;
+            return (int) (actualPrimary * ratio);
+        }
+
+        if (maxSecondary == 0) {
+            return maxPrimary;
+        }
+
+        double ratio = (double) actualSecondary / (double) actualPrimary;
+        int resized = maxPrimary;
+
+        if ((resized * ratio) < maxSecondary) {
+            resized = (int) (maxSecondary / ratio);
+        }
+        return resized;
+    }
+    static int findBestSampleSize(
+            int actualWidth, int actualHeight, int desiredWidth, int desiredHeight) {
+        double wr = (double) actualWidth / desiredWidth;
+        double hr = (double) actualHeight / desiredHeight;
+        double ratio = Math.min(wr, hr);
+        float n = 1.0f;
+        while ((n * 2) <= ratio) {
+            n *= 2;
+        }
+        return (int) n;
+    }
+
 
     public void attemptToCreateItem(ItemEntity itemEntity){
         HashMap<String, ItemEntity> hashItem = new HashMap<String, ItemEntity>();
@@ -335,6 +401,8 @@ public class FormPresenter {
             public void onFailure(Throwable t) {
                 Timber.d("failed to post item");
                 t.printStackTrace();
+                BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+
             }
         });
     }
@@ -390,6 +458,8 @@ public class FormPresenter {
             public void onFailure(Throwable t) {
                 Timber.d("failed to post item");
                 t.printStackTrace();
+                BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+
             }
         };
     }
@@ -634,16 +704,8 @@ public class FormPresenter {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Timber.d("selected item %s", view.getTag(R.id.TAG_ITEM_ID));
-                    /*
-                    Intent data = new Intent();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(ItemFormActivity.LIST_NAME_TAG_ID_KEY, (int) view.getTag(R.id.TAG_ITEM_ID));
-                    data.putExtras(bundle);
 
-                    activity.setResult(Activity.RESULT_OK, data);
-                    activity.finish();
-                    */
-                    String selected = (tabPosition == 1 ? tagStringByPlace.get(position) : tagStringByCloset.get(position));
+                    String selected = (tabPosition == 0 ? tagStringByPlace.get(position) : tagStringByCloset.get(position));
                     inputTags.add(selected);
 
                     ImageChooseActivity.startActivity(activity, selected, inputTags, listId);

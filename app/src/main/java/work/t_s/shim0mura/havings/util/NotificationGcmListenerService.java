@@ -37,7 +37,7 @@ public class NotificationGcmListenerService extends GcmListenerService {
         super.onMessageReceived(s, bundle);
 
         String message = bundle.getString(MESSAGE_KEY);
-        int type = bundle.getInt(TYPE_INT_KEY);
+        int type = Integer.valueOf(bundle.getString(TYPE_INT_KEY));
 
         notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -45,7 +45,7 @@ public class NotificationGcmListenerService extends GcmListenerService {
         switch(type){
             case TYPE_TIMER:
                 intent = new Intent(this, ItemActivity.class);
-                int itemId = bundle.getInt(ITEM_ID_KEY);
+                int itemId = Integer.valueOf(bundle.getString(ITEM_ID_KEY));
                 intent.putExtra(ITEM_ID, itemId);
                 break;
             default:
@@ -56,7 +56,7 @@ public class NotificationGcmListenerService extends GcmListenerService {
 
         builder = new NotificationCompat.Builder(this)
                 .setContentTitle("Havings")
-                .setSmallIcon(R.drawable.list_icon_for_tab)
+                .setSmallIcon(R.drawable.icon)
                 .setContentText(message);
 
         builder.setContentIntent(contentIntent);

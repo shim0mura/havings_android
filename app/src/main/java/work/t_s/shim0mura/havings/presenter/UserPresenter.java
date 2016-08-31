@@ -637,7 +637,10 @@ public class UserPresenter {
             nestedItemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                           @Override
                                                           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                              ItemActivity.startActivity(activity, (int) view.getTag(R.string.tag_item_id));
+                                                              ItemEntity item = nestedItemListAdapter.getItem(position - 1);
+                                                              Timber.d("tapped_tag: %s, position: %s", view.getTag(R.string.tag_item_id), String.valueOf(position));
+
+                                                              ItemActivity.startActivity(activity, item.id);
                                                           }
                                                       });
 

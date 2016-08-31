@@ -3,6 +3,8 @@ package work.t_s.shim0mura.havings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -112,6 +114,39 @@ public class TargetItemSelectActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Timber.d("activity_result");
+        if (resultCode == RESULT_OK) {
+
+            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+
+            if (requestCode == ItemActivity.ITEM_CREATED_RESULTCODE) {
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.item)), Snackbar.LENGTH_LONG).show();
+            } else if (requestCode == ItemActivity.ITEM_UPDATED_RESULTCODE) {
+                Bundle extras = data.getExtras();
+                ItemEntity item = (ItemEntity)extras.getSerializable(ItemActivity.UPDATED_ITEM);
+                String itemType = item.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_updated, itemType), Snackbar.LENGTH_LONG).show();
+            } else if (requestCode == ItemActivity.IMAGE_ADDED_RESULTCODE) {
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_image_added), Snackbar.LENGTH_LONG).show();
+            } else if (requestCode == ItemActivity.ITEM_DUMP_RESULTCODE){
+                Bundle extras = data.getExtras();
+                ItemEntity deletedItem = (ItemEntity)extras.getSerializable(ItemActivity.DUMP_ITEM);
+                String itemType = deletedItem.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_dumped, itemType), Snackbar.LENGTH_LONG).show();
+
+            } else if (requestCode == ItemActivity.ITEM_DELETE_RESULTCODE){
+                Bundle extras = data.getExtras();
+                ItemEntity deletedItem = (ItemEntity)extras.getSerializable(ItemActivity.DELETE_ITEM);
+                String itemType = deletedItem.isList ? getString(R.string.list) : getString(R.string.item);
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_deleted, itemType), Snackbar.LENGTH_LONG).show();
+            }
+        }
     }
 
 }
