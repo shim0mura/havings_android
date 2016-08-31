@@ -2,6 +2,7 @@ package work.t_s.shim0mura.havings;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,6 +55,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private TextView changeImagePrompt;
     private ImageView changedProfileImage;
     private Uri pictureUri;
+    private ProgressDialog progressDialog;
 
     @Bind(R.id.user_name) EditText userName;
     @Bind(R.id.profile) EditText profile;
@@ -63,7 +65,9 @@ public class ProfileEditActivity extends AppCompatActivity {
     public static void startActivity(Context context, UserEntity user){
         Intent intent = new Intent(context, new Object() {}.getClass().getEnclosingClass());
         intent.putExtra(SERIALIZED_USER, user);
-        context.startActivity(intent);
+        //context.startActivity(intent);
+        Activity a = (Activity)context;
+        a.startActivityForResult(intent, 10);
     }
 
     public static void startActivity(Context context, int id){
@@ -81,6 +85,8 @@ public class ProfileEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile_edit);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         ButterKnife.bind(this);
 
@@ -102,6 +108,12 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         BusHolder.get().register(this);
@@ -117,26 +129,45 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     @OnClick(R.id.change_profile)
     public void changeProfile() {
-        Timber.d("change profile");
 
         Uri changedImageUri = (Uri)changedProfileImage.getTag(R.id.ADDED_IMAGE_URI);
         if(changedImageUri != null) {
             userEntity.image = ImageConverter.convertImageToBase64(this, changedImageUri);
         }
 
+        String name = userName.getText().toString();
+
+        if(name.isEmpty()){
+            userName.setError(getText(R.string.error_field_required));
+            return;
+        }
+
+        userEntity.name = name;
+        userEntity.description = profile.getText().toString();
+
+        progressDialog = ProgressDialog.show(this, getTitle(), getString(R.string.prompt_sending), true);
+
         userPresenter.editProfile(userEntity);
     }
 
     @Subscribe
     public void applySuccessResult(ResultEntity resultEntity){
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
         Timber.d("success to change");
+
+        finish();
     }
 
     @Subscribe
     public void applyGereralError(SetErrorEvent errorEvent){
         switch(errorEvent.resultType){
             default:
-                Timber.w("Unexpected ResultCode in Error Returned in changeProfile... code: %s, relatedId: %s", errorEvent.resultType);
+                Timber.w("Unexpected ResultCode in Error Returned in changeProfile...  relatedId: %s", errorEvent.resultType);
+                if(progressDialog != null){
+                    progressDialog.dismiss();
+                }
                 break;
         }
     }

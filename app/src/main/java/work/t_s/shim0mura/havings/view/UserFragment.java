@@ -1,6 +1,7 @@
 package work.t_s.shim0mura.havings.view;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -107,6 +108,8 @@ public class UserFragment extends Fragment {
     public void onResume() {
         super.onResume();
         BusHolder.get().register(this);
+        userPresenter.getSelf();
+
         Timber.d("register observer from dashboard fragment");
     }
 
