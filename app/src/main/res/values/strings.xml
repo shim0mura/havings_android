@@ -150,6 +150,8 @@
     <string name="prompt_item_added">%1$sを追加しました</string>
     <string name="prompt_item_updated">%1$sを編集しました</string>
     <string name="prompt_image_added">画像を追加しました</string>
+    <string name="prompt_image_added_with_item">%1$sに画像を追加しました</string>
+
     <string name="prompt_item_dumped">%1$sを手放しました</string>
     <string name="prompt_item_deleted">%1$sを削除しました</string>
     <string name="prompt_item_dump">%1$sを手放す</string>
@@ -387,6 +389,8 @@
 
     <string name="prompt_copy_url_link">URLをコピー</string>
     <string name="prompt_link_copied">URLをコピーしました</string>
+
+    <string name="prompt_action_tweet">ツイートする</string>
 
     <string name="prompt_share">シェアするアプリを選択</string>
 

@@ -3,6 +3,9 @@ package work.t_s.shim0mura.havings;
 import android.app.Application;
 import android.support.multidex.MultiDexApplication;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.util.ExtTree;
 
@@ -20,6 +23,7 @@ public class HavingsGlobal extends MultiDexApplication {
             Timber.plant(new ExtTree());
         } else {
             //Timber.plant(new MyCrashReportingTree());
+            Fabric.with(this, new Crashlytics());
             Timber.plant(new Timber.DebugTree());
             Timber.plant(new ExtTree());
         }

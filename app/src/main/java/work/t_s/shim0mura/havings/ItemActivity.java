@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -104,6 +105,7 @@ public class ItemActivity extends DrawerActivity {
     public static final String POSTED_TIMER = "PostedTimer";
     public static final String UPDATED_TIMER = "UpdatedTimer";
 
+    public static final String SHARE_APP_TWITTER = "com.twitter.android";
 
     public ItemPresenter itemPresenter;
     private StickyScrollPresenter stickyScrollPresenter;
@@ -409,6 +411,15 @@ public class ItemActivity extends DrawerActivity {
         }else{
             findViewById(R.id.menu_labels_right).setVisibility(View.GONE);
         }
+
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+        String prompt = getString(R.string.prompt_item_added, item.name);
+        String path = ApiServiceManager.getSingleton(this).getWebUrl() + item.path;
+        Snackbar bar = Snackbar.make(coordinatorLayout, prompt, Snackbar.LENGTH_LONG);
+        if(item.privateType == 0){
+            setTweetAction(bar, prompt, path);
+        }
+        bar.show();
     }
 
     private void updateItemData(){
@@ -531,7 +542,7 @@ public class ItemActivity extends DrawerActivity {
                 Timber.d("failed to unfavorite item image");
                 break;
             default:
-                Timber.w("Unexpected ResultCode in Error Returned... code: %s, relatedId: %s", errorEvent.resultType);
+                Timber.w("Unexpected ResultCode in Error Returned..., relatedId: %s", errorEvent.resultType);
                 break;
         }
     }
@@ -693,7 +704,6 @@ public class ItemActivity extends DrawerActivity {
 
             if (requestCode == ITEM_CREATED_RESULTCODE) {
 
-                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.item)), Snackbar.LENGTH_LONG).show();
                 Bundle extras = data.getExtras();
                 ItemEntity addedItem = (ItemEntity)extras.getSerializable(CREATED_ITEM);
                 if(item.isList && addedItem.listId == item.id) {
@@ -701,35 +711,65 @@ public class ItemActivity extends DrawerActivity {
                     pagerAdapter.notifyDataSetChanged();
                 }
 
+                String prompt = getString(R.string.prompt_item_added, item.name);
+                String path = ApiServiceManager.getSingleton(this).getWebUrl() + item.path;
+                Snackbar bar = Snackbar.make(coordinatorLayout, prompt, Snackbar.LENGTH_LONG);
+                if(item.privateType == 0){
+                    setTweetAction(bar, prompt, path);
+                }
+                bar.show();
+
+
             } else if (requestCode == ITEM_UPDATED_RESULTCODE) {
                 Bundle extras = data.getExtras();
                 item = (ItemEntity)extras.getSerializable(UPDATED_ITEM);
 
                 updateItemData();
-                String itemType = item.isList ? getString(R.string.list) : getString(R.string.item);
-                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_updated, itemType), Snackbar.LENGTH_LONG).show();
+                String prompt = getString(R.string.prompt_item_updated, item.name);
+                String path = ApiServiceManager.getSingleton(this).getWebUrl() + item.path;
+
+                Snackbar bar = Snackbar.make(coordinatorLayout, prompt, Snackbar.LENGTH_LONG);
+                if(item.privateType == 0){
+                    setTweetAction(bar, prompt, path);
+                }
+                bar.show();
             } else if (requestCode == IMAGE_ADDED_RESULTCODE) {
                 Bundle extras = data.getExtras();
                 ItemImageListEntity imageListEntity = (ItemImageListEntity) extras.getSerializable(ADDED_IMAGES);
 
                 pagerAdapter.addImage(imageListEntity);
 
-                Snackbar.make(coordinatorLayout, getString(R.string.prompt_image_added), Snackbar.LENGTH_LONG).show();
+                String prompt = getString(R.string.prompt_image_added_with_item, item.name);
+                String path = ApiServiceManager.getSingleton(this).getWebUrl() + item.path;
+
+
+                Snackbar bar = Snackbar.make(coordinatorLayout, prompt, Snackbar.LENGTH_LONG);
+                if(item.privateType == 0){
+                    setTweetAction(bar, prompt, path);
+                }
+                bar.show();
+
             } else if (requestCode == ITEM_DUMP_RESULTCODE){
                 Bundle extras = data.getExtras();
                 ItemEntity deletedItem = (ItemEntity)extras.getSerializable(DUMP_ITEM);
-                String itemType = deletedItem.isList ? getString(R.string.list) : getString(R.string.item);
-                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_dumped, itemType), Snackbar.LENGTH_LONG).show();
 
                 if(item.isList && deletedItem.listId == item.id) {
                     pagerAdapter.shiftItem(deletedItem);
                     pagerAdapter.notifyDataSetChanged();
                 }
+                String prompt = getString(R.string.prompt_item_dumped, item.name);
+                String path = ApiServiceManager.getSingleton(this).getWebUrl() + item.path;
+
+                Snackbar bar = Snackbar.make(coordinatorLayout, prompt, Snackbar.LENGTH_LONG);
+                if(item.privateType == 0){
+                    setTweetAction(bar, prompt, path);
+                }
+                bar.show();
+
             } else if (requestCode == ITEM_DELETE_RESULTCODE){
                 Bundle extras = data.getExtras();
                 ItemEntity deletedItem = (ItemEntity)extras.getSerializable(DELETE_ITEM);
-                String itemType = deletedItem.isList ? getString(R.string.list) : getString(R.string.item);
-                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_deleted, itemType), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_deleted, item.name), Snackbar.LENGTH_LONG).show();
 
                 if(item.isList && deletedItem.listId == item.id) {
                     pagerAdapter.shiftItem(deletedItem);
@@ -776,5 +816,41 @@ public class ItemActivity extends DrawerActivity {
                 .setMessage(event.message)
                 .setPositiveButton("OK", null)
                 .show();
+    }
+
+    private void setTweetAction(Snackbar bar, final String prompt, final String path){
+        bar.setAction(R.string.prompt_action_tweet, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isShareAppInstall(SHARE_APP_TWITTER)){
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.setPackage(SHARE_APP_TWITTER);
+                    intent.putExtra(Intent.EXTRA_TEXT, prompt + " " + path + " #Havings");
+                    startActivity(intent);
+                }else{
+                    shareAppDl(SHARE_APP_TWITTER);
+                }
+            }
+        });
+    }
+
+    // http://qiita.com/ueno-yuhei/items/f5c7b36e2931a9da143f
+    // アプリがインストールされているかチェック
+    private Boolean isShareAppInstall(String shareApp){
+        try {
+            PackageManager pm = getPackageManager();
+            pm.getApplicationInfo(shareApp, PackageManager.GET_META_DATA);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    // アプリが無かったのでGooglePalyに飛ばす
+    private void shareAppDl(String shareApp){
+        Uri uri = Uri.parse("market://details?id=" + shareApp);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 }

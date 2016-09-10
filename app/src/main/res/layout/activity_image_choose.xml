@@ -21,7 +21,7 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/housekeeping"/>
+                android:src="@drawable/bigger_list_icon"/>
             <TextView
                 android:layout_marginTop="@dimen/app_basic_padding"
                 android:layout_width="wrap_content"

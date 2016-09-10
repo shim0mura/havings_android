@@ -133,6 +133,7 @@ public class UserPresenter {
         });
     }
 
+    /*
     public void getNextItemList(int userId, int offset, final ItemListAdapter adapter, final ListView listView, final View footerView){
         Call<ItemEntity> call = service.getUserItemList(userId, offset);
 
@@ -172,6 +173,7 @@ public class UserPresenter {
             }
         });
     }
+    */
 
     public void getNextImageList(int userId, int offset, final ItemImageListAdapter adapter, final View footerView){
         Call<ItemImageListEntity> call = service.getUserItemImages(userId, offset);

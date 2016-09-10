@@ -220,7 +220,9 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.subText.setText(context.getString(R.string.postfix_timeline_create_item, acterName));
                 LinkBuilder.on(holder.subText).addLink(acterLink).build();
 
-                holder.eventTypeIcon.setImageResource(R.drawable.ic_add_circle_cyan_300_36dp);
+                //holder.eventTypeIcon.setImageResource(R.drawable.ic_add_circle_cyan_300_36dp);
+                holder.eventTypeIcon.setImageResource(R.drawable.item_icon_for_tab);
+
                 holder.target.setTag(R.id.TAG_ITEM_ID, (int) target.get("id"));
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -236,7 +238,9 @@ public class TimelineAdapter extends ArrayAdapter<NotificationEntity> {
                 holder.subText.setText(context.getString(R.string.postfix_timeline_create_list, acterName));
                 LinkBuilder.on(holder.subText).addLink(acterLink).build();
 
-                holder.eventTypeIcon.setImageResource(R.drawable.ic_add_circle_blue_300_36dp);
+                //holder.eventTypeIcon.setImageResource(R.drawable.ic_add_circle_blue_300_36dp);
+                holder.eventTypeIcon.setImageResource(R.drawable.list_icon_for_tab);
+
                 holder.target.setTag(R.id.TAG_ITEM_ID, (int) target.get("id"));
                 holder.target.setOnClickListener(new View.OnClickListener() {
                     @Override

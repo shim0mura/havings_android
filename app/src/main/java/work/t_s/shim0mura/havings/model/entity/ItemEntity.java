@@ -24,6 +24,7 @@ public class    ItemEntity implements Serializable {
     public String garbageReason;
     public int count;
     public int privateType;
+    public String path;
 
     public int itemImageId;
 
