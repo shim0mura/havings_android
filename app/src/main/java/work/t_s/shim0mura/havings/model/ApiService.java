@@ -104,7 +104,13 @@ public interface ApiService {
     @GET("/user/{user_id}/dump_items")
     Call<ItemEntity> getDumpItemList(
             @Path("user_id") int user_id,
-            @Query("from") int offset
+            @Query("page") int offset
+    );
+
+    @GET("/user/classed_items/{tag_id}")
+    Call<ItemEntity> getClassedItemList(
+            @Path("tag_id") int tag_id,
+            @Query("page") int offset
     );
 
     @POST("/user/{user_id}/follow")

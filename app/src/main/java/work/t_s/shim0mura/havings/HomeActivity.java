@@ -86,7 +86,6 @@ import work.t_s.shim0mura.havings.presenter.FormPresenter;
 import work.t_s.shim0mura.havings.presenter.HomePresenter;
 import work.t_s.shim0mura.havings.presenter.ItemPresenter;
 import work.t_s.shim0mura.havings.presenter.UserPresenter;
-import work.t_s.shim0mura.havings.util.NotificationGcmIntentService;
 import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 
@@ -197,6 +196,22 @@ public class HomeActivity extends DrawerActivity {
         AdView mAdView = (AdView) findViewById(R.id.ad_view);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
+        String tmpToken = ApiKey.getSingleton(this).getTmpDeviceToken();
+        if(tmpToken != null && !tmpToken.isEmpty()){
+            DeviceTokenEntity deviceTokenEntity = new DeviceTokenEntity();
+            deviceTokenEntity.token = tmpToken;
+            BusHolder.get().post(new DeviceTokenCheckEvent(deviceTokenEntity));
+
+            String registedToken = ApiKey.getSingleton(this).getDeviceToken();
+            Timber.d("regist_token_local %s", registedToken);
+            HomePresenter homePresenter = new HomePresenter(this);
+            if(deviceTokenEntity.token != null && registedToken == null){
+                homePresenter.postDeviceToken(deviceTokenEntity.token);
+            }else if(deviceTokenEntity.token != null && !deviceTokenEntity.token.equals(registedToken)){
+                homePresenter.putDeviceToken(deviceTokenEntity.token);
+            }
+        }
     }
 
     @Override
@@ -244,6 +259,7 @@ public class HomeActivity extends DrawerActivity {
         setNotificationBadge(event.notificationEntities.size());
     }
 
+    /*
     @Subscribe
     public void checkDeviceTokenState(DeviceTokenCheckEvent event){
         String registedToken = ApiKey.getSingleton(this).getDeviceToken();
@@ -255,6 +271,7 @@ public class HomeActivity extends DrawerActivity {
             homePresenter.putDeviceToken(event.deviceTokenEntity.token);
         }
     }
+    */
 
     @Subscribe
     public void deviceTokenUpdateSuccess(DeviceTokenEntity deviceTokenEntity){
@@ -263,8 +280,8 @@ public class HomeActivity extends DrawerActivity {
     }
 
     private void checkDeviceToken(){
-        Intent intent = new Intent(this, NotificationGcmIntentService.class);
-        startService(intent);
+        //Intent intent = new Intent(this, NotificationGcmIntentService.class);
+        //startService(intent);
     }
 
     private void setNotificationBadge(int count) {

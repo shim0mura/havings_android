@@ -2,11 +2,11 @@ package work.t_s.shim0mura.havings.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -19,15 +19,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.wefika.flowlayout.FlowLayout;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
-import butterknife.ButterKnife;
 import lecho.lib.hellocharts.view.LineChartView;
 import retrofit.Call;
 import retrofit.Callback;
@@ -59,6 +56,8 @@ import work.t_s.shim0mura.havings.util.ViewUtil;
 import work.t_s.shim0mura.havings.view.GraphRenderer;
 import work.t_s.shim0mura.havings.view.ItemImageListAdapter;
 import work.t_s.shim0mura.havings.view.ItemListAdapter;
+
+import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 
 /**
  * Created by shim0mura on 2015/11/14.
@@ -397,15 +396,31 @@ public class ItemPresenter {
 
     public static TextView createTag(Context context, String tag, @Nullable Boolean isMultiline){
         TextView baseTag = new TextView(context);
-        FlowLayout.LayoutParams lp = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
+        Paint mPaint = new Paint();
+        mPaint.setTextSize(14);
+        float width = mPaint.measureText(tag, 0, tag.length()) + 30 * tag.length();
+
+        FlowLayout.LayoutParams lp;
+
+        // 何故かよく分からないけど、ItemActivityから呼ぶとき(=isMultiline)は
+        // widthが小さくなって文字が見えなくなるので、自分で計算してる
+        if(isMultiline){
+            lp = new FlowLayout.LayoutParams((int)width, 55);
+            //lp = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
+
+        }else{
+            lp = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
+            baseTag.setPadding(10, 0, 10, 0);
+
+        }
         int marginTop = 0;
         if(isMultiline){
             marginTop = 15;
         }
         lp.setMargins(0, marginTop, 20, 0);
 
+        baseTag.setTextSize(COMPLEX_UNIT_DIP, 13);
         baseTag.setBackgroundColor(ContextCompat.getColor(context, R.color.tagColor));
-        baseTag.setPadding(10, 0, 10, 0);
         baseTag.setLayoutParams(lp);
         baseTag.setText(tag);
         return baseTag;

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Havings</string>
+
+    <string name="api_url">https://havings.me</string>
+    <string name="url_by_web">https://havings.me</string>
+    <string name="ad_unit_in">ca-app-pub-3509309626350343/4677729512</string>
+</resources>

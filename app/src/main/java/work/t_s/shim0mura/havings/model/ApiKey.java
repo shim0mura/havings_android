@@ -26,6 +26,7 @@ public class ApiKey {
     private static final String UID = "uid";
     private static final String USER_ID = "userId";
     private static final String DEVICE_TOKEN = "deviceToken";
+    private static final String TMP_DEVICE_TOKEN = "tmpDeviceToken";
     private static final String USER_NAME = "userName";
     private static final String ITEM_COUNT = "itemCount";
     private static final String USER_THUMBNAIL = "userThumbnail";
@@ -41,6 +42,7 @@ public class ApiKey {
     private String userThumbnail;
     private int itemCount;
     private String deviceToken;
+    private String tmpDeviceToken;
     private boolean notificationEnable;
 
     private ApiKey(Context c){
@@ -65,6 +67,10 @@ public class ApiKey {
     public String getDeviceToken() {
         return deviceToken;
     }
+    public String getTmpDeviceToken() {
+        return tmpDeviceToken;
+    }
+
 
     public String getUserName(){
         return userName;
@@ -107,6 +113,18 @@ public class ApiKey {
         editor.putString(DEVICE_TOKEN, token);
 
         deviceToken = token;
+
+        editor.apply();
+    }
+
+    public void updateTmpDeviceToken(String token){
+        SharedPreferences preferences = context.getSharedPreferences(API_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor;
+
+        editor = preferences.edit();
+        editor.putString(TMP_DEVICE_TOKEN, token);
+
+        tmpDeviceToken = token;
 
         editor.apply();
     }

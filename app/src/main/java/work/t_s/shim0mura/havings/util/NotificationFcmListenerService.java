@@ -4,23 +4,29 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 
-import com.google.android.gms.gcm.GcmListenerService;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.Map;
 
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.HomeActivity;
 import work.t_s.shim0mura.havings.ItemActivity;
 import work.t_s.shim0mura.havings.R;
 
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static work.t_s.shim0mura.havings.ItemActivity.ITEM_ID;
 
 /**
  * Created by shim0mura on 2016/08/06.
  */
 
-public class NotificationGcmListenerService extends GcmListenerService {
+public class NotificationFcmListenerService extends FirebaseMessagingService {
 
     private NotificationManager notificationManager;
     private NotificationCompat.Builder builder;
@@ -31,32 +37,35 @@ public class NotificationGcmListenerService extends GcmListenerService {
     private static final int TYPE_TIMER = 0;
 
     @Override
-    public void onMessageReceived(String s, Bundle bundle) {
-        Timber.d("gcm_message from: %s", s);
+    public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        super.onMessageReceived(s, bundle);
+        Map<String, String> data = remoteMessage.getData();
+        String message = data.get(MESSAGE_KEY);
+        int itemId = Integer.valueOf(data.get(ITEM_ID_KEY));
+        int typeId = Integer.valueOf(data.get(TYPE_INT_KEY));
 
-        String message = bundle.getString(MESSAGE_KEY);
-        int type = Integer.valueOf(bundle.getString(TYPE_INT_KEY));
+        Timber.d("notification_list, %s %s", itemId, typeId);
 
         notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent intent = new Intent(this, HomeActivity.class);
-        switch(type){
+        switch(typeId){
             case TYPE_TIMER:
                 intent = new Intent(this, ItemActivity.class);
-                int itemId = Integer.valueOf(bundle.getString(ITEM_ID_KEY));
                 intent.putExtra(ITEM_ID, itemId);
+                Timber.d("notification_extra %s", itemId);
                 break;
             default:
                 break;
         }
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, FLAG_UPDATE_CURRENT);
 
         builder = new NotificationCompat.Builder(this)
                 .setContentTitle("Havings")
-                .setSmallIcon(R.drawable.icon)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.icon))
+                .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                .setSmallIcon(R.drawable.list_icon)
                 .setContentText(message);
 
         builder.setContentIntent(contentIntent);

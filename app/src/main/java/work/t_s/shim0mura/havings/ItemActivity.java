@@ -4,29 +4,18 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
@@ -47,22 +35,14 @@ import com.google.android.gms.ads.AdView;
 import com.squareup.otto.Subscribe;
 import com.wefika.flowlayout.FlowLayout;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import lecho.lib.hellocharts.model.Line;
 import timber.log.Timber;
 import work.t_s.shim0mura.havings.model.ApiKey;
-import work.t_s.shim0mura.havings.model.ApiService;
 import work.t_s.shim0mura.havings.model.ApiServiceManager;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
@@ -112,6 +92,7 @@ public class ItemActivity extends DrawerActivity {
     private TimerPresenter timerPresenter;
     private Activity act;
     private Toolbar toolbar;
+    private Boolean createList;
 
     private View mImageView;
     private View mOverlayView;
@@ -182,13 +163,9 @@ public class ItemActivity extends DrawerActivity {
 
         Intent intent = getIntent();
         int itemId = intent.getIntExtra(ITEM_ID, 0);
-        boolean createList = intent.getBooleanExtra(CREATE_LIST, false);
+        Timber.d("notification_item_id %s", itemId);
+        createList = intent.getBooleanExtra(CREATE_LIST, false);
 
-        // リスト追加の場合はactivity resultが使えないので、再度読み込みしてスナックバー表示する
-        if(createList){
-            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
-            Snackbar.make(coordinatorLayout, getString(R.string.prompt_item_added, getString(R.string.list)), Snackbar.LENGTH_LONG).show();
-        }
         userId = ApiKey.getSingleton(this).getUserId();
 
         stickyScrollPresenter = new StickyScrollPresenter(this, StickyScrollPresenter.SCROLL_TYPE_ITEM);
@@ -408,18 +385,23 @@ public class ItemActivity extends DrawerActivity {
 
         if(userId == item.owner.id){
             setFAB();
-        }else{
+        }else {
             findViewById(R.id.menu_labels_right).setVisibility(View.GONE);
         }
 
-        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
-        String prompt = getString(R.string.prompt_item_added, item.name);
-        String path = ApiServiceManager.getSingleton(this).getWebUrl() + item.path;
-        Snackbar bar = Snackbar.make(coordinatorLayout, prompt, Snackbar.LENGTH_LONG);
-        if(item.privateType == 0){
-            setTweetAction(bar, prompt, path);
+        // リスト追加の場合はactivity resultが使えないので、再度読み込みしてスナックバー表示する
+        if(createList){
+            CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.wrapper);
+            String prompt = getString(R.string.prompt_item_added, item.name);
+            String path = ApiServiceManager.getSingleton(this).getWebUrl() + item.path;
+            Snackbar bar = Snackbar.make(coordinatorLayout, prompt, Snackbar.LENGTH_LONG);
+            if(item.privateType == 0){
+                Timber.d("create_list_private");
+
+                setTweetAction(bar, prompt, path);
+            }
+            bar.show();
         }
-        bar.show();
     }
 
     private void updateItemData(){
@@ -717,6 +699,7 @@ public class ItemActivity extends DrawerActivity {
                 if(item.privateType == 0){
                     setTweetAction(bar, prompt, path);
                 }
+
                 bar.show();
 
 
@@ -854,3 +837,4 @@ public class ItemActivity extends DrawerActivity {
         startActivity(intent);
     }
 }
+

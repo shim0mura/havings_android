@@ -329,6 +329,8 @@
     <string name="prompt_dump_list">手放したモノ一覧</string>
     <string name="prompt_timer_list">稼働中のタイマー 一覧</string>
     <string name="prompt_follows_onesidely">あなたをフォローしています</string>
+    <string name="prompt_classed_item_list">持ちモノ: %1$s</string>
+
 
     <string name="action_follow">フォローする</string>
     <string name="action_already_follow">フォロー中</string>

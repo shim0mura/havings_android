@@ -203,6 +203,7 @@ public class UserPresenter {
                         }
                     }
                 } else {
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
 
                 }
             }
@@ -241,6 +242,45 @@ public class UserPresenter {
                         }
                     }
                 } else {
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("user", "get failed");
+            }
+        });
+    }
+
+    public void getClassedItemList(int tagId, int offset){
+        Call<ItemEntity> call = service.getClassedItemList(tagId, offset);
+
+        call.enqueue(new Callback<ItemEntity>() {
+            @Override
+            public void onResponse(Response<ItemEntity> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ItemEntity item = response.body();
+                    BusHolder.get().post(item);
+
+                } else if (response.code() == StatusCode.Unauthorized) {
+                    Log.d("failed to authorize", "401 failed to authorize");
+                } else if (response.code() == StatusCode.UnprocessableEntity) {
+                    Timber.d("failed to post");
+
+                    ModelErrorEntity error = ApiErrorUtil.parseError(response, retrofit);
+
+                    Timber.d(error.toString());
+                    for(Map.Entry<String, List<String>> e: error.errors.entrySet()){
+                        switch(e.getKey()){
+                            default:
+                                //sendErrorToGetUser();
+                                break;
+                        }
+                    }
+                } else {
+                    BusHolder.get().post(new AlertEvent(AlertEvent.SOMETHING_OCCURED_IN_SERVER));
 
                 }
             }

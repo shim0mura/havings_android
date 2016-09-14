@@ -180,6 +180,7 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     protected void setDefaultValue(){
@@ -201,6 +202,10 @@ abstract public class ItemFormBaseActivity extends AppCompatActivity {
             privateTypeSwitch.setChecked(false);
             changePrivateType((item.privateType > 0), false);
         }
+
+        asGarbageSwitch.setChecked(item.isGarbage);
+        EditText t = (EditText)findViewById(R.id.garbage_reason_text);
+        t.setText(item.garbageReason);
     }
 
     protected void changePrivateType(Boolean isPrivate, Boolean isParentPrivate){

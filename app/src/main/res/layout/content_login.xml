@@ -105,6 +105,7 @@
                         android:textSize="18dp"/>
                 </LinearLayout>
 
+                <!--
                 <LinearLayout
                     android:id="@+id/register_by_instagram"
                     android:layout_marginTop="@dimen/app_basic_padding"
@@ -146,6 +147,8 @@
                         android:text="@string/prompt_signin_by_hatena"
                         android:textSize="18dp"/>
                 </LinearLayout>
+                -->
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

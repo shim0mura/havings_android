@@ -140,6 +140,7 @@
                             android:textSize="18dp"/>
                     </LinearLayout>
 
+                    <!--
                     <LinearLayout
                         android:id="@+id/register_by_instagram"
                         android:layout_marginTop="@dimen/app_basic_padding"
@@ -182,6 +183,7 @@
                             android:text="@string/prompt_register_by_hatena"
                             android:textSize="18dp"/>
                     </LinearLayout>
+                    -->
                 </LinearLayout>
 
 
@@ -212,7 +214,8 @@
                     android:text="ろぐいんする"
                     android:id="@+id/loginn"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="30dp"/>
+                    android:layout_marginTop="30dp"
+                    />
 
             </LinearLayout>
         </ScrollView>

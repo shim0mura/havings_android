@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,6 +35,7 @@ import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import timber.log.Timber;
+import work.t_s.shim0mura.havings.ClassedItemListActivity;
 import work.t_s.shim0mura.havings.R;
 import work.t_s.shim0mura.havings.model.BusHolder;
 import work.t_s.shim0mura.havings.model.GeneralResult;
@@ -138,6 +140,7 @@ public class GraphRenderer {
         counts.add(c);
     }
 
+    // TODO: finalを使いまくって見栄えが良くないので別のモジュールとして切り出したい
     public static void renderPieChart(Context context, PieChartView pieChartView, LinearLayout detailWrapper, ArrayList<ItemPercentageEntity> itemPercentageEntities){
         pieChartView.setOnValueTouchListener(new GraphRenderer.ValueTouchListener());
 
@@ -172,18 +175,37 @@ public class GraphRenderer {
         data.setCenterText2FontSize(PIECHART_MAINTEXT_FONT_SIZE);
         data.setCenterText2(String.valueOf(totalCount));
 
-        pieChartView.setValueSelectionEnabled(true);
+        pieChartView.setValueSelectionEnabled(false);
 
         data.setHasLabels(true);
         pieChartView.setPieChartData(data);
 
+        /*
         detailWrapper.removeAllViews();
         for(ItemPercentageEntity ipe : itemPercentageEntities){
             detailWrapper.addView(renderPieChartCategory(context, ipe));
+        }*/
+        reRenderPieChartCategory(context, detailWrapper, itemPercentageEntities);
+    }
+
+    public static void reRenderPieChartCategory(final Context context, final LinearLayout detailWrapper, final ArrayList<ItemPercentageEntity> itemPercentageEntities){
+        detailWrapper.removeAllViews();
+        for(final ItemPercentageEntity ipe : itemPercentageEntities){
+            View header = renderPieChartCategory(context, ipe);
+            header.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    renderPieChartDetail(context, detailWrapper, ipe, itemPercentageEntities);
+
+                    return false;
+                }
+            });
+            detailWrapper.addView(header);
+
         }
     }
 
-    public static void renderPieChartDetail(Context context, LinearLayout detailWrapper, ItemPercentageEntity itemPercentageEntity){
+    public static void renderPieChartDetail(final Context context, final LinearLayout detailWrapper, ItemPercentageEntity itemPercentageEntity, final ArrayList<ItemPercentageEntity> itemPercentageEntities){
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         View header = renderPieChartCategory(context, itemPercentageEntity);
@@ -191,10 +213,18 @@ public class GraphRenderer {
             return;
         }
 
+        header.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                reRenderPieChartCategory(context, detailWrapper, itemPercentageEntities);
+                return false;
+            }
+        });
+
         detailWrapper.removeAllViews();
         detailWrapper.addView(header);
 
-        for(ItemPercentageEntity ipe : itemPercentageEntity.childs){
+        for(final ItemPercentageEntity ipe : itemPercentageEntity.childs){
             View parentView = layoutInflater.inflate(pieChartPartialView, null);
             ImageView parentIcon = (ImageView)parentView.findViewById(R.id.item_category_icon);
             View depthPadding = parentView.findViewById(R.id.category_depth_padding1);
@@ -209,9 +239,17 @@ public class GraphRenderer {
             parentItemCount.setText(String.valueOf(ipe.count));
             parentItemPercentage.setText(String.valueOf(ipe.percentage));
 
+            parentView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Timber.d("tag %s %s", ipe.tag, ipe.tagId);
+                    ClassedItemListActivity.startActivity(context, ipe.tagId, ipe.tag);
+                    return false;
+                }
+            });
             detailWrapper.addView(parentView);
 
-            for(ItemPercentageEntity childIpe : ipe.childs){
+            for(final ItemPercentageEntity childIpe : ipe.childs){
                 View childView = layoutInflater.inflate(pieChartPartialView, null);
                 ImageView childIcon = (ImageView)childView.findViewById(R.id.item_category_icon);
                 View childPadding = childView.findViewById(R.id.category_depth_padding2);
@@ -231,6 +269,15 @@ public class GraphRenderer {
                 childItemPercentage.setText(String.valueOf(childIpe.percentage));
                 childItemPercentage.setTypeface(null, Typeface.NORMAL);
 
+                childView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        Timber.d("tag %s %s", childIpe.tag, childIpe.tagId);
+                        ClassedItemListActivity.startActivity(context, ipe.tagId, ipe.tag);
+
+                        return false;
+                    }
+                });
                 detailWrapper.addView(childView);
             }
         }

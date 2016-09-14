@@ -87,7 +87,7 @@ public class SessionBaseActivity extends AppCompatActivity {
         presenter.attemptToStartSession();
     }
 
-    @OnClick({R.id.register_by_twitter, R.id.register_by_facebook, R.id.register_by_instagram, R.id.register_by_hatena})
+    @OnClick({R.id.register_by_twitter, R.id.register_by_facebook})
     public void openBrowser(View v){
         String providerTag = v.getTag().toString();
         LoginPresenter loginPresenter = new LoginPresenter(this);

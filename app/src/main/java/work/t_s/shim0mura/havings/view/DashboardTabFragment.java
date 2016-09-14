@@ -412,7 +412,9 @@ public class DashboardTabFragment extends Fragment {
             return;
         }
 
-        GraphRenderer.renderPieChartDetail(getActivity(), graphDetailWrapper, categoryParent);
+        //GraphRenderer.renderPieChartDetail(getActivity(), graphDetailWrapper, categoryParent);
+        GraphRenderer.reRenderPieChartCategory(getActivity(), graphDetailWrapper, itemPercentageEntityArrayList);
+
     }
 
     @OnClick(R.id.view_more_timer)

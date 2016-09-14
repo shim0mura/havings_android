@@ -44,10 +44,12 @@ public class ItemEditActivity extends ItemFormBaseActivity {
 
         constructForm();
         if(item.isGarbage){
-            itemCountWrapper.setVisibility(View.GONE);
+            //itemCountWrapper.setVisibility(View.GONE);
         }
 
         setDefaultValue();
+        asGarbageWrapper.setVisibility(View.GONE);
+
 
         setTitle(getString(R.string.prompt_edit_form, itemTypeString));
         Button b = (Button)findViewById(R.id.post_item);
